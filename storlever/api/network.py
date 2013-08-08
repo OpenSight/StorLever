@@ -1,25 +1,21 @@
-from pyramid.view import view_config, view_defaults
-
-from storlever.api.common import version_cmp, eq, lt, gt, le, ge
+from storlever.api.common import get_view, post_view, put_view, delete_view
 
 
 def includeme(config):
     config.add_route('network', '/network')
+    
 
-
-@view_config(route_name='network',
-             request_method='GET',
-             custom_predicates=(version_cmp(eq, 1),))
+@get_view(route_name='network',
+          api_ver=lambda ver: ver==1)
 def network_get(request):
     return {'eth0': {'ip':'192.168.1.22', 'gateway': '192.168.1.1'}}
 
-
-@view_config(route_name='network',
-             request_method='GET',
-             custom_predicates=(version_cmp(eq, 2),))
+@get_view(route_name='network',
+          api_ver=lambda ver: ver==2)
 def network_get_v2(request):
     return {'eth0': {}}
 
-
-
-    
+@post_view(route_name='network',
+          api_ver=lambda ver: ver==1)
+def network_post(request):
+    return "post successfully"

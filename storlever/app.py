@@ -12,7 +12,7 @@ def main(global_config, **settings):
     
     config.add_renderer(None, JSON())
     config.include('storlever.api.network', route_prefix='storlever/api/v{api_version}')
-
+    config.include('storlever.api.system', route_prefix='storlever/api/v{api_version}')
     config.scan()
     
     return config.make_wsgi_app()
