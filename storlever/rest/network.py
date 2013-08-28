@@ -9,7 +9,8 @@ def includeme(config):
 
 @get_view(route_name='network')
 def network_get(request):
-    return {'eth0': {'ip':'192.168.1.22', 'gateway': '192.168.1.1'}}
+    return {'eth0': {'ip': '192.168.1.22', 'gateway': '192.168.1.1'}}
+
 
 @post_view(route_name='network')
 def network_post(request):

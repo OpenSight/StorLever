@@ -4,6 +4,7 @@ from pyramid.events import subscriber, NewResponse
 
 from storlever.lib.schema import SchemaError as ValidationFailure
 
+
 class _rest_view(view_config):
     def __init__(self, **settings):
         method = self.__class__.__name__.split('_')[0].upper()
@@ -14,25 +15,28 @@ class _rest_view(view_config):
 class get_view(_rest_view):
     pass
 
+
 class post_view(_rest_view):
     pass
 
+
 class put_view(_rest_view):
     pass
+
 
 class delete_view(_rest_view):
     pass
 
 
 class RestError(Exception):
-    ''' Exception for REST related error other than request validation Error
+    """ Exception for REST related error other than request validation Error
     Raise this error in REST request handling will cause pyramid to return JSON encoded error message like:
     {
         "message": "something failed",
         "code": 500
     }
     code in JSON is same as the returned HTTP status code, which can be given as status_code when raising error
-    '''
+    """
     def __init__(self, msg='REST request failed', status_code=500):
         self.msg = msg
         self.status_code = status_code
@@ -53,9 +57,9 @@ def failed_rest(exc, request):
 
 @subscriber(NewResponse)
 def add_response_header(event):
-    '''
+    """
     add all custom header here
-    '''
+    """
     response = event.response
     response.headers['X-Powered-By'] = 'Pyramid framework'
 
