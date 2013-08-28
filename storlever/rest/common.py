@@ -1,3 +1,14 @@
+"""
+storlever.common
+~~~~~~~~~~~~~~~~
+
+This module implements some common API for REST.
+
+:copyright: (c) 2013 by Yiting Huang.
+:license: GPLv3, see LICENSE for more details.
+
+"""
+
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.events import subscriber, NewResponse
@@ -62,9 +73,3 @@ def add_response_header(event):
     """
     response = event.response
     response.headers['X-Powered-By'] = 'Pyramid framework'
-
-
-
-
-
-
