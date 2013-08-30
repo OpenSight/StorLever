@@ -38,7 +38,7 @@ For the complete list of software packages involved, check out the dependency do
 Why Web API
 -----------
 
-All those "resources" mentioned above, come with their own utiliities like command line 
+All those "resources" mentioned above, come with their own utilities like command line
 and configuration files for the management purpose, but unfortunately all in different style.
 To master all those the command lines and configuration files requires non-trivial effort, 
 and to access these utilities remotely and programmatically requires another set of skills,
