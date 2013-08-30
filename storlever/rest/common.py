@@ -59,6 +59,7 @@ def failed_validation(exc, request):
     response.status_int = 400
     return response
 
+
 @view_config(context=RestError)
 def failed_rest(exc, request):
     response = request.response

@@ -14,6 +14,7 @@ def main(global_config, **settings):
     config.add_renderer(None, JSON())
     config.include('storlever.rest.network', route_prefix='storlever/api/v1')
     config.include('storlever.rest.system', route_prefix='storlever/api/v1')
+    config.include('storlever.rest.lvm', route_prefix='storlever/api/v1')
     config.scan()
     
     return config.make_wsgi_app()
