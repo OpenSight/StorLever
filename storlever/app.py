@@ -10,11 +10,15 @@ def main(global_config, **settings):
     """
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
-    
+
+    # make JSON as the default renderer
     config.add_renderer(None, JSON())
-    config.include('storlever.rest.network', route_prefix='storlever/api/v1')
-    config.include('storlever.rest.system', route_prefix='storlever/api/v1')
-    config.include('storlever.rest.lvm', route_prefix='storlever/api/v1')
+
+    # route and view configuration of REST API version 1 can be found in module storlever.rest
+    # check storlever.rest.__init__.py for more detail
+    config.include('storlever.rest', route_prefix='storlever/api/v1')
+
+    # scan to register view callables
     config.scan()
     
     return config.make_wsgi_app()
