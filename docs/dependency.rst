@@ -22,3 +22,9 @@ Following is a list of RHEL/CentOS 6 packages that needed by StorLever, some of 
 * net-snmp: SNMP utilities
 * ntp: for date time synchronization
 
+StorLever supports RAID controllers with LSI SAS 2208/2108/2008 chip, to enable this feature, please
+make sure following packages are installed:
+
+* MegaRaid SAS driver: driver for RAID controller
+* MegaCli: command line util to manager RAID controller
+

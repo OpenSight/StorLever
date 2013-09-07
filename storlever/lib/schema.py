@@ -1,4 +1,4 @@
-'''
+"""
 Copyright (c) 2012 Vladimir Keleshev, <vladimir@keleshev.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -18,8 +18,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-'''
-
+"""
 
 from inspect import getargspec
 from functools import wraps
@@ -50,10 +49,40 @@ class SchemaError(Exception):
         return '\n'.join(a)
 
 
+def handle_default(init):
+
+    """Add default handling to __init__ method; meant for decorators"""
+
+    def init2(self, *args, **kw):
+        # get default from the ``default`` keyword argument
+        if 'default' in kw:
+            self.default = kw['default']
+            del(kw['default'])
+        # if auto_default is set, get default from first argument
+        elif hasattr(self, 'auto_default') and self.auto_default:
+            self.default = args[0]
+            if hasattr(self.default, 'default'):
+                self.default = self.default.default
+            elif type(self.default) == type:
+                self.default = self.default()
+        # normal init
+        init(self, *args, **kw)
+        # validate default
+        if hasattr(self, 'default'):
+            try:
+                self.default = self.validate(self.default)
+            except SchemaError:
+                raise ValueError('%s does not validate its default: %s' % (
+                    self, self.default))
+    return init2
+
+
 class And(object):
 
+    @handle_default
     def __init__(self, *args, **kw):
         self._args = args
+        assert len(args)
         assert list(kw) in (['error'], [])
         self._error = kw.get('error')
 
@@ -82,6 +111,7 @@ class Or(And):
 
 class Use(object):
 
+    @handle_default
     def __init__(self, callable_, error=None):
         assert callable(callable_)
         self._callable = callable_
@@ -117,6 +147,7 @@ def priority(s):
 
 class Schema(object):
 
+    @handle_default
     def __init__(self, schema, error=None):
         self._schema = schema
         self._error = error
@@ -161,12 +192,19 @@ class Schema(object):
                                           x.autos, [e] + x.errors)
                     else:
                         raise SchemaError('key %r is required' % skey, e)
-            coverage = set(k for k in coverage if type(k) is not Optional)
             required = set(k for k in s if type(k) is not Optional)
-            if coverage != required:
+            # missed keys
+            if not required.issubset(coverage):
                 raise SchemaError('missed keys %r' % (required - coverage), e)
+            # wrong keys
             if len(new) != len(data):
                 raise SchemaError('wrong keys %r in %r' % (new, data), e)
+            # default for optional keys
+            for k in set(s) - required - coverage:
+                try:
+                    new[k.default] = s[k].default
+                except AttributeError:
+                    pass
             return new
         if hasattr(s, 'validate'):
             try:
@@ -201,4 +239,58 @@ class Schema(object):
 class Optional(Schema):
 
     """Marker for an optional part of Schema."""
-    
+
+    auto_default = True
+
+
+class Default(Schema):
+
+    """Wrapper automatically adding a default value if possible"""
+
+    auto_default = True
+
+
+if __name__ == '__main__':
+    # example
+    schema = Schema({"key1": str,       # key1 should be string
+                     "key2": int,       # key2 should be int
+                     "key3": Use(int),  # key3 should be in or int in string
+                     "key4": And(int, lambda n: 0 < n < 100),   # key4 should be int between 1-99
+                     Optional("key5"): Default(str, default="value5"),  # key5 is optional,
+                                                                        # should be str and default value is "value 5"
+                     Optional(str): object})      # for keys we don't care
+
+    from pprint import pprint
+
+    # should pass the validation
+    pprint(schema.validate({"key1": "value1",
+                            "key2": 222,
+                            "key3": "333",
+                            "key4": 44,
+                            "key_none": None,
+                            "key_none2": "null"}))
+
+    # all following cases should fail
+    import traceback
+
+    try:
+        schema.validate({"key1": "value1"})   # missing key
+    except Exception:
+        print traceback.format_exc()
+
+    try:
+        schema.validate({"key1": "value1",
+                         "key2": 222,
+                         "key3": 333,
+                         "key4": 444})   # number too large
+    except Exception:
+        print traceback.format_exc()
+
+    try:
+        schema.validate({"key1": "value1",
+                         "key2": 222,
+                         "key3": 333,
+                         "key4": 44,
+                         "key5": 555})   # wrong type
+    except Exception:
+        print traceback.format_exc()
