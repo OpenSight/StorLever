@@ -109,6 +109,39 @@ class Or(And):
                          [self._error] + x.errors)
 
 
+class IntVal(object):
+    """
+    schema to Validate integer
+    @data should be either integer or numeric string like "123"
+    @data should be in @values set OR in range of @min and @max
+    """
+    def __init__(self, min=None, max=None, values=None, error=None):
+        self._min = min
+        self._max = max
+        self._values = values
+        self._error = error
+
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__, self._callable)
+
+    def validate(self, data):
+        if not isinstance(data, int):
+            try:
+                data = int(data)
+            except Exception:
+                raise SchemaError('%s is not integer' % data, self._error)
+        if data in self._values:
+            return data
+        if self._min:
+            if data < self._min:
+                raise SchemaError('%d is smaller than %d' % (data, self._min), self._error)
+        if self._max:
+            if data > self._max:
+                raise SchemaError('%d is larger than %d' % (data, self._max), self._error)
+        return data
+
+
+
 class Use(object):
 
     @handle_default
@@ -131,6 +164,8 @@ class Use(object):
 
 
 def priority(s):
+    if isinstance(s, DoNotCare):
+        return 7
     if type(s) in (list, tuple, set, frozenset):
         return 6
     if type(s) is dict:
@@ -169,16 +204,21 @@ class Schema(object):
             for key, value in data.items():
                 valid = False
                 skey = None
+                must_match = False
                 for skey in sorted(s, key=priority):
                     svalue = s[skey]
                     try:
                         nkey = Schema(skey, error=e).validate(key)
+                        if isinstance(skey, str) or isinstance(skey, Optional):
+                            must_match = True
                         try:
                             nvalue = Schema(svalue, error=e).validate(value)
                         except SchemaError as _x:
                             x = _x
                             raise
                     except SchemaError:
+                        if must_match:
+                            raise
                         pass
                     else:
                         coverage.add(skey)
@@ -191,8 +231,8 @@ class Schema(object):
                         raise SchemaError(['key %r is required' % key] +
                                           x.autos, [e] + x.errors)
                     else:
-                        raise SchemaError('key %r is required' % skey, e)
-            required = set(k for k in s if type(k) is not Optional)
+                        raise SchemaError('invalid key %r' % key, e)
+            required = set(k for k in s if not isinstance(k, Optional))
             # missed keys
             if not required.issubset(coverage):
                 raise SchemaError('missed keys %r' % (required - coverage), e)
@@ -213,7 +253,7 @@ class Schema(object):
                 raise SchemaError([None] + x.autos, [e] + x.errors)
             except BaseException as x:
                 raise SchemaError('%r.validate(%r) raised %r' % (s, data, x),
-                                 self._error)
+                                  self._error)
         if type(s) is type:
             if isinstance(data, s):
                 return data
@@ -243,6 +283,11 @@ class Optional(Schema):
     auto_default = True
 
 
+class DoNotCare(Optional):
+
+    auto_default = True
+
+
 class Default(Schema):
 
     """Wrapper automatically adding a default value if possible"""
@@ -255,10 +300,10 @@ if __name__ == '__main__':
     schema = Schema({"key1": str,       # key1 should be string
                      "key2": int,       # key2 should be int
                      "key3": Use(int),  # key3 should be in or int in string
-                     "key4": And(int, lambda n: 0 < n < 100),   # key4 should be int between 1-99
+                     "key4": IntRange(1, 99),   # key4 should be int between 1-99
                      Optional("key5"): Default(str, default="value5"),  # key5 is optional,
                                                                         # should be str and default value is "value 5"
-                     Optional(str): object})      # for keys we don't care
+                     DoNotCare(str): object})      # for keys we don't care
 
     from pprint import pprint
 
@@ -271,20 +316,29 @@ if __name__ == '__main__':
                             "key_none2": "null"}))
 
     # all following cases should fail
-    import traceback
+    # import traceback
 
     try:
         schema.validate({"key1": "value1"})   # missing key
-    except Exception:
-        print traceback.format_exc()
+    except Exception as e:
+        # print traceback.format_exc()
+        print e
 
     try:
         schema.validate({"key1": "value1",
                          "key2": 222,
                          "key3": 333,
                          "key4": 444})   # number too large
-    except Exception:
-        print traceback.format_exc()
+    except Exception as e:
+        print e
+
+    try:
+        schema.validate({"key1": "value1",
+                         "key2": 222,
+                         "key3": 333,
+                         "key4": 0})   # not int
+    except Exception as e:
+        print e
 
     try:
         schema.validate({"key1": "value1",
@@ -292,5 +346,5 @@ if __name__ == '__main__':
                          "key3": 333,
                          "key4": 44,
                          "key5": 555})   # wrong type
-    except Exception:
-        print traceback.format_exc()
+    except Exception as e:
+        print e
