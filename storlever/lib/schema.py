@@ -300,7 +300,7 @@ if __name__ == '__main__':
     schema = Schema({"key1": str,       # key1 should be string
                      "key2": int,       # key2 should be int
                      "key3": Use(int),  # key3 should be in or int in string
-                     "key4": IntRange(1, 99),   # key4 should be int between 1-99
+                     "key4": IntVal(1, 99),   # key4 should be int between 1-99
                      Optional("key5"): Default(str, default="value5"),  # key5 is optional,
                                                                         # should be str and default value is "value 5"
                      DoNotCare(str): object})      # for keys we don't care
