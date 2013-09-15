@@ -11,8 +11,10 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
+    json_indent = settings.get("json.indent")
+
     # make JSON as the default renderer
-    config.add_renderer(None, JSON())
+    config.add_renderer(None, JSON(indent=json_indent))
 
     # route and view configuration of REST API version 1 can be found in module storlever.rest
     # check storlever.rest.__init__.py for more detail
