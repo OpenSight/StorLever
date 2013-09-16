@@ -11,7 +11,10 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
+    # get user-specific config from setting
     json_indent = settings.get("json.indent")
+    if json_indent is not None:
+        json_indent = int(json_indent)
 
     # make JSON as the default renderer
     config.add_renderer(None, JSON(indent=json_indent))
