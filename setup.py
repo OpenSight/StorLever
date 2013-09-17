@@ -11,7 +11,11 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'gunicorn',
-    'pyyaml'
+    'pyyaml',
+]
+
+test_requires = [
+    'unittest2'
 ]
 
 setup(name='storlever',
@@ -32,8 +36,8 @@ setup(name='storlever',
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
-      tests_require=requires,
-      test_suite="storlever",
+      tests_require=requires + test_requires,
+      test_suite="storlever.tests",
       entry_points="""\
       [paste.app_factory]
       main = storlever:main

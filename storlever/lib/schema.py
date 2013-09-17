@@ -121,25 +121,24 @@ class IntVal(object):
         self._values = values
         self._error = error
 
-    def __repr__(self):
-        return '%s(%r)' % (self.__class__.__name__, self._callable)
-
     def validate(self, data):
         if not isinstance(data, int):
             try:
                 data = int(data)
             except Exception:
                 raise SchemaError('%s is not integer' % data, self._error)
-        if data in self._values:
-            return data
+        if self._values:
+            if data in self._values:
+                return data
         if self._min:
             if data < self._min:
                 raise SchemaError('%d is smaller than %d' % (data, self._min), self._error)
         if self._max:
             if data > self._max:
                 raise SchemaError('%d is larger than %d' % (data, self._max), self._error)
+        if self._min is None and self._max is None and self._values:
+            raise SchemaError('%s is not in %s' % data, self._values)
         return data
-
 
 
 class Use(object):
