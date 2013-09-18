@@ -10,17 +10,6 @@ from storlever.lib.schema import Schema, Optional, DoNotCare, \
 
 
 class TestSchema(unittest.TestCase):
-    def setUp(self):
-        self.schema = Schema({
-            "key1": str,       # key1 should be string
-            "key2": int,       # key2 should be int
-            "key3": Use(int),  # key3 should be in or int in string
-            "key4": IntVal(1, 99),   # key4 should be int between 1-99
-            # key5 is optional,
-            # should be str and default value is "value 5"
-            Optional("key5"): Default(str, default="value5"),
-            DoNotCare(str): object  # for all those key we don't care
-        })
 
     def test_int_value(self):
         schema = Schema(IntVal())
@@ -71,19 +60,133 @@ class TestSchema(unittest.TestCase):
         data = schema.validate({'key': 'abc', 'op_key': 123})
         self.assertEqual({'key': 'abc', 'op_key': 123}, data)
         with self.assertRaises(SchemaError):
-            data = schema.validate({'key': 'abc', 'op_key': 'bcd'})
+            schema.validate({'key': 'abc', 'op_key': 'bcd'})
+
+    def test_default_value(self):
+        schema = Schema({
+            "key": str,
+            Optional('op_key'): Default(IntVal(min=10), default=50)
+        })
+        data = schema.validate({'key': 'abc'})
+        self.assertEqual({'key': 'abc', 'op_key': 50}, data)
+        data = schema.validate({'key': 'abc', 'op_key': 20})
+        self.assertEqual({'key': 'abc', 'op_key': 20}, data)
+        with self.assertRaises(SchemaError):
+            schema.validate({'key': 'abc', 'op_key': 0})
+
+    def test_donot_care(self):
+        schema = Schema({
+            'key': str,
+            DoNotCare(str): object
+        })
+        data = schema.validate({'key': 'abc', 'key2': 'bbb', 'key3': [1, 2, 3]})
+        self.assertEqual({'key': 'abc', 'key2': 'bbb', 'key3': [1, 2, 3]}, data)
+        with self.assertRaises(SchemaError):
+            schema.validate({'key2': 'bbb', 'key3': [1, 2, 3]})
+
+    def test_list(self):
+        schema = Schema([str])
+        self.assertEqual(schema.validate(['abc', 'bbc', 'ddc']),
+                         ['abc', 'bbc', 'ddc'])
+        with self.assertRaises(SchemaError):
+            schema.validate(['abc', 123, 'bbc'])
+        schema = Schema([IntVal(min=10, max=20)])
+        self.assertEqual(schema.validate([10, 12, 19, 11]), [10, 12, 19, 11])
+        with self.assertRaises(SchemaError):
+            schema.validate([10, 12, 21])
 
     def test_dict(self):
-        data = self.schema.validate({
+        schema = Schema({
+            "key1": str,       # key1 should be string
+            "key2": Use(int),  # key3 should be in or int in string
+            "key3": [IntVal(min=10, max=20)],
+            # key4 is optional,
+            Optional("key4"): str,
+            Optional('key5'): Default(IntVal(min=100, max=200), default=100),
+            DoNotCare(str): object  # for all those key we don't care
+        })
+
+        data = schema.validate({
+            "key1": "abc",
+            "key2": '123',
+            "key3": [10, 15, 20],
+            "key5": 199,
+        })
+        self.assertEqual(data, {
             "key1": "abc",
             "key2": 123,
-            "key3": "223",
-            "key4": 88,
+            "key3": [10, 15, 20],
+            "key5": 199
         })
-        self.assertDictEqual(data, {
+
+        data = schema.validate({
+            "key1": "abc",
+            "key2": '123',
+            "key3": [10, 15, 20],
+        })
+        self.assertEqual(data, {
             "key1": "abc",
             "key2": 123,
-            "key3": 223,
-            "key4": 88,
-            "key5": "value5"
+            "key3": [10, 15, 20],
+            "key5": 100
         })
+
+        data = schema.validate({
+            "key1": "abc",
+            "key2": '123',
+            "key3": [10, 15, 20],
+            "key4": 'abc'
+        })
+        self.assertEqual(data, {
+            "key1": "abc",
+            "key2": 123,
+            "key3": [10, 15, 20],
+            "key4": 'abc',
+            "key5": 100
+        })
+
+        data = schema.validate({
+            "key1": "abc",
+            "key2": '123',
+            "key3": [10, 15, 20],
+            "key4": 'abc',
+            "key100": 'bbc',
+            'key200': [123, 23, 334]
+        })
+        self.assertEqual(data, {
+            "key1": "abc",
+            "key2": 123,
+            "key3": [10, 15, 20],
+            "key4": 'abc',
+            "key5": 100,
+            "key100": 'bbc',
+            'key200': [123, 23, 334]
+        })
+
+        with self.assertRaises(SchemaError):
+            schema.validate({
+                'key1': 123,
+                "key2": '123',
+                "key3": [10, 15, 20],
+                "key4": 223,
+            })
+        with self.assertRaises(SchemaError):
+            schema.validate({
+                'key1': 123,
+                "key2": '123',
+                "key3": [10, 15, 20],
+                "key4": 'abc',
+                "key100": 'bbc',
+                'key200': [123, 23, 334]
+            })
+        with self.assertRaises(SchemaError):
+            schema.validate({
+                'key1': 'abc',
+                "key2": '123',
+                "key3": [10, 15, 20],
+                "key4": 'abc',
+                'key5': 0,
+                "key100": 'bbc',
+                'key200': [123, 23, 334]
+            })
+
