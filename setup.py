@@ -10,7 +10,6 @@ requires = [
     'pyramid',
     'pyramid_debugtoolbar',
     'waitress',
-    'gunicorn',
     'pyyaml',
 ]
 
