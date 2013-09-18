@@ -11,6 +11,7 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'pyyaml',
+    'psutil',
 ]
 
 test_requires = [
