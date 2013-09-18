@@ -1,6 +1,6 @@
 from storlever.rest.common import (get_view, post_view,
-                                   put_view, delete_view,
-                                   RestError)
+                                   put_view, delete_view)
+from storlever.lib.exception import StorLeverError
 
 
 def includeme(config):

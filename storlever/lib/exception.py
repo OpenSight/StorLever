@@ -1,0 +1,17 @@
+"""
+storlever.lib.exception
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This module defines the exception class which should be
+sub-classed from by all other Exception used in StorLever project.
+
+:copyright: (c) 2013 by Yiting Huang.
+:license: GPLv3, see LICENSE for more details.
+
+"""
+
+
+class StorLeverError(Exception):
+    def __init__(self, info, http_status_code=500):
+        super(StorLeverError, self).__init__(info)
+        self.http_status_code = http_status_code

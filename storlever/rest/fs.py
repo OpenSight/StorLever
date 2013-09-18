@@ -1,6 +1,6 @@
 from storlever.rest.common import (get_view, post_view, 
-                                   put_view, delete_view,
-                                   RestError)
+                                   put_view, delete_view)
+from storlever.lib.exception import StorLeverError
 
 
 def includeme(config):
@@ -52,5 +52,5 @@ def network_get(request):
 
 @post_view(route_name='fs')
 def network_post(request):
-    raise RestError('it failing')
+    raise StorLeverError('it failing')
     return "post successfully"

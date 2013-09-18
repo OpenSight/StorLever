@@ -8,12 +8,16 @@ This module implements some common API for REST.
 :license: GPLv3, see LICENSE for more details.
 
 """
+import sys
+import traceback
 
+import pyramid.exceptions
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.events import subscriber, NewResponse
 
 from storlever.lib.schema import SchemaError as ValidationFailure
+from storlever.lib.exception import StorLeverError
 
 
 class _rest_view(view_config):
@@ -39,32 +43,35 @@ class delete_view(_rest_view):
     pass
 
 
-class RestError(Exception):
-    """ Exception for REST related error other than request validation Error
-    Raise this error in REST request handling will cause pyramid to return JSON encoded error message like:
-    {
-        "message": "something failed",
-        "code": 500
-    }
-    code in JSON is same as the returned HTTP status code, which can be given as status_code when raising error
-    """
-    def __init__(self, msg='REST request failed', status_code=500):
-        self.msg = msg
-        self.status_code = status_code
-
-
 @view_config(context=ValidationFailure)
 def failed_validation(exc, request):
     response = Response('Failed validation: %s' % exc.code)
     response.status_int = 400
-    return response
+    return {'info': str(exc), 'traceback': []}
 
 
-@view_config(context=RestError)
-def failed_rest(exc, request):
+@view_config(context=StorLeverError)
+def storlever_error_view(exc, request):
+    response = request.response
+    response.status_int = exc.http_status_code
+    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
+    return {'info': str(exc), 'traceback': tb_list}
+
+
+@view_config(context=Exception)
+def error_view(exc, request):
+    response = request.response
+    response.status_int = exc.http_status_code
+    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
+    return {'info': str(exc), 'traceback': tb_list}
+
+
+@view_config(context=pyramid.exceptions.NotFound)
+def not_found_view(exc, request):
     response = request.response
     response.status_int = exc.status_code
-    return {'code': exc.status_code, 'message': exc.msg}
+    return {'info': 'Resource {} not found or method {} not supported'.format(request.path, request.method),
+            'traceback': []}
 
 
 @subscriber(NewResponse)
