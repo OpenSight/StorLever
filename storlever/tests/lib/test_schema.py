@@ -68,8 +68,8 @@ class TestSchema(unittest.TestCase):
         })
         data = schema.validate({"key": "abc"})
         self.assertEqual({"key": "abc"}, data)
-        data = schema.validate({'key': 'abc', 'opt_key': 123})
-        self.assertEqual({'key':'abc', 'op_key': 123}, data)
+        data = schema.validate({'key': 'abc', 'op_key': 123})
+        self.assertEqual({'key': 'abc', 'op_key': 123}, data)
         with self.assertRaises(SchemaError):
             data = schema.validate({'key': 'abc', 'op_key': 'bcd'})
 
