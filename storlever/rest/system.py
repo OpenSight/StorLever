@@ -10,11 +10,11 @@ This module implements the rest API for system.
 """
 
 import platform
+import time
 
 import psutil
 
 from storlever.rest.common import get_view, post_view, put_view, delete_view
-
 from storlever.mngr.system import sysinfo
 
 
@@ -27,9 +27,9 @@ def includeme(config):
     config.add_route('per_cpu_times', '/system/per_cpu_times')
     config.add_route('memory', '/system/memory')
     config.add_route('ps', '/system/ps')
-    config.add_route('disk_io_counter', '/system/disk_io_counter')
+    config.add_route('disk_io_counters', '/system/disk_io_counters')
     config.add_route('per_disk_io_counters', '/system/per_disk_io_counters')
-    config.add_route('net_io_counter', '/system/net_io_counter')
+    config.add_route('net_io_counters', '/system/net_io_counters')
     config.add_route('per_net_io_counters', '/system/per_net_io_counters')
 
 
@@ -57,3 +57,141 @@ def system_cpu_list_get(request):
                     'physical_id': cpu["physical id"]}
         cpu_list_dict.append(cpu_info)
     return cpu_list_dict
+
+
+@get_view(route_name='cpu_percent')
+def system_cpu_percent_get(request):
+    interval = float(request.params.get('interval', '1'))
+    cpu_percent = psutil.cpu_percent(interval=interval)
+    return cpu_percent
+
+
+@get_view(route_name='per_cpu_percent')
+def system_per_cpu_percent_get(request):
+    interval = float(request.params.get('interval', '1'))
+    per_cpu_percent_list = psutil.cpu_percent(interval=interval, percpu=True)
+    return per_cpu_percent_list
+
+
+@get_view(route_name='cpu_times')
+def system_cpu_time_get(request):
+    cpu_time = psutil.cpu_times()
+    cpu_time_output = {'user': cpu_time.user,
+                       'system': cpu_time.system,
+                       'idle': cpu_time.idle,
+                       'nice': cpu_time.nice,
+                       'iowait': cpu_time.iowait,
+                       'irq': cpu_time.irq,
+                       'softirq': cpu_time.softirq,
+                       'steal': cpu_time.steal,
+                       'guest': cpu_time.guest}
+
+    return cpu_time_output
+
+
+@get_view(route_name='per_cpu_times')
+def system_per_cpu_time_get(request):
+    cpu_time_list = psutil.cpu_times(percpu=True)
+    cpu_time_list_output = []
+    for cpu_time in cpu_time_list:
+        cpu_time_output = {'user': cpu_time.user,
+                           'system': cpu_time.system,
+                           'idle': cpu_time.idle,
+                           'nice': cpu_time.nice,
+                           'iowait': cpu_time.iowait,
+                           'irq': cpu_time.irq,
+                           'softirq': cpu_time.softirq,
+                           'steal': cpu_time.steal,
+                           'guest': cpu_time.guest}
+        cpu_time_list_output.append(cpu_time_output)
+
+    return cpu_time_list_output
+
+
+@get_view(route_name='memory')
+def system_memory_get(request):
+    memory_info = psutil.virtual_memory()
+    memory_info_output = {'total': memory_info.total,
+                          'available': memory_info.available,
+                          'percent': memory_info.percent,
+                          'used': memory_info.used,
+                          'free': memory_info.free,
+                          'buffers': memory_info.buffers,
+                          'cached': memory_info.cached}
+
+    return memory_info_output
+
+
+
+@get_view(route_name='disk_io_counters')
+def system_disk_io_counters_get(request):
+    io_counters = psutil.disk_io_counters()
+    now = time.time()
+    io_counters_output = {'time': now,
+                          'disk_name': "all",
+                          'read_count': io_counters.read_count,
+                          'write_count': io_counters.write_count,
+                          'read_bytes': io_counters.read_bytes,
+                          'write_bytes': io_counters.write_bytes,
+                          'read_time': io_counters.read_time,
+                          'write_time': io_counters.write_time}
+
+    return io_counters_output
+
+
+@get_view(route_name='per_disk_io_counters')
+def system_per_disk_io_counters_get(request):
+    io_counters_dict = psutil.disk_io_counters(perdisk=True)
+    now = time.time()
+    io_counters_list_output = []
+    for disk_name, io_counters in io_counters_dict.items():
+        io_counters_output = {'time': now,
+                              'disk_name': disk_name,
+                              'read_count': io_counters.read_count,
+                              'write_count': io_counters.write_count,
+                              'read_bytes': io_counters.read_bytes,
+                              'write_bytes': io_counters.write_bytes,
+                              'read_time': io_counters.read_time,
+                              'write_time': io_counters.write_time}
+        io_counters_list_output.append(io_counters_output)
+
+    return io_counters_list_output
+
+
+@get_view(route_name='net_io_counters')
+def system_net_io_counters_get(request):
+    io_counters = psutil.net_io_counters()
+    now = time.time()
+    io_counters_output = {'time': now,
+                          'if_name': "all",
+                          'bytes_sent': io_counters.bytes_sent,
+                          'bytes_recv': io_counters.bytes_recv,
+                          'packets_sent': io_counters.packets_sent,
+                          'packets_recv': io_counters.packets_recv,
+                          'errin': io_counters.errin,
+                          'errout': io_counters.errout,
+                          'dropin': io_counters.dropin,
+                          'dropout': io_counters.dropout}
+
+    return io_counters_output
+
+
+@get_view(route_name='per_net_io_counters')
+def system_per_net_io_counters_get(request):
+    io_counters_dict = psutil.net_io_counters(pernic=True)
+    now = time.time()
+    io_counters_list_output = []
+    for nic_name, io_counters in io_counters_dict.items():
+        io_counters_output = {'time': now,
+                              'if_name': nic_name,
+                              'bytes_sent': io_counters.bytes_sent,
+                              'bytes_recv': io_counters.bytes_recv,
+                              'packets_sent': io_counters.packets_sent,
+                              'packets_recv': io_counters.packets_recv,
+                              'errin': io_counters.errin,
+                              'errout': io_counters.errout,
+                              'dropin': io_counters.dropin,
+                              'dropout': io_counters.dropout}
+        io_counters_list_output.append(io_counters_output)
+
+    return io_counters_list_output
