@@ -1,5 +1,13 @@
-''' StorLever main file to make a wsgi application
-'''
+"""
+storlever.common
+~~~~~~~~~~~~~~~~
+
+StorLever's main file to make a WSGI application.
+
+:copyright: (c) 2013 by Yiting Huang.
+:license: GPLv3, see LICENSE for more details.
+
+"""
 
 from pyramid.config import Configurator
 from pyramid.renderers import JSON

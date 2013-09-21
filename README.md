@@ -7,7 +7,7 @@ management system or other client who whish to monitor or manipulate those resou
 remotely.
 
 StorLever delivers with a intuitive web based user interface based on those web API as well, 
-which showcase the potential of those API.
+which showcases the potential of those API.
 
 Highlights:
 
@@ -54,9 +54,19 @@ Differences with other similar projects
 ---------------------------------------
 
 There are already projects like openfiler and freeNAS which server the similar purpose, but what's
-the difference? openfiler an freeNAS are both storage systems which including the whole operation system
-and all the utilities sit on it.
+the difference?
 
+Openfiler an freeNAS are both storage systems delivered with the whole operation system
+and all the utilities sit on it, on the contrary, StorLever is only a set of API that helps the user
+to ease the management of storage resources.
+
+As to the OS part, StorLever is based on RHEL/CentOS 6, which is maintained by a bunch of Linux experts
+and has already proven itself the most rock-solid enterprise-class Linux distribution. StorLever also depends
+on the packages/RPMs delivered by RHEL/CentOS, but user has the freedom to install only the packages they
+actually required.
+
+At what makes StorLever unique is its REST based API, which makes remote and programmatic access so much easier
+compare to other solution.
 
 
 
