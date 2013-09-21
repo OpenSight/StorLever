@@ -195,3 +195,33 @@ def system_per_net_io_counters_get(request):
         io_counters_list_output.append(io_counters_output)
 
     return io_counters_list_output
+
+
+@get_view(route_name='ps')
+def system_ps_get(request):
+    ps_list_output = []
+    for proc in psutil.process_iter():
+        now = time.time()
+        io_counters = proc.get_io_counters()
+        cpu_times = proc.get_cpu_times()
+        memory_info = proc.get_memory_info()
+        ps_output = {'pid': proc.pid,
+                     'ppid': proc.ppid,
+                     'name': proc.name,
+                     'cmdline': proc.cmdline,
+                     'nice': proc.get_nice(),
+                     'status': str(proc.status),
+                     'current_time': now,
+                     'create_time': proc.create_time,
+                     'user_time': cpu_times.user,
+                     'system_time': cpu_times.system,
+                     'vms': memory_info.vms,
+                     'rss': memory_info.rss,
+                     'memory_percent': proc.get_memory_percent(),
+                     'read_count': io_counters.read_count,
+                     'write_count': io_counters.write_count,
+                     'read_bytes': io_counters.read_bytes,
+                     'write_bytes': io_counters.write_bytes}
+        ps_list_output.append(ps_output)
+
+    return ps_list_output
