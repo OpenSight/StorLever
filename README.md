@@ -3,7 +3,7 @@ StorLever
 
 The primary goal of this project is ease the management of storage resources on server, 
 by exposing a set of well-designed REST-styled web API, which may be consumed by central 
-management system or other client who whish to monitor or manipulate those resources 
+management system or other client who wish to monitor or manipulate those resources
 remotely.
 
 StorLever delivers with a intuitive web based user interface based on those web API as well, 
@@ -53,7 +53,7 @@ All those API are HTTP based, which makes them totally platform and programming 
 Differences with other similar projects
 ---------------------------------------
 
-There are already projects like openfiler and freeNAS which server the similar purpose, but what's
+There are already projects like openfiler and freeNAS which service the similar purpose, but what's
 the difference?
 
 Openfiler an freeNAS are both storage systems delivered with the whole operation system
