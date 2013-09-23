@@ -53,8 +53,7 @@ def system_cpu_list_get(request):
         cpu_info = {'processor': cpu["processor"],
                     'model_name': cpu["model name"],
                     'cpu_MHz': cpu["cpu MHz"],
-                    'cache_size': cpu["cache size"],
-                    'physical_id': cpu["physical id"]}
+                    'cache_size': cpu["cache size"]}
         cpu_list_dict.append(cpu_info)
     return cpu_list_dict
 

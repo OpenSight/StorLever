@@ -61,7 +61,7 @@ def storlever_error_view(exc, request):
 @view_config(context=Exception)
 def error_view(exc, request):
     response = request.response
-    response.status_int = exc.http_status_code
+    response.status_int = 500
     tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
     return {'info': str(exc), 'traceback': tb_list}
 
