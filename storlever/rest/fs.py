@@ -13,6 +13,10 @@ def includeme(config):
     # PUT:    create filesystem
     # DELETE: remove filesystem
     config.add_route('fs', '/fs_list/{fs}')
+    # filesystem share list resource
+    # GET:    share list
+    # POST:   create/delete share
+    config.add_route('share_list', '/fs_list/{fs}/share_list')
     # NFS export list resource
     # GET:    NFS export list
     # POST:   create/delete NFS export
