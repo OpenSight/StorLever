@@ -10,7 +10,7 @@ def includeme(config):
     #
     config.add_route('block', '/block_list/{block}')
     # adapter list resource (HBA, raid controller etc)
-    # GET：   adapter list
+    # GET: adapter list
     config.add_route('adapter_list', '/adapter_list')
     config.add_route('adapter', '/adapter_list/{adapter}')
     config.add_route('adapter_disk_list', '/adapter_list/{adapter}/disk_list')
