@@ -17,7 +17,7 @@ def includeme(config):
     # GET:    share list
     # POST:   create/delete share
     config.add_route('share_list', '/fs_list/{fs}/share_list')
-    # NFS export list resource
+    # NFS export list resourceh
     # GET:    NFS export list
     # POST:   create/delete NFS export
     config.add_route('nfs_list', '/nfs_list')
