@@ -7,20 +7,13 @@ def includeme(config):
     # block device list resource
     # GET:    block device list
     config.add_route('block_list', '/block_list')
-    # block device resource
-    # GET:    block device information
+    #
     config.add_route('block', '/block_list/{block}')
     # adapter list resource (HBA, raid controller etc)
-    # GET:    adapter list
+    # GET：   adapter list
     config.add_route('adapter_list', '/adapter_list')
-    # adapter resource
-    # GET:    adapter information
     config.add_route('adapter', '/adapter_list/{adapter}')
-    # list of physical disk under adapter
-    # GET:    list of physical disks
     config.add_route('adapter_disk_list', '/adapter_list/{adapter}/disk_list')
-    # list of virtual disk under adapter
-    # GET:    list of virtual disks
     config.add_route('adapter_vdisk_list', '/adapter_list/{adapter}/vdisk_list')
 
 
