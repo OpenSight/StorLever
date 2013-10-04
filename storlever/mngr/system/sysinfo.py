@@ -15,7 +15,7 @@ import datetime
 
 
 LOG_DIR = "/var/log/"
-LOG_COMPRESS_FILE_DIR = "/tmp/"
+LOG_FILE_PATH_PREFIX = "/tmp/syslog"
 
 sys_manager = None
 
@@ -49,7 +49,7 @@ class SysManager(object):
     def rm_sys_log(self):
         """make use of rm cmd to delete all the existed sys log file"""
 
-        shell_cmd = "/bin/rm -rf " + LOG_COMPRESS_FILE_DIR + "sys_log*"
+        shell_cmd = "/bin/rm -rf " + LOG_FILE_PATH_PREFIX + "*"
         subprocess.call(shell_cmd, shell=True)
 
     def tar_sys_log(self):
@@ -57,13 +57,13 @@ class SysManager(object):
 
         # get current date time
         now_date = datetime.datetime.now()
-        file_base_name = "syslog_%d-%d-%d_%d-%d-%d" % \
-                         (now_date.year, now_date.month, now_date.day,
-                          now_date.hour, now_date.minute, now_date.second)
-        path_base_name = LOG_COMPRESS_FILE_DIR + file_base_name
+        file_base_name = LOG_FILE_PATH_PREFIX + \
+            ("_%d-%d-%d_%d-%d-%d" %
+             (now_date.year, now_date.month, now_date.day,
+              now_date.hour, now_date.minute, now_date.second))
 
         # archive the log dir to file
-        file_path_name = shutil.make_archive(path_base_name, "gztar", "/", LOG_DIR)
+        file_path_name = shutil.make_archive(file_base_name, "gztar", "/", LOG_DIR)
 
         return file_path_name
 
