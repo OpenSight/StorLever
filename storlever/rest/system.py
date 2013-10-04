@@ -11,8 +11,10 @@ This module implements the rest API for system.
 
 import platform
 import time
+import os
 
 import psutil
+from pyramid.response import FileResponse
 
 from storlever.rest.common import get_view, post_view, put_view, delete_view
 from storlever.mngr.system import sysinfo
@@ -31,7 +33,7 @@ def includeme(config):
     config.add_route('per_disk_io_counters', '/system/per_disk_io_counters')
     config.add_route('net_io_counters', '/system/net_io_counters')
     config.add_route('per_net_io_counters', '/system/per_net_io_counters')
-
+    config.add_route('download_log', '/system/log_download')
 
 @get_view(route_name='uname')
 def system_uname_get(request):
@@ -47,7 +49,8 @@ def system_uname_get(request):
 
 @get_view(route_name='cpu_list')
 def system_cpu_list_get(request):
-    cpus = sysinfo.cpu_list()
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    cpus = sys_mgr.cpu_list()
     cpu_list_dict = []
     for cpu in cpus:
         cpu_info = {'processor': cpu["processor"],
@@ -224,3 +227,13 @@ def system_ps_get(request):
         ps_list_output.append(ps_output)
 
     return ps_list_output
+
+
+@get_view(route_name='download_log')
+def download_log(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.rm_sys_log()   # rm the exist tar log file
+    log_tar_file = sys_mgr.tar_sys_log()
+    response = FileResponse(log_tar_file, request=request, content_type='application/force-download')
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % (os.path.basename(log_tar_file))
+    return response
