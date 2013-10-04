@@ -50,7 +50,7 @@ class SysManager(object):
         """make use of rm cmd to delete all the existed sys log file"""
 
         shell_cmd = "/bin/rm -rf " + LOG_FILE_PATH_PREFIX + "*"
-        subprocess.call(shell_cmd, shell=True)
+        subprocess.check_call(shell_cmd, shell=True)
 
     def tar_sys_log(self):
         """compress the whole system log directory to a temp"""
