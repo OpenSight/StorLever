@@ -67,6 +67,14 @@ class SysManager(object):
 
         return file_path_name
 
+    def poweroff(self):
+        """shutdown the system"""
+        subprocess.check_call("(sleep 1;/sbin/poweroff)&", shell=True)
+
+    def reboot(self):
+        """reboot the system"""
+        subprocess.check_call("(sleep 1;/sbin/reboot)&", shell=True)
+
 
 def sys_mgr():
     """return the global system manager instance"""

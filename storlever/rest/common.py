@@ -81,3 +81,30 @@ def add_response_header(event):
     """
     response = event.response
     response.headers['X-Powered-By'] = 'Pyramid framework'
+
+
+def get_params_from_request(request, schema=None):
+    """Get input parameter dict from request
+
+    If the request content type is json, get the params dict from json body,
+    otherwise, from GET/POST params.
+    If shema is not None, check the input params dict against the schema.
+
+    return the params dict.
+
+
+    :param request: request object
+    :param schema:  the schema for the input params
+
+    """
+    params = {}
+    if "json" in request.content_type:
+        params = request.json_body
+    else:
+        params = request.params
+
+    if schema is not None:
+        # todo
+        pass
+    return params
+

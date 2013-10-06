@@ -15,6 +15,7 @@ import os
 
 import psutil
 from pyramid.response import FileResponse
+from pyramid.response import Response
 
 from storlever.rest.common import get_view, post_view, put_view, delete_view
 from storlever.mngr.system import sysinfo
@@ -34,6 +35,9 @@ def includeme(config):
     config.add_route('net_io_counters', '/system/net_io_counters')
     config.add_route('per_net_io_counters', '/system/per_net_io_counters')
     config.add_route('download_log', '/system/log_download')
+    config.add_route('sys_poweroff', '/system/poweroff')
+    config.add_route('sys_reboot', '/system/reboot')
+
 
 @get_view(route_name='uname')
 def system_uname_get(request):
@@ -237,3 +241,17 @@ def download_log(request):
     response = FileResponse(log_tar_file, request=request, content_type='application/force-download')
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % (os.path.basename(log_tar_file))
     return response
+
+
+@post_view(route_name='sys_poweroff')
+def sys_poweroff(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.poweroff()
+    return Response(status=200)
+
+
+@post_view(route_name='sys_reboot')
+def sys_reboot(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.reboot()
+    return Response(status=200)
