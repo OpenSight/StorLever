@@ -104,7 +104,7 @@ def get_params_from_request(request, schema=None):
         params = request.params
 
     if schema is not None:
-        # todo
-        pass
+        params = schema.validate(params)
+
     return params
 

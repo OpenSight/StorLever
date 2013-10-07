@@ -12,6 +12,7 @@ This module implements some functions of sys infomation acquisition for mngr.
 import subprocess
 import shutil
 import datetime
+import time
 
 
 LOG_DIR = "/var/log/"
@@ -74,6 +75,24 @@ class SysManager(object):
     def reboot(self):
         """reboot the system"""
         subprocess.check_call("(sleep 1;/sbin/reboot)&", shell=True)
+
+    def get_datetime(self):
+        """get system date time string with iso8601 format"""
+        return subprocess.check_output(["/bin/date", "-Iseconds"]).strip()
+
+    def set_datetime(self, datetime_str):
+        """set system date time by datetime_string"""
+
+        # because linux date command cannot recognize iso 8601 format string with timezone,
+        # change it with a valid format
+
+        set_string = datetime_str.replace("T", " ")
+        subprocess.check_output(["/bin/date", "-s%s" % set_string])
+        subprocess.check_output(["/sbin/hwclock", "-w"])  # sync the system time to hw time
+
+    def get_timestamp(self):
+        """get the timestamp of the system"""
+        return time.time()
 
 
 def sys_mgr():

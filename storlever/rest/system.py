@@ -18,8 +18,8 @@ from pyramid.response import FileResponse
 from pyramid.response import Response
 
 from storlever.rest.common import get_view, post_view, put_view, delete_view
+from storlever.rest.common import get_params_from_request
 from storlever.mngr.system import sysinfo
-
 
 def includeme(config):
     config.add_route('cpu_list', '/system/cpu_list')
@@ -37,6 +37,8 @@ def includeme(config):
     config.add_route('download_log', '/system/log_download')
     config.add_route('sys_poweroff', '/system/poweroff')
     config.add_route('sys_reboot', '/system/reboot')
+    config.add_route('sys_datetime', '/system/datetime')
+    config.add_route('sys_timestamp', '/system/timestamp')
 
 
 @get_view(route_name='uname')
@@ -255,3 +257,25 @@ def sys_reboot(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
     sys_mgr.reboot()
     return Response(status=200)
+
+
+@get_view(route_name='sys_datetime')
+def get_datetime(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    datetime_str = sys_mgr.get_datetime()
+    return {'datetime': datetime_str}
+
+
+@post_view(route_name='sys_datetime')
+def set_datetime(request):
+    params = get_params_from_request(request)
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.set_datetime(params['datetime'])
+    return Response(status=200)
+
+
+@get_view(route_name='sys_timestamp')
+def get_timestamp(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    timestamp = sys_mgr.get_timestamp()
+    return {'timestamp': timestamp}
