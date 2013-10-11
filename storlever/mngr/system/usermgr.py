@@ -4,7 +4,7 @@ storlever.mngr.system.usermgr
 
 This module implements some functions of linux user management.
 
-:copyright: (c) 2013 by Jiankai Wang.
+:copyright: (c) 2013 by jk.
 :license: GPLv3, see LICENSE for more details.
 
 """

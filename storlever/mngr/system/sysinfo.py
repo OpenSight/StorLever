@@ -4,7 +4,7 @@ storlever.mngr.system.sysinfo
 
 This module implements some functions of sys infomation acquisition for mngr.
 
-:copyright: (c) 2013 by Jiankai Wang.
+:copyright: (c) 2013 by jk.
 :license: GPLv3, see LICENSE for more details.
 
 """

@@ -4,7 +4,7 @@ storlever.lib.command
 
 This module implements command call for storlever.
 
-:copyright: (c) 2013 by Jiankai Wang.
+:copyright: (c) 2013 by jk.
 :license: GPLv3, see LICENSE for more details.
 
 """

@@ -4,7 +4,7 @@ storlever.mngr.system.servicemgr
 
 This module implements some functions of linux service management.
 
-:copyright: (c) 2013 by Jiankai Wang.
+:copyright: (c) 2013 by jk.
 :license: GPLv3, see LICENSE for more details.
 
 """
