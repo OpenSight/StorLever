@@ -15,9 +15,6 @@ import datetime
 import time
 
 
-cfg_manager = None
-
-
 class CfgManager(object):
     """contains all methods to manage the storlever cfg"""
 
@@ -25,11 +22,11 @@ class CfgManager(object):
         pass
 
 
+cfg_manager = CfgManager()
+
+
 def cfg_mgr():
-    """return the global user manager instance"""
-    global cfg_manager
-    if cfg_manager is None:
-        cfg_manager = CfgManager()
+    """return the global cfg manager instance"""
     return cfg_manager
 
 

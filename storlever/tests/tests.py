@@ -2,7 +2,7 @@ import unittest
 
 from pyramid import testing
 
-
+"""
 class ViewTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
@@ -15,3 +15,4 @@ class ViewTests(unittest.TestCase):
         request = testing.DummyRequest()
         info = my_view(request)
         self.assertEqual(info['project'], 'storlever')
+"""

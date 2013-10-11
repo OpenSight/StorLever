@@ -18,8 +18,6 @@ import time
 LOG_DIR = "/var/log/"
 LOG_FILE_PATH_PREFIX = "/tmp/syslog"
 
-sys_manager = None
-
 
 class SysManager(object):
     """contains all methods to manage the system"""
@@ -95,11 +93,11 @@ class SysManager(object):
         return time.time()
 
 
+sys_manager = SysManager()
+
+
 def sys_mgr():
     """return the global system manager instance"""
-    global sys_manager
-    if sys_manager is None:
-        sys_manager = SysManager()
     return sys_manager
 
 
