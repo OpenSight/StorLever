@@ -10,9 +10,16 @@ This module implements some functions of linux service management.
 """
 
 import subprocess
-import shutil
-import datetime
-import time
+import re
+
+from storlever.lib.command import check_output
+from storlever.lib.exception import StorLeverError
+
+
+INIT_SCRIPT_DIR = "/etc/init.d/"
+CHKCONFIG = "/sbin/chkconfig"
+CHK_LEVEL = "3"
+SET_CHK_LEVEL = "2345"
 
 
 class SystemService(object):
@@ -22,50 +29,95 @@ class SystemService(object):
     to manage this service
 
     """
-    def __init__(self, name):
-        pass
+    def __init__(self, name, init_script, comment=""):
+        self.name = name
+        self.init_script = init_script
+        self.comment = comment
 
     def get_state(self):
-        pass
+        with open("/dev/null") as null_file:
+            ret = subprocess.call([INIT_SCRIPT_DIR + self.init_script,
+                                   "status"], stdout=null_file,
+                                  stderr=subprocess.STDOUT)
+            if ret == 0:
+                return True
+            else:
+                return False
 
     def get_auto_start(self):
-        pass
+        service_stat = check_output([CHKCONFIG, "--list", self.init_script])
+        state_list = re.split("\s+", service_stat)
+        for level_state in state_list:
+            if CHK_LEVEL in level_state:
+                level, dummy, state = level_state.partition(":")
+                if state.strip() == "on":
+                    return True
+                else:
+                    return False
+        return False
 
     def restart(self):
-        pass
+        check_output([INIT_SCRIPT_DIR + self.init_script, "restart"])
 
     def start(self):
-        pass
+        check_output([INIT_SCRIPT_DIR + self.init_script, "start"])
 
     def stop(self):
-        pass
+        check_output([INIT_SCRIPT_DIR + self.init_script, "stop"])
 
     def enable_auto_start(self):
-        pass
+        check_output([CHKCONFIG, "--level", SET_CHK_LEVEL, self.init_script, "on"])
 
     def disable_auto_start(self):
-        pass
+        check_output([CHKCONFIG, "--level", SET_CHK_LEVEL, self.init_script, "off"])
 
 
 class ServiceManager(object):
     """contains all methods to manage the user and group in linux system"""
 
-    managed_service_list = [
+    managed_services = {
+        "sshd": {"comment": "SSH Server", "ps": "/sbin/sshd", "init": "sshd"},
 
-
-
-    ]
+    }
 
     def __init__(self):
         pass
 
+    def _get_chkconfig_output(self):
+        service_list = check_output([CHKCONFIG, "--list"]).split("\n")
+        chkconfig_output = {}
+        for service_state in service_list:
+            state_list = re.split("\s+", service_state)
+            service_name = state_list[0]
+            chkconfig_output[service_name] = {}
+            for level_state in state_list[1:]:
+                level, dummy, state = level_state.partition(":")
+                chkconfig_output[service_name][level] = state
+
+        return chkconfig_output
+
     def service_list(self):
-        pass
+        ps_out = check_output(["/bin/ps", "-ef"])
+        chkconfig_out = self._get_chkconfig_output()
+        output_list = []
+        for service, params in ServiceManager.managed_services.items():
+            service_info = {
+                "name": service,
+                "comment": params["comment"],
+                "state": str(params["ps"] in ps_out),
+                "auto_start": str(chkconfig_out[service][CHK_LEVEL] == "on")
+            }
+            output_list.append(service_info)
+
+        return output_list
 
     def get_service_by_name(self, name):
-        pass
-
-
+        if name in ServiceManager.managed_services:
+            return SystemService(name,
+                                 ServiceManager.managed_services[name]["init"],
+                                 ServiceManager.managed_services[name]["comment"])
+        else:
+            raise StorLeverError("service does not exist", 400)
 
 
 service_manager = ServiceManager()

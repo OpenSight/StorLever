@@ -45,9 +45,10 @@ class delete_view(_rest_view):
 
 @view_config(context=ValidationFailure)
 def failed_validation(exc, request):
-    response = Response('Failed validation: %s' % exc.code)
+    response = request.response
     response.status_int = 400
-    return {'info': str(exc), 'traceback': []}
+    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
+    return {'info': str(exc), 'traceback': tb_list}
 
 
 @view_config(context=StorLeverError)
@@ -101,7 +102,7 @@ def get_params_from_request(request, schema=None):
     if "json" in request.content_type:
         params = request.json_body
     else:
-        params = request.params
+        params = dict(request.params)
 
     if schema is not None:
         params = schema.validate(params)

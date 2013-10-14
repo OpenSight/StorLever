@@ -11,7 +11,7 @@ This module implements some functions of linux user management.
 
 import pwd
 import grp
-
+from crypt import crypt
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
@@ -61,6 +61,7 @@ class UserManager(object):
             return_entry = {
                 "name": entry.pw_name,
                 "uid": entry.pw_uid,
+                "password": entry.pw_passwd,
                 "comment": entry.pw_gecos,
                 "primay_group": gid_name.get(entry.pw_gid, "unknown"),
                 "groups": ",".join(user_groups[entry.pw_name])
@@ -74,13 +75,14 @@ class UserManager(object):
             return_entry = {
                 "name": user.pw_name,
                 "uid": user.pw_uid,
+                "password": user.pw_passwd,
                 "comment": user.pw_gecos,
                 "primay_group": grp.getgrgid(user.pw_gid).gr_name,
                 "groups": ",".join(self._get_groups_for_user(name))
             }
             return return_entry
         except KeyError as e:
-            raise StorLeverError(str(e), 400)
+            raise StorLeverError(str(e), 404)
 
     def group_list(self):
         groups = grp.getgrall()
@@ -104,30 +106,34 @@ class UserManager(object):
             }
             return return_entry
         except KeyError as e:
-            raise StorLeverError(str(e), 400)
+            raise StorLeverError(str(e), 404)
 
-    def user_add(self, name, uid=None, primary_group=None, groups=None, comment=None):
+    def user_add(self, name, password="", uid=-1, primary_group=-1, groups="", comment=""):
         cmds = ["/usr/sbin/useradd"]
-        if uid:
+        if uid != -1:
             cmds.append("-u")
             cmds.append("%d" % int(uid))
-        if primary_group:
+        if primary_group != -1:
             cmds.append("-g")
             cmds.append(primary_group)
-        if groups:
+        if groups != "":
             cmds.append("-G")
             cmds.append(groups)
-        if comment:
+        if comment != "":
             cmds.append("-c")
             cmds.append(comment)
+        if password != "":
+            cmds.append("-p")
+            enc_passwd = crypt(password, "ab")
+            cmds.append(enc_passwd)
 
         cmds.append("-M")
         cmds.append(name)
         check_output(cmds, input_ret=[2, 3, 4, 6, 9])
 
-    def group_add(self, name, gid=None):
+    def group_add(self, name, gid=-1):
         cmds = ["/usr/sbin/groupadd"]
-        if gid:
+        if gid != -1:
             cmds.append("-g")
             cmds.append("%d" % int(gid))
         cmds.append(name)
@@ -140,24 +146,28 @@ class UserManager(object):
         cmds.append(name)
         check_output(cmds, input_ret=[2, 6, 8])
 
-    def user_mod(self, name, uid=None, primary_group=None, groups=None, comment=None):
+    def user_mod(self, name, password="", uid=-1, primary_group=-1, groups="", comment=""):
 
         if name == "root":
             raise StorLeverError("cannot modify user root", 400)
 
         cmds = ["/usr/sbin/usermod"]
-        if uid:
+        if uid != -1:
             cmds.append("-u")
             cmds.append("%d" % int(uid))
-        if primary_group:
+        if primary_group != -1:
             cmds.append("-g")
             cmds.append(primary_group)
-        if groups:
+        if groups != "":
             cmds.append("-G")
             cmds.append(groups)
-        if comment:
+        if comment != "":
             cmds.append("-c")
             cmds.append(comment)
+        if password != "":
+            cmds.append("-p")
+            enc_passwd = crypt(password, "ab")
+            cmds.append(enc_passwd)
 
         cmds.append(name)
         check_output(cmds, input_ret=[4, 6])

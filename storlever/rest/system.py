@@ -20,6 +20,10 @@ from pyramid.response import Response
 from storlever.rest.common import get_view, post_view, put_view, delete_view
 from storlever.rest.common import get_params_from_request
 from storlever.mngr.system import sysinfo
+from storlever.mngr.system import usermgr
+from storlever.mngr.system import servicemgr
+from storlever.lib.schema import Schema, Optional, DoNotCare, \
+    Use, IntVal, Default, SchemaError
 
 def includeme(config):
     config.add_route('cpu_list', '/system/cpu_list')
@@ -39,6 +43,12 @@ def includeme(config):
     config.add_route('sys_reboot', '/system/reboot')
     config.add_route('sys_datetime', '/system/datetime')
     config.add_route('sys_timestamp', '/system/timestamp')
+    config.add_route('user_list', '/system/user_list')
+    config.add_route('user_info', '/system/user_list/{user_name}')
+    config.add_route('group_list', '/system/group_list')
+    config.add_route('group_info', '/system/group_list/{group_name}')
+    config.add_route('service_list', '/system/service_list')
+    config.add_route('service_info', '/system/service_list/{service_name}')
 
 
 @get_view(route_name='uname')
@@ -279,3 +289,164 @@ def get_timestamp(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
     timestamp = sys_mgr.get_timestamp()
     return {'timestamp': timestamp}
+
+
+@get_view(route_name='user_list')
+def get_user_list(request):
+    user_mgr = usermgr.user_mgr()      # get user manager
+    return user_mgr.user_list()
+
+
+user_info_schema = Schema({
+    "name": Use(unicode),     # name should be string
+    Optional("uid"): Default(Use(int), default=-1),  # uid must int
+    Optional("password"): Default(Use(unicode), default=""),  # uid must int
+    Optional("comment"): Default(Use(unicode), default=""),  # comment must int,
+    Optional("primay_group"): Default(Use(int), default=-1),  # primay_group must int
+    Optional("groups"): Default(Use(unicode), default=""),  # comment must int,
+    DoNotCare(str): object  # for all those key we don't care
+})
+
+
+@post_view(route_name='user_list')
+def add_user(request):
+    user_info = get_params_from_request(request)
+    user_info = user_info_schema.validate(user_info)
+    user_mgr = usermgr.user_mgr()
+    user_mgr.user_add(user_info["name"], user_info["password"], user_info["uid"],
+                      user_info["primay_group"], user_info["groups"],
+                      user_info["comment"])
+
+    # generate 201 response
+    resp = Response(status=201)
+    resp.location = request.route_url('user_info', user_name=user_info["name"])
+    return resp
+
+
+@get_view(route_name='user_info')
+def get_user_info(request):
+    user_name = request.matchdict["user_name"]
+    user_mgr = usermgr.user_mgr()      # get user manager
+    return user_mgr.get_user_info_by_name(user_name)
+
+
+@put_view(route_name='user_info')
+def mod_user_info(request):
+    user_name = request.matchdict["user_name"]
+    user_info = get_params_from_request(request)
+    user_info["name"] = user_name
+    user_info = user_info_schema.validate(user_info)
+    user_mgr = usermgr.user_mgr()
+    user_mgr.user_mod(user_info["name"], user_info["password"], user_info["uid"],
+                      user_info["primay_group"], user_info["groups"],
+                      user_info["comment"])
+    return Response(status=200)
+
+
+@delete_view(route_name='user_info')
+def del_user(request):
+    user_name = request.matchdict["user_name"]
+    user_mgr = usermgr.user_mgr()      # get user manager
+    user_mgr.user_del_by_name(user_name)
+    return Response(status=200)
+
+
+@get_view(route_name='group_list')
+def get_group_list(request):
+    user_mgr = usermgr.user_mgr()      # get user manager
+    return user_mgr.group_list()
+
+
+group_info_schema = Schema({
+    "name": Use(unicode),     # name should be string
+    Optional("gid"): Default(Use(int), default=-1),  # uid must int
+    DoNotCare(str): object  # for all those key we don't care
+})
+
+
+@post_view(route_name='group_list')
+def add_group(request):
+    group_info = get_params_from_request(request)
+    group_info = group_info_schema.validate(group_info)
+    user_mgr = usermgr.user_mgr()
+    user_mgr.group_add(group_info["name"], group_info["gid"])
+
+    # generate 201 response
+    resp = Response(status=201)
+    resp.location = request.route_url('group_info', group_name=group_info["name"])
+    return resp
+
+
+@get_view(route_name='group_info')
+def get_group_info(request):
+    group_name = request.matchdict["group_name"]
+    user_mgr = usermgr.user_mgr()      # get user manager
+    return user_mgr.get_group_by_name(group_name)
+
+
+@delete_view(route_name='group_info')
+def del_group(request):
+    group_name = request.matchdict["group_name"]
+    user_mgr = usermgr.user_mgr()      # get user manager
+    user_mgr.group_del_by_name(group_name)
+    return Response(status=200)
+
+
+@get_view(route_name='service_list')
+def get_service_list(request):
+    service_mgr = servicemgr.service_mgr()      # get service manager
+    return service_mgr.service_list()
+
+
+
+@get_view(route_name='service_info')
+def get_service_info(request):
+    service_name = request.matchdict["service_name"]
+    service_mgr = servicemgr.service_mgr()      # get service manager
+    service = service_mgr.get_service_by_name(service_name)
+
+    service_dict = {
+        "name": service_name,
+        "comment": service.comment,
+        "state": str(service.get_state()),
+        "auto_start": str(service.get_auto_start())
+    }
+
+    return service_dict
+
+
+service_mod_schema = Schema({
+    Optional("state"): Use(unicode),  # state must bool
+    Optional("restart"): Use(unicode),  # restart must bool
+    Optional("auto_start"): Use(unicode),  # auto_start must bool
+    DoNotCare(str): object  # for all those key we don't care
+})
+
+
+@put_view(route_name='service_info')
+def put_service(request):
+    service_name = request.matchdict["service_name"]
+    cmd = get_params_from_request(request)
+    cmd = service_mod_schema.validate(cmd)
+
+    service_mgr = servicemgr.service_mgr()      # get service manager
+    service = service_mgr.get_service_by_name(service_name)
+
+    print cmd
+
+    if "state" in cmd:
+        if cmd["state"] == "True":
+            service.start()
+        elif cmd["state"] == "False":
+            service.stop()
+    elif "restart" in cmd:
+        if cmd["restart"] == "True":
+            service.restart()
+
+    if "auto_start" in cmd:
+        if cmd["auto_start"] == "True":
+            service.enable_auto_start()
+        else:
+            service.disable_auto_start()
+
+    return Response(status=200)
