@@ -15,7 +15,8 @@ from crypt import crypt
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
-
+from storlever.lib import logger
+import logging
 
 class UserManager(object):
     """contains all methods to manage the user and group in linux system"""
@@ -108,7 +109,7 @@ class UserManager(object):
         except KeyError as e:
             raise StorLeverError(str(e), 404)
 
-    def user_add(self, name, password="", uid=-1, primary_group=-1, groups="", comment=""):
+    def user_add(self, name, password="", uid=-1, primary_group=-1, groups="", comment="", user="unknown"):
         cmds = ["/usr/sbin/useradd"]
         if uid != -1:
             cmds.append("-u")
@@ -130,23 +131,32 @@ class UserManager(object):
         cmds.append("-M")
         cmds.append(name)
         check_output(cmds, input_ret=[2, 3, 4, 6, 9])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "New system user %s is created by user(%s)" %
+                   (name, user))
 
-    def group_add(self, name, gid=-1):
+    def group_add(self, name, gid=-1, user="unknown"):
         cmds = ["/usr/sbin/groupadd"]
         if gid != -1:
             cmds.append("-g")
             cmds.append("%d" % int(gid))
         cmds.append(name)
         check_output(cmds, input_ret=[2, 3, 4, 9])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "New system group %s is created by user(%s)" %
+                   (name, user))
 
-    def user_del_by_name(self, name):
+    def user_del_by_name(self, name, user="unknown"):
         if name == "root":
             raise StorLeverError("cannot del user root", 400)
         cmds = ["/usr/sbin/userdel"]
         cmds.append(name)
         check_output(cmds, input_ret=[2, 6, 8])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "System user %s is deleted by user(%s)" %
+                   (name, user))
 
-    def user_mod(self, name, password="", uid=-1, primary_group=-1, groups="", comment=""):
+    def user_mod(self, name, password="", uid=-1, primary_group=-1, groups="", comment="", user="unknown"):
 
         if name == "root":
             raise StorLeverError("cannot modify user root", 400)
@@ -171,13 +181,19 @@ class UserManager(object):
 
         cmds.append(name)
         check_output(cmds, input_ret=[4, 6])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "System user %s is modified by user(%s)" %
+                   (name, user))
 
-    def group_del_by_name(self, name):
+    def group_del_by_name(self, name, user="unknown"):
         if name == "root":
             raise StorLeverError("cannot del group root", 400)
         cmds = ["/usr/sbin/groupdel"]
         cmds.append(name)
         check_output(cmds, input_ret=[2, 6, 8])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "System group %s is deleted by user(%s)" %
+                   (name, user))
 
 user_manager = UserManager()
 

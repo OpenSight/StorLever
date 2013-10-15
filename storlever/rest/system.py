@@ -25,6 +25,7 @@ from storlever.mngr.system import servicemgr
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError
 
+
 def includeme(config):
     config.add_route('cpu_list', '/system/cpu_list')
     config.add_route('uname', '/system/uname')
@@ -258,14 +259,14 @@ def download_log(request):
 @post_view(route_name='sys_poweroff')
 def sys_poweroff(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
-    sys_mgr.poweroff()
+    sys_mgr.poweroff(user=request.client_addr)
     return Response(status=200)
 
 
 @post_view(route_name='sys_reboot')
 def sys_reboot(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
-    sys_mgr.reboot()
+    sys_mgr.reboot(user=request.client_addr)
     return Response(status=200)
 
 
@@ -280,7 +281,7 @@ def get_datetime(request):
 def set_datetime(request):
     params = get_params_from_request(request)
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
-    sys_mgr.set_datetime(params['datetime'])
+    sys_mgr.set_datetime(params['datetime'], user=request.client_addr)
     return Response(status=200)
 
 
@@ -315,7 +316,7 @@ def add_user(request):
     user_mgr = usermgr.user_mgr()
     user_mgr.user_add(user_info["name"], user_info["password"], user_info["uid"],
                       user_info["primay_group"], user_info["groups"],
-                      user_info["comment"])
+                      user_info["comment"], user=request.client_addr)
 
     # generate 201 response
     resp = Response(status=201)
@@ -339,7 +340,7 @@ def mod_user_info(request):
     user_mgr = usermgr.user_mgr()
     user_mgr.user_mod(user_info["name"], user_info["password"], user_info["uid"],
                       user_info["primay_group"], user_info["groups"],
-                      user_info["comment"])
+                      user_info["comment"], user=request.client_addr)
     return Response(status=200)
 
 
@@ -347,7 +348,7 @@ def mod_user_info(request):
 def del_user(request):
     user_name = request.matchdict["user_name"]
     user_mgr = usermgr.user_mgr()      # get user manager
-    user_mgr.user_del_by_name(user_name)
+    user_mgr.user_del_by_name(user_name, user=request.client_addr)
     return Response(status=200)
 
 
@@ -369,7 +370,8 @@ def add_group(request):
     group_info = get_params_from_request(request)
     group_info = group_info_schema.validate(group_info)
     user_mgr = usermgr.user_mgr()
-    user_mgr.group_add(group_info["name"], group_info["gid"])
+    user_mgr.group_add(group_info["name"], group_info["gid"],
+                       user=request.client_addr)
 
     # generate 201 response
     resp = Response(status=201)
@@ -388,7 +390,7 @@ def get_group_info(request):
 def del_group(request):
     group_name = request.matchdict["group_name"]
     user_mgr = usermgr.user_mgr()      # get user manager
-    user_mgr.group_del_by_name(group_name)
+    user_mgr.group_del_by_name(group_name, user=request.client_addr)
     return Response(status=200)
 
 
@@ -432,21 +434,19 @@ def put_service(request):
     service_mgr = servicemgr.service_mgr()      # get service manager
     service = service_mgr.get_service_by_name(service_name)
 
-    print cmd
-
     if "state" in cmd:
         if cmd["state"] == "True":
-            service.start()
+            service.start(request.client_addr)
         elif cmd["state"] == "False":
-            service.stop()
+            service.stop(request.client_addr)
     elif "restart" in cmd:
         if cmd["restart"] == "True":
-            service.restart()
+            service.restart(request.client_addr)
 
     if "auto_start" in cmd:
         if cmd["auto_start"] == "True":
-            service.enable_auto_start()
+            service.enable_auto_start(request.client_addr)
         else:
-            service.disable_auto_start()
+            service.disable_auto_start(request.client_addr)
 
     return Response(status=200)

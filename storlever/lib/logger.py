@@ -38,5 +38,6 @@ def log(lvl, log_type, msg, *args):
     args -- the args list for msg
 
     """
-    logger.log(lvl, msg, *args, extra={"logtype": log_type})
+    log_type_str = "[%s] " % log_type
+    logger.log(lvl, log_type_str + msg, *args)
 

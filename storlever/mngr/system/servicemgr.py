@@ -14,6 +14,8 @@ import re
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
+from storlever.lib import logger
+import logging
 
 
 INIT_SCRIPT_DIR = "/etc/init.d/"
@@ -56,21 +58,30 @@ class SystemService(object):
                     return False
         return False
 
-    def restart(self):
+    def restart(self, user="unkown"):
         check_output([INIT_SCRIPT_DIR + self.init_script, "restart"])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s is restarted by user(%s)" % (self.name, user))
 
-    def start(self):
+    def start(self, user="unkown"):
         check_output([INIT_SCRIPT_DIR + self.init_script, "start"])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s is start by user(%s)" % (self.name, user))
 
-    def stop(self):
+    def stop(self, user="unkown"):
         check_output([INIT_SCRIPT_DIR + self.init_script, "stop"])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s is start by user(%s)" % (self.name, user))
 
-    def enable_auto_start(self):
+    def enable_auto_start(self, user="unkown"):
         check_output([CHKCONFIG, "--level", SET_CHK_LEVEL, self.init_script, "on"])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s auto start is enabled by user(%s)" % (self.name, user))
 
-    def disable_auto_start(self):
+    def disable_auto_start(self, user="unkown"):
         check_output([CHKCONFIG, "--level", SET_CHK_LEVEL, self.init_script, "off"])
-
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s auto start is disabled by user(%s)" % (self.name, user))
 
 class ServiceManager(object):
     """contains all methods to manage the user and group in linux system"""

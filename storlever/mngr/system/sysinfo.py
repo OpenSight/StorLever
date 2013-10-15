@@ -14,6 +14,8 @@ import shutil
 import datetime
 import time
 
+from storlever.lib import logger
+import logging
 
 LOG_DIR = "/var/log/"
 LOG_FILE_PATH_PREFIX = "/tmp/syslog"
@@ -66,19 +68,23 @@ class SysManager(object):
 
         return file_path_name
 
-    def poweroff(self):
+    def poweroff(self, user="unknown"):
         """shutdown the system"""
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "system is powered off by user(%s)" % user)
         subprocess.check_call("(sleep 1;/sbin/poweroff)&", shell=True)
 
-    def reboot(self):
+    def reboot(self, user="unknown"):
         """reboot the system"""
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "system is rebooted by user(%s)" % user)
         subprocess.check_call("(sleep 1;/sbin/reboot)&", shell=True)
 
     def get_datetime(self):
         """get system date time string with iso8601 format"""
         return subprocess.check_output(["/bin/date", "-Iseconds"]).strip()
 
-    def set_datetime(self, datetime_str):
+    def set_datetime(self, datetime_str, user="unknown"):
         """set system date time by datetime_string"""
 
         # because linux date command cannot recognize iso 8601 format string with timezone,
@@ -87,6 +93,9 @@ class SysManager(object):
         set_string = datetime_str.replace("T", " ")
         subprocess.check_output(["/bin/date", "-s%s" % set_string])
         subprocess.check_output(["/sbin/hwclock", "-w"])  # sync the system time to hw time
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "system date time is update to %s by user(%s)" %
+                   (datetime_str, user))
 
     def get_timestamp(self):
         """get the timestamp of the system"""
