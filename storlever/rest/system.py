@@ -12,6 +12,7 @@ This module implements the rest API for system.
 import platform
 import time
 import os
+from datetime import datetime
 
 import psutil
 from pyramid.response import FileResponse
@@ -22,8 +23,10 @@ from storlever.rest.common import get_params_from_request
 from storlever.mngr.system import sysinfo
 from storlever.mngr.system import usermgr
 from storlever.mngr.system import servicemgr
+from storlever.mngr.system import cfgmgr
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError
+from storlever.lib.exception import StorLeverError
 
 
 def includeme(config):
@@ -50,6 +53,10 @@ def includeme(config):
     config.add_route('group_info', '/system/group_list/{group_name}')
     config.add_route('service_list', '/system/service_list')
     config.add_route('service_info', '/system/service_list/{service_name}')
+    config.add_route('storlever_conf', '/system/conf_tar')
+    config.add_route('backup_conf_to_file', '/system/backup_conf')
+    config.add_route('restore_conf_from_file', '/system/restore_conf')
+
 
 
 @get_view(route_name='uname')
@@ -448,5 +455,100 @@ def put_service(request):
             service.enable_auto_start(request.client_addr)
         else:
             service.disable_auto_start(request.client_addr)
+
+    return Response(status=200)
+
+
+def remove_tmp_conf_file(request):
+    os.remove(request.storlever_tmp_file)
+
+
+@get_view(route_name='storlever_conf')
+def download_conf(request):
+    cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
+
+    # the tmp file name
+    t = datetime.today().strftime("%Y%m%d_%H%M%S")
+    request.storlever_tmp_file = "/tmp/storlever_conf_%s.tar.gz" % t
+
+    cfg_mgr.backup_to_file(request.storlever_tmp_file)
+    response = FileResponse(request.storlever_tmp_file,
+                            request=request,
+                            content_type='application/force-download')
+    response.headers['Content-Disposition'] = \
+        'attachment; filename=%s' % \
+        (os.path.basename(request.storlever_tmp_file))
+
+    request.add_finished_callback(remove_tmp_conf_file)  # remove the temp file
+
+    return response
+
+
+@post_view(route_name='storlever_conf')
+def upload_conf(request):
+    """
+    upload a config file to storlever
+
+    the html form must be like below:
+
+<form action="..." method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <label for="conf">conf</label>
+    <input id="conf" name="conf" type="file" value="" />
+    <input type="submit" value="submit" />
+</form>
+
+    """
+
+    # the name of file input of HTML form must be "conf"
+    input_file = request.POST['conf'].file
+
+    t = datetime.today().strftime("%Y%m%d_%H%M%S")
+    file_path = "/tmp/storlever_conf_%s.tar.gz" % t
+
+    with open(file_path, 'wb') as output_file:
+        # Finally write the data to a temporary file
+        input_file.seek(0)
+        while True:
+            data = input_file.read(2 << 16)
+            if not data:
+                break
+            output_file.write(data)
+
+    cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
+    cfg_mgr.restore_from_file(file_path, user=request.client_addr)   # restore the config
+
+    os.remove(file_path)
+
+    return Response(status=200)
+
+
+@post_view(route_name='backup_conf_to_file')
+def backup_conf_to_file(request):
+
+    params = get_params_from_request(request)
+
+    # check params
+    if "file" not in params:
+        raise StorLeverError("\"file\" params must be given")
+
+    cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
+
+    cfg_mgr.backup_to_file(params["file"])
+
+    return Response(status=200)
+
+
+@post_view(route_name='restore_conf_from_file')
+def restore_conf_from_file(request):
+
+    params = get_params_from_request(request)
+
+    # check params
+    if "file" not in params:
+        raise StorLeverError("\"file\" params must be given")
+
+    cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
+
+    cfg_mgr.restore_from_file(params["file"], user=request.client_addr)
 
     return Response(status=200)

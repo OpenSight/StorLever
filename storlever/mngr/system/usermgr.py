@@ -18,6 +18,7 @@ from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
 
+
 class UserManager(object):
     """contains all methods to manage the user and group in linux system"""
 
