@@ -529,7 +529,7 @@ def backup_conf_to_file(request):
 
     # check params
     if "file" not in params:
-        raise StorLeverError("\"file\" params must be given")
+        raise StorLeverError("\"file\" params must be given", 400)
 
     cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
 
@@ -545,7 +545,7 @@ def restore_conf_from_file(request):
 
     # check params
     if "file" not in params:
-        raise StorLeverError("\"file\" params must be given")
+        raise StorLeverError("\"file\" params must be given", 400)
 
     cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
 
