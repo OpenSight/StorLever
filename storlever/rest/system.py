@@ -25,7 +25,7 @@ from storlever.mngr.system import usermgr
 from storlever.mngr.system import servicemgr
 from storlever.mngr.system import cfgmgr
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
-    Use, IntVal, Default, SchemaError
+    Use, IntVal, Default, SchemaError, BoolVal
 from storlever.lib.exception import StorLeverError
 
 
@@ -318,8 +318,7 @@ user_info_schema = Schema({
 
 @post_view(route_name='user_list')
 def add_user(request):
-    user_info = get_params_from_request(request)
-    user_info = user_info_schema.validate(user_info)
+    user_info = get_params_from_request(request, user_info_schema)
     user_mgr = usermgr.user_mgr()
     user_mgr.user_add(user_info["name"], user_info["password"], user_info["uid"],
                       user_info["primay_group"], user_info["groups"],
@@ -374,8 +373,7 @@ group_info_schema = Schema({
 
 @post_view(route_name='group_list')
 def add_group(request):
-    group_info = get_params_from_request(request)
-    group_info = group_info_schema.validate(group_info)
+    group_info = get_params_from_request(request, group_info_schema)
     user_mgr = usermgr.user_mgr()
     user_mgr.group_add(group_info["name"], group_info["gid"],
                        user=request.client_addr)
@@ -407,7 +405,6 @@ def get_service_list(request):
     return service_mgr.service_list()
 
 
-
 @get_view(route_name='service_info')
 def get_service_info(request):
     service_name = request.matchdict["service_name"]
@@ -417,17 +414,17 @@ def get_service_info(request):
     service_dict = {
         "name": service_name,
         "comment": service.comment,
-        "state": str(service.get_state()),
-        "auto_start": str(service.get_auto_start())
+        "state": service.get_state(),
+        "auto_start": service.get_auto_start()
     }
 
     return service_dict
 
 
 service_mod_schema = Schema({
-    Optional("state"): Use(unicode),  # state must bool
-    Optional("restart"): Use(unicode),  # restart must bool
-    Optional("auto_start"): Use(unicode),  # auto_start must bool
+    Optional("state"): BoolVal(),  # state must bool
+    Optional("restart"): BoolVal(),  # restart must bool
+    Optional("auto_start"): BoolVal(),  # auto_start must bool
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -435,23 +432,22 @@ service_mod_schema = Schema({
 @put_view(route_name='service_info')
 def put_service(request):
     service_name = request.matchdict["service_name"]
-    cmd = get_params_from_request(request)
-    cmd = service_mod_schema.validate(cmd)
+    cmd = get_params_from_request(request, service_mod_schema)
 
     service_mgr = servicemgr.service_mgr()      # get service manager
     service = service_mgr.get_service_by_name(service_name)
 
     if "state" in cmd:
-        if cmd["state"] == "True":
+        if cmd["state"]:
             service.start(request.client_addr)
-        elif cmd["state"] == "False":
+        else:
             service.stop(request.client_addr)
     elif "restart" in cmd:
-        if cmd["restart"] == "True":
+        if cmd["restart"]:
             service.restart(request.client_addr)
 
     if "auto_start" in cmd:
-        if cmd["auto_start"] == "True":
+        if cmd["auto_start"]:
             service.enable_auto_start(request.client_addr)
         else:
             service.disable_auto_start(request.client_addr)

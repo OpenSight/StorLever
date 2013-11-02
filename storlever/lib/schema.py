@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+import re
 from inspect import getargspec
 from functools import wraps
 
@@ -139,6 +139,55 @@ class IntVal(object):
         if self._min is None and self._max is None and self._values:
             raise SchemaError('%s is not in %s' % data, self._values)
         return data
+
+
+class BoolVal(object):
+    """
+    schema to Validate bool
+
+    if it's not of bool type, convert it from string to bool
+    under the rule: if it's "false"/"False", convert to False,
+    if it's "true"/"True", convert to True.
+
+    Otherwise, raise a SchemaError
+
+    """
+    def __init__(self, error=None):
+        self._error = error
+
+    def validate(self, data):
+        if isinstance(data, bool):
+            return data
+
+        if (data == "true") or (data == "True"):
+            return True
+        elif (data == "false") or (data == "False"):
+            return False
+        else:
+            raise SchemaError('fail to convert %s to bool' % data, self._error)
+
+
+class StrRe(object):
+    """
+    schema to Validate string against to regular express
+    @data should be string which can match the given regular express
+    """
+    def __init__(self, pattern="", error=None):
+        self._error = error
+        self.pattern = re.compile(pattern)
+        self.pattern_str = pattern
+
+    def validate(self, data):
+        if not isinstance(data, unicode):
+            try:
+                data = unicode(data)
+            except Exception:
+                raise SchemaError('%s is not string' % data, self._error)
+
+        if self.pattern.match(data) is None:
+            raise SchemaError('%s does not match regular express(%s)' % (data, self.pattern_str), self._error)
+        else:
+            return data
 
 
 class Use(object):

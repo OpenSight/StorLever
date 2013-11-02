@@ -6,7 +6,7 @@ else:
     import unittest2 as unittest
 
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
-    Use, IntVal, Default, SchemaError
+    Use, IntVal, Default, SchemaError, BoolVal, StrRe
 
 
 class TestSchema(unittest.TestCase):
@@ -49,6 +49,42 @@ class TestSchema(unittest.TestCase):
         self.assertEqual(1, schema.validate(1))
         with self.assertRaises(SchemaError):
             schema.validate(3)
+
+    def test_bool_value(self):
+        schema = Schema(BoolVal())
+        self.assertEquals(True, schema.validate(True))
+        self.assertEquals(True, schema.validate("True"))
+        self.assertEquals(True, schema.validate("true"))
+
+        self.assertEquals(False, schema.validate(False))
+        self.assertEquals(False, schema.validate("False"))
+        self.assertEquals(False, schema.validate("false"))
+
+        with self.assertRaises(SchemaError):
+            schema.validate(0)
+
+        with self.assertRaises(SchemaError):
+            schema.validate(1)
+
+        with self.assertRaises(SchemaError):
+            schema.validate("abc")
+
+    def test_strre_value(self):
+        schema = Schema(StrRe("^(abc|efg)$"))
+        self.assertEquals("abc", schema.validate("abc"))
+        self.assertEquals("efg", schema.validate("efg"))
+
+        with self.assertRaises(SchemaError):
+            schema.validate("ebc")
+
+        with self.assertRaises(SchemaError):
+            schema.validate("abcdefg")
+
+        with self.assertRaises(SchemaError):
+            schema.validate(0)
+
+        with self.assertRaises(SchemaError):
+            schema.validate(1)
 
     def test_optional_value(self):
         schema = Schema({

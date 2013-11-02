@@ -83,6 +83,7 @@ class SystemService(object):
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Service %s auto start is disabled by user(%s)" % (self.name, user))
 
+
 class ServiceManager(object):
     """contains all methods to manage the user and group in linux system"""
 
@@ -115,8 +116,8 @@ class ServiceManager(object):
             service_info = {
                 "name": service,
                 "comment": params["comment"],
-                "state": str(params["ps"] in ps_out),
-                "auto_start": str(chkconfig_out[service][CHK_LEVEL] == "on")
+                "state": params["ps"] in ps_out,
+                "auto_start": chkconfig_out[service][CHK_LEVEL] == "on"
             }
             output_list.append(service_info)
 
