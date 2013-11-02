@@ -47,31 +47,36 @@ class delete_view(_rest_view):
 def failed_validation(exc, request):
     response = request.response
     response.status_int = 400
-    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
-    return {'info': str(exc), 'traceback': tb_list}
+    type, dummy, tb = sys.exc_info()
+    tb_list = traceback.format_list(traceback.extract_tb(tb)[-5:])
+    return {'info': str(exc), 'exception': str(type), 'traceback': tb_list}
 
 
 @view_config(context=StorLeverError)
 def storlever_error_view(exc, request):
     response = request.response
     response.status_int = exc.http_status_code
-    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
-    return {'info': str(exc), 'traceback': tb_list}
+    type, dummy, tb = sys.exc_info()
+    tb_list = traceback.format_list(traceback.extract_tb(tb)[-5:])
+    return {'info': str(exc), 'exception': str(type), 'traceback': tb_list}
 
 
 @view_config(context=Exception)
 def error_view(exc, request):
     response = request.response
     response.status_int = 500
-    tb_list = traceback.format_list(traceback.extract_tb(sys.exc_traceback)[-5:])
-    return {'info': str(exc), 'traceback': tb_list}
+    type, dummy, tb = sys.exc_info()
+    tb_list = traceback.format_list(traceback.extract_tb(tb)[-5:])
+    return {'info': str(exc), 'exception': str(type), 'traceback': tb_list}
 
 
 @view_config(context=pyramid.exceptions.NotFound)
 def not_found_view(exc, request):
     response = request.response
     response.status_int = exc.status_code
+    type, dummy, tb = sys.exc_info()
     return {'info': 'Resource {} not found or method {} not supported'.format(request.path, request.method),
+            'exception': str(type),
             'traceback': []}
 
 
