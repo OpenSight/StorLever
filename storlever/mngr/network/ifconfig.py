@@ -257,11 +257,11 @@ class Interface(object):
         if speed == 65535:
             speed = 0
         if duplex == 255:
-            duplex = None
+            duplex = False
         else:
             duplex = bool(duplex)
         if auto == 255:
-            auto = None
+            auto = False
         else:
             auto = bool(auto)
         return speed, duplex, auto, up
