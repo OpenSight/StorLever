@@ -105,17 +105,16 @@ class CfgManager(object):
         self._clear_conf_dir()
 
         # invoke the other module's interface to restore
-		
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Storlever system is totally restored by user(%s)" % user)			
 
 
-cfg_manager = CfgManager()
+CfgManager = CfgManager()
 
 
 def cfg_mgr():
     """return the global cfg manager instance"""
-    return cfg_manager
+    return CfgManager
 
 
 

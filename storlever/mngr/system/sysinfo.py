@@ -102,12 +102,12 @@ class SysManager(object):
         return time.time()
 
 
-sys_manager = SysManager()
+SysManager = SysManager()
 
 
 def sys_mgr():
     """return the global system manager instance"""
-    return sys_manager
+    return SysManager
 
 
 

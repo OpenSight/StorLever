@@ -91,7 +91,8 @@ SIOCSIFNETMASK = 0x891C
 SIOCETHTOOL = 0x8946
 
 # From linux/if.h
-IFF_UP       = 0x1
+IFF_UP = 0x1
+IFF_MASTER = 0x400        # Master of a load balancer.
 
 # From linux/socket.h
 AF_UNIX      = 1
@@ -129,6 +130,7 @@ if not os.path.isdir(SYSFS_NET_PATH):
     raise ImportError("Path %s not found. This module requires sysfs." % SYSFS_NET_PATH)
 if not os.path.exists(PROCFS_NET_PATH):
     raise ImportError("Path %s not found. This module requires procfs." % PROCFS_NET_PATH)
+
 
 class Interface(object):
     ''' Class representing a Linux network device. '''
@@ -172,6 +174,19 @@ class Interface(object):
 
         # Set new flags
         if flags & IFF_UP:
+            return True
+        else:
+            return False
+
+    def is_master(self):
+        ''' Return True if the interface is master of bond, False otherwise. '''
+
+        # Get existing device flags
+        ifreq = struct.pack('16sh', self.name, 0)
+        flags = struct.unpack('16sh', fcntl.ioctl(sockfd, SIOCGIFFLAGS, ifreq))[1]
+
+        # Set new flags
+        if flags & IFF_MASTER:
             return True
         else:
             return False
@@ -388,21 +403,20 @@ def iterifs(physical=True):
             d = res[i:i+16].strip('\0')
             interfaces.add(d)
 
+    d_list = []
     results = interfaces - virtual if physical else interfaces
     for d in results:
-        yield Interface(d)
+        d_list.append(Interface(d))
+
+    return d_list
 
 
-def findif(name):
-    for br in iterifs(True):
+def findif(name, physical=True):
+    for br in iterifs(physical):
         if name == br.name:
             return br
     return None
 
-def list_ifs(physical=True):
-    ''' Return a list of the names of the interfaces. If physical is
-        true, then return only real physical interfaces (not 'lo', etc). '''
-    return [br for br in iterifs(physical)]
 
 
 def init():

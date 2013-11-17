@@ -196,12 +196,12 @@ class UserManager(object):
                    "System group %s is deleted by user(%s)" %
                    (name, user))
 
-user_manager = UserManager()
+UserManager = UserManager()
 
 
 def user_mgr():
     """return the global user manager instance"""
-    return user_manager
+    return UserManager
 
 
 
