@@ -59,12 +59,6 @@ class EthInterface(object):
         gateway = self.conf.get("GATEWAY", "")
         return ip, netmask, gateway
 
-    def get_mac(self):
-        if self.ifconfig_interface is not None:
-            return self.ifconfig_interface.get_mac()
-        else:
-            return self.conf.get("HWADDR", "00:00:00:00:00:00")
-
     def set_ip_config(self, ip="", netmask="", gateway="", user="unknown"):
         self.conf["IPADDR"] = ip
         self.conf["NETMASK"] = netmask
@@ -112,42 +106,56 @@ class EthInterface(object):
                    "Network interface (%s) is up by user(%s)" %
                    (self.name, user))
 
-    def get_state_info(self):
+    @property
+    def property_info(self):
+        """return the property info of the interface
+
+        This function would return a dict include the following keys:
+        "up"  Bool    This interface is up in system or not
+        "is_master" Bool this interface is the master of a bond group
+        "is_slave" Bool this interface is slave of a bond group
+        "mac" String mac address of interface
+
+        """
+        info = {"up": False,
+                "is_master": False,
+                "is_slave": False,
+                "mac": self.ifconfig_interface.get_mac()}
+
+        flags = self.ifconfig_interface.get_if_flags()
+        if flags & ifconfig.IFF_UP:
+            info["up"] = True
+        if flags & ifconfig.IFF_SLAVE:
+            info["is_slave"] = True
+        if flags & ifconfig.IFF_MASTER:
+            info["is_master"] = True
+
+        return info
+
+    @property
+    def link_state(self):
         """return the current state of the net interface
 
         This function would return a dict include the following keys:
-        "valid"  Bool this interface is valid or not, if a interface does not
-                  exist in system but has a config file, it's considered to
-                  be invalid. When it's invalid, all the other fileds in
-                  the return dict has no sense.
-        "up"  Bool    This interface is up in system or not
         "speed"  Int the speed the current link, if the link is down, it's 0
         "duplex" Bool the current link is duplex or not
         "auto"  Bool the interface support auto-negotiation or not
         "link_up" Bool the link is up or down
-        "is_master" Bool this interface is the master of a bond group
 
         """
-        state = {
-            "vaild": False,
-            "up": False,
-            "speed": 0,
-            "duplex": False,
-            "auto": False,
-            "link_up": False,
-            "is_master": False
-        }
+        speed, duplex, auto, link_up = self.ifconfig_interface.get_link_info()
 
-        if self.ifconfig_interface is not None:
-            state["valid"] = True
-            state["up"] = self.ifconfig_interface.is_up()
-            state["is_master"] = self.ifconfig_interface.is_master()
-            state["speed"], state["duplex"], state["auto"], state["link_up"] = \
-                self.ifconfig_interface.get_link_info()
+        state = {
+            "speed": speed,
+            "duplex": duplex,
+            "auto": auto,
+            "link_up": link_up,
+        }
 
         return state
 
-    def get_statistic_info(self):
+    @property
+    def statistic_info(self):
         # get timestamp
         now = time.time()
         # if valid, get the statistic from system, or return a fake

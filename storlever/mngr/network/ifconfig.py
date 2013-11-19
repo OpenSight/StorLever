@@ -93,6 +93,7 @@ SIOCETHTOOL = 0x8946
 # From linux/if.h
 IFF_UP = 0x1
 IFF_MASTER = 0x400        # Master of a load balancer.
+IFF_SLAVE  = 0x800        # Slave of a load balancer.
 
 # From linux/socket.h
 AF_UNIX      = 1
@@ -165,12 +166,19 @@ class Interface(object):
         ifreq = struct.pack('16sh', self.name, flags)
         fcntl.ioctl(sockfd, SIOCSIFFLAGS, ifreq)
 
+    def get_if_flags(self):
+        '''return flag of the interface '''
+        # Get existing device flags
+        ifreq = struct.pack('16sh', self.name, 0)
+        flags = struct.unpack('16sh', fcntl.ioctl(sockfd, SIOCGIFFLAGS, ifreq))[1]
+
+        return flags
+
     def is_up(self):
         ''' Return True if the interface is up, False otherwise. '''
 
         # Get existing device flags
-        ifreq = struct.pack('16sh', self.name, 0)
-        flags = struct.unpack('16sh', fcntl.ioctl(sockfd, SIOCGIFFLAGS, ifreq))[1]
+        flags = self.get_if_flags();
 
         # Set new flags
         if flags & IFF_UP:
@@ -182,11 +190,22 @@ class Interface(object):
         ''' Return True if the interface is master of bond, False otherwise. '''
 
         # Get existing device flags
-        ifreq = struct.pack('16sh', self.name, 0)
-        flags = struct.unpack('16sh', fcntl.ioctl(sockfd, SIOCGIFFLAGS, ifreq))[1]
+        flags = self.get_if_flags();
 
         # Set new flags
         if flags & IFF_MASTER:
+            return True
+        else:
+            return False
+
+    def is_slave(self):
+        ''' Return True if the interface is master of bond, False otherwise. '''
+
+        # Get existing device flags
+        flags = self.get_flags();
+
+        # Set new flags
+        if flags & IFF_SLAVE:
             return True
         else:
             return False
