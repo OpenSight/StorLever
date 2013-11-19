@@ -27,19 +27,15 @@ class EthInterfaceManager(object):
     """contains all methods to manage the user and group in linux system"""
 
     def __init__(self):
-        # need a mutex to provide thread-safe
-
-        # construct a Interface type mapping table
         pass
-
-    def _restart_network(self):
-        check_output(["/etc/init.d/network", "restart"])
 
     def _get_if_encap(self, name):
         encap_type = 1
         type_path = os.path.join(SYSFS_NET_DEV, name, "type")
-        with open(type_path, "r") as type_file:
-            encap_type = int(type_file.read())
+        if os.path.isfile(type_path):
+            with open(type_path, "r") as type_file:
+                encap_type = int(type_file.read())
+
         return encap_type
 
     def get_interface_by_name(self, name):

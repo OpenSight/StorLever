@@ -120,7 +120,7 @@ ADVERTISED_BNC = (1 << 11)
 ADVERTISED_10000baseT_Full = (1 << 12)
 
 # This is probably not cross-platform
-SIZE_OF_IFREQ = 40
+SIZE_OF_IFREQ = 32
 
 # Globals
 sock = None
@@ -227,37 +227,39 @@ class Interface(object):
         ifreq = struct.pack('16sH6B8x', self.name, AF_UNIX, *macbytes)
         fcntl.ioctl(sockfd, SIOCSIFHWADDR, ifreq)
 
-
     def get_ip(self):
         ifreq = struct.pack('16sH14s', self.name, AF_INET, '\x00'*14)
         try:
             res = fcntl.ioctl(sockfd, SIOCGIFADDR, ifreq)
         except IOError:
-            return None
+            return ""
         ip = struct.unpack('16sH2x4s8x', res)[2]
 
         return socket.inet_ntoa(ip)
-
 
     def set_ip(self, newip):
         ipbytes = socket.inet_aton(newip)
         ifreq = struct.pack('16sH2s4s8s', self.name, AF_INET, '\x00'*2, ipbytes, '\x00'*8)
         fcntl.ioctl(sockfd, SIOCSIFADDR, ifreq)
 
-
     def get_netmask(self):
         ifreq = struct.pack('16sH14s', self.name, AF_INET, '\x00'*14)
         try:
             res = fcntl.ioctl(sockfd, SIOCGIFNETMASK, ifreq)
         except IOError:
-            return 0
+            return ""
         netmask = socket.ntohl(struct.unpack('16sH2xI8x', res)[2])
 
-        return 32 - int(math.log(ctypes.c_uint32(~netmask).value + 1, 2))
-
+        # return 32 - int(math.log(ctypes.c_uint32(~netmask).value + 1, 2))
+        return '%d.%d.%d.%d' % (netmask >> 24 & 255,
+                                netmask >> 16 & 255,
+                                netmask >> 8 & 255,
+                                netmask & 255)
 
     def set_netmask(self, netmask):
-        netmask = ctypes.c_uint32(~((2 ** (32 - netmask)) - 1)).value
+        # netmask = ctypes.c_uint32(~((2 ** (32 - netmask)) - 1)).value
+        packed_netmask = socket.inet_aton(netmask)
+        netmask = struct.unpack("!L", packed_netmask)[0]
         nmbytes = socket.htonl(netmask)
         ifreq = struct.pack('16sH2sI8s', self.name, AF_INET, '\x00'*2, nmbytes, '\x00'*8) 
         fcntl.ioctl(sockfd, SIOCSIFNETMASK, ifreq)
@@ -392,6 +394,7 @@ class Interface(object):
 def iterifs(physical=True):
     ''' Iterate over all the interfaces in the system. If physical is
         true, then return only real physical interfaces (not 'lo', etc).'''
+
     net_files = os.listdir(SYSFS_NET_PATH)
     interfaces = set()
     virtual = set()
@@ -413,14 +416,14 @@ def iterifs(physical=True):
         ifconf_res = fcntl.ioctl(sockfd, SIOCGIFCONF, ifconf)
         ifreqs_len, _ = struct.unpack("iP", ifconf_res)
 
-        assert ifreqs_len % SIZE_OF_IFREQ == 0, (
-            "Unexpected amount of data returned from ioctl. "
-            "You're probably running on an unexpected architecture")
-
-        res = ifreqs.tostring()
-        for i in range(0, ifreqs_len, SIZE_OF_IFREQ):
-            d = res[i:i+16].strip('\0')
-            interfaces.add(d)
+        if ifreqs_len % SIZE_OF_IFREQ == 0:
+            res = ifreqs.tostring()
+            for i in range(0, ifreqs_len, SIZE_OF_IFREQ):
+                d = res[i:i+16].strip('\0')
+                interfaces.add(d)
+        else:
+            print "Unexpected amount of data returned from ioctl. \
+                   You're probably running on an unexpected architecture"
 
     d_list = []
     results = interfaces - virtual if physical else interfaces
