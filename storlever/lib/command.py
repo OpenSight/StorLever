@@ -9,7 +9,7 @@ This module implements command call for storlever.
 
 """
 import subprocess
-
+import os
 import exception
 
 
@@ -40,6 +40,16 @@ def check_output(cmd, shell=False, input_ret=[]):
         raise exception.StorLeverError(info, http_status)
 
 
+def read_file_entry(path, default_value = None):
+    if os.path.isfile(path):
+        with open(path, "r") as file_entry:
+            value = file_entry.read()
+    else:
+        if default_value is None:
+            raise exception.StorLeverError(path + " does not exist", 500)
+        else:
+            value = default_value
+    return value
 
 
 

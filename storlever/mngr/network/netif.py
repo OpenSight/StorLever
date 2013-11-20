@@ -28,30 +28,29 @@ IF_CONF_PATH = "/etc/sysconfig/network-scripts/"
 class EthInterface(object):
     """contains all methods to manage the user and group in linux system"""
 
-    def __init__(self, name, ifconfig_interface):
+    def __init__(self, name):
 
         self.name = name
         ifcfg_file_name = "ifcfg-" + name
         self.conf_file_path = os.path.join(IF_CONF_PATH, ifcfg_file_name)
+        self.ifconfig_interface = ifconfig.Interface(name)
 
         # get the config file
         if os.path.exists(self.conf_file_path):
             self.conf = properties(self.conf_file_path)
         else:
             # create default if no config file
-            ip = ifconfig_interface.ip
-            mac = ifconfig_interface.mac
-            netmask = ifconfig_interface.netmask
-            up = ifconfig_interface.is_up()
+            ip = self.ifconfig_interface.ip
+            mac = self.ifconfig_interface.mac
+            netmask = self.ifconfig_interface.netmask
+            up = self.ifconfig_interface.is_up()
             if up:
                 onboot = "yes"
             else:
                 onboot = "no"
             self.conf = properties(IPADDR=ip, NETMASK=netmask,
+                                   BOOTPROTO="none", DEVICE=name,
                                    HWADDR=mac, ONBOOT=onboot)
-
-        # get the interface state object
-        self.ifconfig_interface = ifconfig_interface
 
     def get_ip_config(self):
         ip = self.conf.get("IPADDR", "")
@@ -63,6 +62,7 @@ class EthInterface(object):
         self.conf["IPADDR"] = ip
         self.conf["NETMASK"] = netmask
         self.conf["GATEWAY"] = gateway
+        self.conf["BOOTPROTO"] = "none"
 
         # write to config file
         self.conf.apply_to(self.conf_file_path)

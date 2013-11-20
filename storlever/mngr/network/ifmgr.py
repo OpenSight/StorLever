@@ -11,7 +11,7 @@ This module implements some functions of linux network interface management.
 
 import os
 
-from storlever.lib.command import check_output
+from storlever.lib.command import check_output, read_file_entry
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
@@ -30,13 +30,8 @@ class EthInterfaceManager(object):
         pass
 
     def _get_if_encap(self, name):
-        encap_type = 1
         type_path = os.path.join(SYSFS_NET_DEV, name, "type")
-        if os.path.isfile(type_path):
-            with open(type_path, "r") as type_file:
-                encap_type = int(type_file.read())
-
-        return encap_type
+        return int(read_file_entry(type_path, 1))
 
     def get_interface_by_name(self, name):
 
@@ -52,9 +47,9 @@ class EthInterfaceManager(object):
             raise StorLeverError("Interface(%s)'s type(%d) is not supported by storlever"
                                  % (name, encap_type), 400)
 
-        return EthInterface(dev.name, dev)
+        return EthInterface(dev.name)
 
-    def interface_list(self):
+    def interface_name_list(self):
         interfaces = []
         for dev in ifconfig.iterifs(False):
             if dev.name == "lo":    # loopback interface is not handled
@@ -64,7 +59,7 @@ class EthInterfaceManager(object):
                 # only support Ethernet
                 continue
 
-            interfaces.append(EthInterface(dev.name, dev))
+            interfaces.append(dev.name)
 
         return interfaces
 
