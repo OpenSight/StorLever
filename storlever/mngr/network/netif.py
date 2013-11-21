@@ -68,9 +68,7 @@ class EthInterface(object):
         self.conf.apply_to(self.conf_file_path)
 
         # restart this interface
-        if self.ifconfig_interface is not None and \
-                self.ifconfig_interface.is_up():
-
+        if self.ifconfig_interface.is_up():
             check_output([IFDOWN, self.name])
             check_output([IFUP, self.name])
 
@@ -105,6 +103,12 @@ class EthInterface(object):
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Network interface (%s) is up by user(%s)" %
                    (self.name, user))
+
+    def save_conf(self):
+        self.conf.apply_to(self.conf_file_path);
+
+    def get_conf(self):
+        return self.conf
 
     @property
     def property_info(self):

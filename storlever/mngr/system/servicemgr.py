@@ -132,12 +132,12 @@ class ServiceManager(object):
             raise StorLeverError("service does not exist", 404)
 
 
-ServiceManager = ServiceManager()
+service_manager = ServiceManager()
 
 
 def service_mgr():
     """return the global user manager instance"""
-    return ServiceManager
+    return service_manager
 
 
 

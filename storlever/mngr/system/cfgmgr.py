@@ -109,12 +109,12 @@ class CfgManager(object):
                    "Storlever system is totally restored by user(%s)" % user)			
 
 
-CfgManager = CfgManager()
+cfg_manager = CfgManager()
 
 
 def cfg_mgr():
     """return the global cfg manager instance"""
-    return CfgManager
+    return cfg_manager
 
 
 
