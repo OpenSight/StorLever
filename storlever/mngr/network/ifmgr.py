@@ -24,10 +24,13 @@ SYSFS_NET_DEV = "/sys/class/net/"
 
 
 class EthInterfaceManager(object):
-    """contains all methods to manage the user and group in linux system"""
+    """contains all methods to manage ethernet interface in linux system"""
 
     def __init__(self):
         pass
+
+    def _restart_network(self):
+        check_output(["/sbin/service", "network", "restart"])
 
     def _get_if_encap(self, name):
         type_path = os.path.join(SYSFS_NET_DEV, name, "type")

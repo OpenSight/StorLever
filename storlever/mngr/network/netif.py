@@ -48,9 +48,16 @@ class EthInterface(object):
                 onboot = "yes"
             else:
                 onboot = "no"
-            self.conf = properties(IPADDR=ip, NETMASK=netmask,
-                                   BOOTPROTO="none", DEVICE=name,
-                                   HWADDR=mac, ONBOOT=onboot)
+
+            if self.ifconfig_interface.is_master():
+                mac = ""
+
+            self.conf = properties(DEVICE=name,
+                                   IPADDR=ip,
+                                   NETMASK=netmask,
+                                   BOOTPROTO="none",
+                                   HWADDR=mac,
+                                   ONBOOT=onboot)
 
     def get_ip_config(self):
         ip = self.conf.get("IPADDR", "")
