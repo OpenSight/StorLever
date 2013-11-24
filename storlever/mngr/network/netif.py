@@ -114,9 +114,6 @@ class EthInterface(object):
     def save_conf(self):
         self.conf.apply_to(self.conf_file_path);
 
-    def get_conf(self):
-        return self.conf
-
     @property
     def property_info(self):
         """return the property info of the interface

@@ -52,6 +52,15 @@ def read_file_entry(path, default_value = None):
     return value
 
 
+def write_file_entry(path, value):
+    if os.path.isfile(path):
+        with open(path, "w") as file_entry:
+            file_entry.write(value)
+    else:
+        raise exception.StorLeverError(path + " does not exist", 500)
+
+    return value
+
 
 
 

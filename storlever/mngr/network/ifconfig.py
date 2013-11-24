@@ -190,7 +190,7 @@ class Interface(object):
         ''' Return True if the interface is master of bond, False otherwise. '''
 
         # Get existing device flags
-        flags = self.get_if_flags();
+        flags = self.get_if_flags()
 
         # Set new flags
         if flags & IFF_MASTER:
@@ -202,7 +202,7 @@ class Interface(object):
         ''' Return True if the interface is master of bond, False otherwise. '''
 
         # Get existing device flags
-        flags = self.get_flags();
+        flags = self.get_if_flags()
 
         # Set new flags
         if flags & IFF_SLAVE:

@@ -23,6 +23,14 @@ from storlever.mngr.network import ifconfig
 SYSFS_NET_DEV = "/sys/class/net/"
 
 
+def check_network_manager_exist():
+    if os.path.exists('/var/run/NetworkManager/NetworkManager.pid'):
+        pid = open('/var/run/NetworkManager/NetworkManager.pid').read().strip()
+        if os.path.exists('/proc/%s/cmdline' % pid) and \
+                ('NetworkManager'in open('/proc/%s/cmdline' % pid).read()):
+            raise StorLeverError("NetworkManager must be shutdown", 500)
+
+
 class EthInterfaceManager(object):
     """contains all methods to manage ethernet interface in linux system"""
 

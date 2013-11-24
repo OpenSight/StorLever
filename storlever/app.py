@@ -11,6 +11,7 @@ StorLever's main file to make a WSGI application.
 
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
+from storlever.lib.lock import set_lock_factory_from_name
 
 
 def main(global_config, **settings):
@@ -23,6 +24,15 @@ def main(global_config, **settings):
     json_indent = settings.get("json.indent")
     if json_indent is not None:
         json_indent = int(json_indent)
+
+    # get lock factory
+    if (settings.get("lock.module") is not None) and \
+            (settings.get("lock.factory") is not None):
+        set_lock_factory_from_name(settings.get("lock.module"),
+                                   settings.get("lock.factory"))
+
+
+
 
     # make JSON as the default renderer
     config.add_renderer(None, JSON(indent=json_indent))

@@ -143,7 +143,7 @@ class properties(dict):
 			\s*
         (?P<option>	[^\#;]+?)
         	 	(\s* (=|:) \s*)
-        (?P<value>	.+?)?
+        (?P<value>	.*?)?
         		(\s+((\#|;).*)?)?
 $)|(^
     			(\s*(\#|;)+\s*
