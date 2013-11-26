@@ -47,12 +47,36 @@ class CfgManager(object):
         {"name": "/etc/shadow", "pattern": None},
         {"name": "/etc/group", "pattern": None},
         {"name": "/etc/gshadow", "pattern": None},
+        {"name": "/etc/modprobe.d/bond.conf", "pattern": None},  # for bond
+        {"name": "/etc/sysconfig/network-scripts", "pattern": r"^ifcfg-(.+)$"},
         {"name": "/etc/storlever_test", "pattern": None},  # for unit test
 
     ]
 
     def __init__(self):
         pass
+
+    def _del_all_config_files(self):
+        for config_file in CfgManager.managed_config_files:
+            file_name = config_file["name"]
+            pattern = config_file["pattern"]
+
+            if os.path.exists(file_name):
+                if pattern is None:
+                    if os.path.isfile(file_name):
+                        os.remove(file_name)
+                    elif os.path.isdir(file_name):
+                        shutil.rmtree(file_name)
+                else:
+                    cp = re.compile(pattern)
+                    if os.path.isfile(file_name):
+                        if cp.match(file_name):
+                            os.remove(file_name)
+                    elif os.path.isdir(file_name):
+                        for path, subdirs, files in os.walk(file_name):
+                            for name in files:
+                                if cp.match(name):
+                                    os.remove(os.path.join(path, name))
 
     def backup_to_file(self, filename):
 
@@ -80,6 +104,7 @@ class CfgManager(object):
         if not tarfile.is_tarfile(filename):
             raise StorLeverError("File (%s) is not a config archive" % filename, 400)
 
+        self._del_all_config_files()
         tar_file = tarfile.open(filename, 'r')
         tar_file.extractall("/")
         tar_file.close()
