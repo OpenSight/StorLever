@@ -49,15 +49,14 @@ class EthInterface(object):
             else:
                 onboot = "no"
 
-            if self.ifconfig_interface.is_master():
-                mac = ""
-
             self.conf = properties(DEVICE=name,
                                    IPADDR=ip,
                                    NETMASK=netmask,
                                    BOOTPROTO="none",
-                                   HWADDR=mac,
                                    ONBOOT=onboot)
+            # if physical, add HWADDR
+            if self.ifconfig_interface.is_physical():
+                self.conf["HWADDR"] = mac
 
     def get_ip_config(self):
         ip = self.conf.get("IPADDR", "")
@@ -86,12 +85,10 @@ class EthInterface(object):
                    (self.name, ip, netmask, gateway, user))
 
     def up(self, user="unknown"):
-        if self.ifconfig_interface is None:
-            raise StorLeverError("Interface(%s) is invalid" % self.name, 400)
 
         self.conf["ONBOOT"] = "yes"
         self.conf.apply_to(self.conf_file_path)
-        self.ifconfig_interface.up()
+        check_output([IFUP, self.name])
 
         # log the operation
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -99,12 +96,10 @@ class EthInterface(object):
                    (self.name, user))
 
     def down(self, user="unknown"):
-        if self.ifconfig_interface is None:
-            raise StorLeverError("Interface(%s) is invalid" % self.name, 400)
 
         self.conf["ONBOOT"] = "no"
         self.conf.apply_to(self.conf_file_path)
-        self.ifconfig_interface.down()
+        check_output([IFDOWN, self.name])
 
         # log the operation
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -112,7 +107,7 @@ class EthInterface(object):
                    (self.name, user))
 
     def save_conf(self):
-        self.conf.apply_to(self.conf_file_path);
+        self.conf.apply_to(self.conf_file_path)
 
     @property
     def property_info(self):

@@ -146,11 +146,11 @@ class BondManager(object):
             exist_if_list = if_mgr().interface_name_list()
             for slave_if in ifs:
                 if slave_if not in exist_if_list:
-                    StorLeverError("%s not found" % slave_if, 404)
+                    raise StorLeverError("%s not found" % slave_if, 404)
 
                 if ifconfig.Interface(slave_if).is_slave():
-                    StorLeverError("%s is already a slave of other bond group"
-                                   % slave_if, 400)
+                    raise StorLeverError("%s is already a slave of other bond group"
+                                         % slave_if, 400)
 
             # find the available bond name
             max_index = self._find_max_index()
@@ -200,13 +200,13 @@ class BondManager(object):
         # check exist
         group_name_list = self.group_name_list()
         if bond_name not in group_name_list:
-            StorLeverError("%s not found" % bond_name, 404)
+            raise StorLeverError("%s not found" % bond_name, 404)
         if bond_name == "bond0":
             # if want to delete bond0, there must be no other
             # group
             if (len(group_name_list) > 1) or \
                     (group_name_list[0] != bond_name):
-                StorLeverError("Other bonding group must be "
+                raise StorLeverError("Other bonding group must be "
                                "deleted before bond0 can be deleted", 404)
         # get mutex
         with self.lock:
@@ -219,8 +219,8 @@ class BondManager(object):
             is_first = True
             bond_slaves = bond_group.slaves
             for slave in bond_slaves:
+                slave_object = EthInterface(slave)
                 if is_first:
-                    slave_object = EthInterface(slave)
                     slave_object.conf["IPADDR"] = \
                         bond_group.conf.get("IPADDR", "")
                     slave_object.conf["NETMASK"] = \
