@@ -143,7 +143,7 @@ class properties(dict):
 			\s*
         (?P<option>	[^\#;]+?)
         	 	(\s* (=|:) \s*)
-        (?P<value>	.*?)?
+        (?P<value>	.+?)?
         		(\s+((\#|;).*)?)?
 $)|(^
     			(\s*(\#|;)+\s*
@@ -332,7 +332,8 @@ $)""", re.VERBOSE)
             m = self.line.match( l )
             if m:
                 option, value, cont = m.group('option', 'value', 'cont')
-
+                if value is None:
+                    value = ""
                 if option: 	cur_opt, self[option] = option, value
                 elif cont: 	self[cur_opt] += '\n' + cont.lstrip()
                 
