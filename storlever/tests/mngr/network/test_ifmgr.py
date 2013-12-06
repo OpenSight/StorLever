@@ -8,7 +8,7 @@ else:
 from storlever.mngr.network.ifmgr import if_mgr
 
 
-class TestServiceMgr(unittest.TestCase):
+class TestEthInterfaceMgr(unittest.TestCase):
 
     def test_interface_list(self):
         manager = if_mgr()
