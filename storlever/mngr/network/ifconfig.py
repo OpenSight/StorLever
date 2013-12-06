@@ -199,13 +199,22 @@ class Interface(object):
             return False
 
     def is_slave(self):
-        ''' Return True if the interface is master of bond, False otherwise. '''
+        ''' Return True if the interface is slave of bond, False otherwise. '''
 
         # Get existing device flags
         flags = self.get_if_flags()
 
         # Set new flags
         if flags & IFF_SLAVE:
+            return True
+        else:
+            return False
+
+    def is_physical(self):
+        """Return True if this interface is a physical device, otherwise False
+        """
+        path = os.path.join(SYSFS_NET_PATH, self.name, "device")
+        if os.path.exists(path):
             return True
         else:
             return False

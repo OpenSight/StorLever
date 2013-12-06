@@ -31,8 +31,8 @@ class TarFilter(object):
     def __call__(self, tarinfo):
         if tarinfo.isdir():      # dir always include
             return tarinfo
-
-        if self.pattern.match(tarinfo.name) is None:
+        base_name = os.path.basename(tarinfo.name)
+        if self.pattern.match(base_name) is None:
             return None
         else:
             return tarinfo
