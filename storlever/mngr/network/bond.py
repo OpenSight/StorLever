@@ -165,6 +165,7 @@ class BondManager(object):
                               NETMASK=netmask,
                               GATEWAY=gateway,
                               BOOTPROTO="none",
+                              NM_CONTROLLED="no",
                               ONBOOT="yes",
                               BONDING_OPTS='"miimon=%d, mode=%d"'
                                            % (miimon, mode))
