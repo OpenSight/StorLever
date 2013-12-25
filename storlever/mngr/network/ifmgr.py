@@ -72,6 +72,8 @@ class EthInterfaceManager(object):
 
             interfaces.append(dev.name)
 
+        interfaces.sort()
+
         return interfaces
 
 

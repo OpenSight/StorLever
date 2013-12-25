@@ -32,8 +32,8 @@ class TestServiceMgr(unittest.TestCase):
         service_list = manager.service_list()
         for entry in service_list:
             if "sshd" == entry["name"]:
-                self.assertEquals("True", entry["state"])
-                self.assertEquals("True", entry["auto_start"])
+                self.assertEquals(True, entry["state"])
+                self.assertEquals(True, entry["auto_start"])
         ser.stop()
         ser.disable_auto_start()
         self.assertEquals(False, ser.get_state())

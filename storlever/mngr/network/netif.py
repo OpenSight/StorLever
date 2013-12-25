@@ -87,7 +87,7 @@ class EthInterface(object):
     def up(self, user="unknown"):
 
         self.conf["ONBOOT"] = "yes"
-        self.conf.apply_to(self.conf_file_path)
+        self.save_conf()
         check_output([IFUP, self.name])
 
         # log the operation
@@ -98,7 +98,7 @@ class EthInterface(object):
     def down(self, user="unknown"):
 
         self.conf["ONBOOT"] = "no"
-        self.conf.apply_to(self.conf_file_path)
+        self.save_conf()
         check_output([IFDOWN, self.name])
 
         # log the operation
