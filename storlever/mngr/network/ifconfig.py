@@ -436,7 +436,7 @@ def iterifs(physical=True):
                 d = res[i:i+16].strip('\0')
                 interfaces.add(d)
         else:
-            print "Unexpected amount of data returned from ioctl. \
+            print "Warning: Unexpected amount of data returned from ioctl. \
                    You're probably running on an unexpected architecture"
 
     d_list = []
