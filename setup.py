@@ -1,4 +1,5 @@
 import os
+import sys
 
 from setuptools import setup, find_packages
 
@@ -13,6 +14,8 @@ requires = [
     'pyyaml',
     'psutil>=1.1.3',
 ]
+if sys.version_info < (2,7):
+    requires.append('unittest2')
 
 test_requires = [
     'unittest2'

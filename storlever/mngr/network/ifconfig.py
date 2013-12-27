@@ -6,6 +6,7 @@ import struct
 import ctypes
 import array
 import math
+import platform
 
 """
 This file makes the following assumptions about data structures:
@@ -121,6 +122,9 @@ ADVERTISED_10000baseT_Full = (1 << 12)
 
 # This is probably not cross-platform
 SIZE_OF_IFREQ = 32
+if platform.uname()[5] == "x86_64":
+    SIZE_OF_IFREQ = 40
+
 
 # Globals
 sock = None
@@ -424,6 +428,7 @@ def iterifs(physical=True):
         ifconf = struct.pack("iP", SIZE_OF_IFREQ * 30, buf_addr)
         ifconf_res = fcntl.ioctl(sockfd, SIOCGIFCONF, ifconf)
         ifreqs_len, _ = struct.unpack("iP", ifconf_res)
+
 
         if ifreqs_len % SIZE_OF_IFREQ == 0:
             res = ifreqs.tostring()
