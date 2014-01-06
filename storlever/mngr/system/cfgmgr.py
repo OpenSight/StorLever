@@ -41,23 +41,31 @@ class TarFilter(object):
 class CfgManager(object):
     """contains all methods to manage the storlever cfg"""
 
-    managed_config_files = [
-        {"name": STORLEVER_CONF_DIR, "pattern": None},
-        {"name": "/etc/passwd", "pattern": None},
-        {"name": "/etc/shadow", "pattern": None},
-        {"name": "/etc/group", "pattern": None},
-        {"name": "/etc/gshadow", "pattern": None},
-        {"name": "/etc/modprobe.d/bond.conf", "pattern": None},  # for bond
-        {"name": "/etc/sysconfig/network-scripts", "pattern": r"^ifcfg-(.+)$"},
-        {"name": "/etc/storlever_test", "pattern": None},  # for unit test
-
-    ]
-
     def __init__(self):
-        pass
+        self.managed_config_files = [
+            {"name": STORLEVER_CONF_DIR, "pattern": None},
+            {"name": "/etc/passwd", "pattern": None},
+            {"name": "/etc/shadow", "pattern": None},
+            {"name": "/etc/group", "pattern": None},
+            {"name": "/etc/gshadow", "pattern": None},
+            {"name": "/etc/modprobe.d/bond.conf", "pattern": None},  # for bond
+            {"name": "/etc/sysconfig/network-scripts", "pattern": r"^ifcfg-(.+)$"},
+            {"name": "/etc/storlever_test", "pattern": None},  # for unit test
+        ]
+        self.restore_from_file_cb = []
+        self.system_restore_cb = []
+
+    def register_config_file(self, file_name, pattern=None):
+        self.managed_config_files.append({"name": file_name, "patten": pattern})
+
+    def register_restore_from_file_cb(self, fun):
+        self.restore_from_file_cb.append(fun)
+
+    def register_system_restore_cb(self, fun):
+        self.system_restore_cb.append(fun)
 
     def _del_all_config_files(self):
-        for config_file in CfgManager.managed_config_files:
+        for config_file in self.managed_config_files:
             file_name = config_file["name"]
             pattern = config_file["pattern"]
 
@@ -87,7 +95,7 @@ class CfgManager(object):
         self.check_conf_dir()     # make sure config dir exist
 
         tar_file = tarfile.open(filename, 'w:gz')
-        for config_file in CfgManager.managed_config_files:
+        for config_file in self.managed_config_files:
             if os.path.exists(config_file.get("name")):
                 if config_file.get("pattern") is None:
                     tar_file.add(config_file["name"])
@@ -108,6 +116,11 @@ class CfgManager(object):
         tar_file = tarfile.open(filename, 'r')
         tar_file.extractall("/")
         tar_file.close()
+
+        # call the register callback function for restore config
+        for callback in self.system_restore_cb:
+            callback()
+
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Storlever conf is restored from file by user(%s)" % user)		
 
@@ -119,7 +132,7 @@ class CfgManager(object):
         """
         if not os.path.isdir(STORLEVER_CONF_DIR):
             if os.path.exists(STORLEVER_CONF_DIR):
-                raise StorLeverError("storlever conf path(%) is not a directory" % STORLEVER_CONF_DIR)
+                raise StorLeverError("storlever conf path(%s) is not a directory" % STORLEVER_CONF_DIR)
             else:
                 os.makedirs(STORLEVER_CONF_DIR)
 
@@ -129,17 +142,21 @@ class CfgManager(object):
     def system_restore(self, user="unkown"):
         self._clear_conf_dir()
 
+        # call the register callback function for system_restore
+        for callback in self.system_restore_cb:
+            callback()
+
         # invoke the other module's interface to restore
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Storlever system is totally restored by user(%s)" % user)			
 
 
-cfg_manager = CfgManager()
+CfgManager = CfgManager()
 
 
 def cfg_mgr():
     """return the global cfg manager instance"""
-    return cfg_manager
+    return CfgManager
 
 
 

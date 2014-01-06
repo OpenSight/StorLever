@@ -83,7 +83,6 @@ class BondManager(object):
     def __init__(self):
         # need a mutex to protect create/delete bond interface
         self.lock = lock()
-        pass
 
     def _find_max_index(self):
         list = self.group_name_list()

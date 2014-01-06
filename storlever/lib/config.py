@@ -14,22 +14,25 @@ class Config(object):
     def parse(self):
         if self.conf_file:
             try:
-                with open(self.conf_file) as f:
+                with open(self.conf_file, "r") as f:
                     self.conf = yaml.load(f)
                 if self.schema:
-                    # TODO validate
-                    pass
+                    self.conf = self.schema.validate(self.conf)
                 return self.conf
             except Exception:
-                raise ConfigError()
+                raise ConfigError(str(Exception))
         else:
-            raise ConfigError()
+            raise ConfigError("conf file absent")
 
     def write(self):
-        if self.conf:
-            yaml.dump(self.conf, default_flow_style=False)
+        if self.conf_file and self.conf:
+            try:
+                with open(self.conf_file, "w") as f:
+                    yaml.dump(self.conf, f, default_flow_style=False)
+            except Exception:
+                raise ConfigError(str(Exception))
         else:
-            raise ConfigError
+            raise ConfigError("conf file absent")
 
     @classmethod
     def from_file(cls, conf_file, schema=None):
