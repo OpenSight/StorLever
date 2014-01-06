@@ -9,15 +9,15 @@ This module implements some functions of sys infomation acquisition for mngr.
 
 """
 
-import subprocess
-import shutil
 import datetime
 import time
+import tarfile
 
 from storlever.lib import logger
+from storlever.lib.command import check_output
 import logging
 
-LOG_DIR = "/var/log/"
+LOG_DIR = "/var/log"
 LOG_FILE_PATH_PREFIX = "/tmp/syslog"
 
 
@@ -51,20 +51,24 @@ class SysManager(object):
         """make use of rm cmd to delete all the existed sys log file"""
 
         shell_cmd = "/bin/rm -rf " + LOG_FILE_PATH_PREFIX + "*"
-        subprocess.check_call(shell_cmd, shell=True)
+        check_output(shell_cmd, shell=True)
 
     def tar_sys_log(self):
         """compress the whole system log directory to a temp"""
 
         # get current date time
         now_date = datetime.datetime.now()
-        file_base_name = LOG_FILE_PATH_PREFIX + \
-            ("_%d-%d-%d_%d-%d-%d" %
+        file_path_name = LOG_FILE_PATH_PREFIX + \
+            ("_%d-%d-%d_%d-%d-%d.tar.gz" %
              (now_date.year, now_date.month, now_date.day,
               now_date.hour, now_date.minute, now_date.second))
 
         # archive the log dir to file
-        file_path_name = shutil.make_archive(file_base_name, "gztar", "/", LOG_DIR)
+        tar_file = tarfile.open(file_path_name, 'w:gz')
+        try:
+            tar_file.add(LOG_DIR)
+        finally:
+            tar_file.close()
 
         return file_path_name
 
@@ -72,17 +76,17 @@ class SysManager(object):
         """shutdown the system"""
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "system is powered off by user(%s)" % user)
-        subprocess.check_call("(sleep 1;/sbin/poweroff)&", shell=True)
+        check_output("(sleep 1;/sbin/poweroff)&", shell=True)
 
     def reboot(self, user="unknown"):
         """reboot the system"""
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "system is rebooted by user(%s)" % user)
-        subprocess.check_call("(sleep 1;/sbin/reboot)&", shell=True)
+        check_output("(sleep 1;/sbin/reboot)&", shell=True)
 
     def get_datetime(self):
         """get system date time string with iso8601 format"""
-        return subprocess.check_output(["/bin/date", "-Iseconds"]).strip()
+        return check_output(["/bin/date", "-Iseconds"]).strip()
 
     def set_datetime(self, datetime_str, user="unknown"):
         """set system date time by datetime_string"""
@@ -91,8 +95,8 @@ class SysManager(object):
         # change it with a valid format
 
         set_string = datetime_str.replace("T", " ")
-        subprocess.check_output(["/bin/date", "-s%s" % set_string])
-        subprocess.check_output(["/sbin/hwclock", "-w"])  # sync the system time to hw time
+        check_output(["/bin/date", "-s%s" % set_string])
+        check_output(["/sbin/hwclock", "-w"])  # sync the system time to hw time
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "system date time is update to %s by user(%s)" %
                    (datetime_str, user))

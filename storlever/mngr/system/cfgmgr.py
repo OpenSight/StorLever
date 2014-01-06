@@ -28,14 +28,14 @@ class TarFilter(object):
     def __init__(self, pattern):
         self.pattern = re.compile(pattern)
 
-    def __call__(self, tarinfo):
-        if tarinfo.isdir():      # dir always include
-            return tarinfo
-        base_name = os.path.basename(tarinfo.name)
+    def __call__(self, filename):
+        if os.path.isdir(filename):      # dir always include
+            return False
+        base_name = os.path.basename(filename)
         if self.pattern.match(base_name) is None:
-            return None
+            return True
         else:
-            return tarinfo
+            return False
 
 
 class CfgManager(object):
@@ -101,7 +101,7 @@ class CfgManager(object):
                     tar_file.add(config_file["name"])
                 else:
                     filter = TarFilter(config_file["pattern"])
-                    tar_file.add(config_file["name"], filter=filter)
+                    tar_file.add(config_file["name"], exclude=filter)
         tar_file.close()
 
     def restore_from_file(self, filename, user="unkown"):

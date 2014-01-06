@@ -1,4 +1,5 @@
 import os
+import sys
 
 from setuptools import setup, find_packages
 
@@ -11,8 +12,10 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'pyyaml',
-    'psutil==1.0.1',
+    'psutil>=1.1.3',
 ]
+if sys.version_info < (2,7):
+    requires.append('unittest2')
 
 test_requires = [
     'unittest2'
