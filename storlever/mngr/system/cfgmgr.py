@@ -48,8 +48,6 @@ class CfgManager(object):
             {"name": "/etc/shadow", "pattern": None},
             {"name": "/etc/group", "pattern": None},
             {"name": "/etc/gshadow", "pattern": None},
-            {"name": "/etc/modprobe.d/bond.conf", "pattern": None},  # for bond
-            {"name": "/etc/sysconfig/network-scripts", "pattern": r"^ifcfg-(.+)$"},
             {"name": "/etc/storlever_test", "pattern": None},  # for unit test
         ]
         self.restore_from_file_cb = []

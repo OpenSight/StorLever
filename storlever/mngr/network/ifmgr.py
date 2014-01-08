@@ -13,15 +13,13 @@ import os
 
 from storlever.lib.command import check_output, read_file_entry
 from storlever.lib.exception import StorLeverError
-from storlever.lib import logger
-import logging
+from storlever.mngr.system.cfgmgr import cfg_mgr
 
 from storlever.mngr.network.netif import EthInterface
 from storlever.mngr.network import ifconfig
 
 
 SYSFS_NET_DEV = "/sys/class/net/"
-
 
 def check_network_manager_exist():
     if os.path.exists('/var/run/NetworkManager/NetworkManager.pid'):
@@ -77,12 +75,19 @@ class EthInterfaceManager(object):
         return interfaces
 
 
-EthInterfaceManager = EthInterfaceManager()
-
-
 def if_mgr():
     """return the global user manager instance"""
     return EthInterfaceManager
+
+EthInterfaceManager = EthInterfaceManager()
+
+# register cfg file
+cfg_mgr().register_config_file("/etc/modprobe.d/bond.conf")
+cfg_mgr().register_config_file("/etc/sysconfig/network-scripts", r"^ifcfg-(.+)$")
+
+
+
+
 
 
 

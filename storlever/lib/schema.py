@@ -169,7 +169,29 @@ class BoolVal(object):
 
 class StrRe(object):
     """
-    schema to Validate string against to regular express
+    schema to Validate string against to regular express, return str type
+    @data should be string which can match the given regular express
+    """
+    def __init__(self, pattern="", error=None):
+        self._error = error
+        self.pattern = re.compile(pattern)
+        self.pattern_str = pattern
+
+    def validate(self, data):
+        if not isinstance(data, str):
+            try:
+                data = str(data)
+            except Exception:
+                raise SchemaError('%s is not valid string' % data, self._error)
+
+        if self.pattern.match(data) is None:
+            raise SchemaError('%s does not match regular express(%s)' % (data, self.pattern_str), self._error)
+        else:
+            return data
+
+class UnicodeRe(object):
+    """
+    schema to Validate string against to regular express, return unicode type
     @data should be string which can match the given regular express
     """
     def __init__(self, pattern="", error=None):
@@ -182,7 +204,7 @@ class StrRe(object):
             try:
                 data = unicode(data)
             except Exception:
-                raise SchemaError('%s is not string' % data, self._error)
+                raise SchemaError('%s is not valid string' % data, self._error)
 
         if self.pattern.match(data) is None:
             raise SchemaError('%s does not match regular express(%s)' % (data, self.pattern_str), self._error)
