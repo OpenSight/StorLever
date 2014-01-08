@@ -54,12 +54,26 @@ class CfgManager(object):
         self.system_restore_cb = []
 
     def register_config_file(self, file_name, pattern=None):
+        """register a config to cfg mananger
+
+        Other module can register its config file(except in STORLEVER_CONF_DIR) to cfg manager
+        so that cfg manager can take this file into its process including backup/restore cfg.
+
+        args:
+        file_name: file/directory path name(include the absolute path, like "etc/passwd")
+        pattern: if present, cfg manager would filter the file in the path base on it,
+                 it must be a regular expression
+        """
         self.managed_config_files.append({"name": file_name, "patten": pattern})
 
     def register_restore_from_file_cb(self, fun):
+        """ register a callback function after cfg manager restore the config from file
+        """
         self.restore_from_file_cb.append(fun)
 
     def register_system_restore_cb(self, fun):
+        """register a callback function after cfg manager perform a system restore
+        """
         self.system_restore_cb.append(fun)
 
     def _del_all_config_files(self):
