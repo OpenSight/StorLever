@@ -9,6 +9,7 @@ filesystem base class. All filesystem type must inherit this class.
 
 """
 import os
+import math
 from storlever.lib.command import check_output
 
 
@@ -56,7 +57,7 @@ class FileSystem(object):
             total = (st.f_blocks * st.f_frsize)
             used = (st.f_blocks - st.f_bfree) * st.f_frsize
             try:
-                percent = (float(used) / total) * 100
+                percent = (used * 100 + (total - 1)) / total
             except ZeroDivisionError:
                 percent = 0
         else:
@@ -66,12 +67,27 @@ class FileSystem(object):
             percent = 0
 
         return {"total": total, "available": available,
-                "used": used, "percent": round(percent, 1)}
+                "used": used, "percent":  percent}
 
     def fs_meta_dump(self):
         return ""
 
     def grow_size(self):
+        pass
+
+    def create_share(self):
+        pass
+
+    def delete_share(self):
+        pass
+
+    def list_share(self):
+        pass
+
+    def mod_share_owner(self):
+        pass
+
+    def mod_share_mode(self):
         pass
 
 
