@@ -14,12 +14,13 @@ requires = [
     'pyyaml',
     'psutil>=1.1.3',
 ]
-if sys.version_info < (2,7):
-    requires.append('unittest2')
+test_requires = []
 
-test_requires = [
-    'unittest2'
-]
+if sys.version_info < (2,7):
+    test_requires.append('unittest2')
+
+
+
 
 setup(name='storlever',
       version='0.0',

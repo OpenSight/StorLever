@@ -307,11 +307,13 @@ def get_user_list(request):
 
 user_info_schema = Schema({
     "name": Use(unicode),     # name should be string
-    Optional("uid"): Default(Use(int), default=-1),  # uid must int
-    Optional("password"): Default(Use(unicode), default=""),  # uid must int
-    Optional("comment"): Default(Use(unicode), default=""),  # comment must int,
-    Optional("primay_group"): Default(Use(int), default=-1),  # primay_group must int
-    Optional("groups"): Default(Use(unicode), default=""),  # comment must int,
+    Optional("uid"): Use(int),  # uid must int
+    Optional("password"): Use(unicode), # password should be a string
+    Optional("comment"): Use(unicode), # comment must int,
+    Optional("primary_group"): Use(unicode), # primay_group must int
+    Optional("groups"):Use(unicode),
+    Optional("home_dir"): Use(unicode),
+    Optional("login"): BoolVal(),
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -320,9 +322,10 @@ user_info_schema = Schema({
 def add_user(request):
     user_info = get_params_from_request(request, user_info_schema)
     user_mgr = usermgr.user_mgr()
-    user_mgr.user_add(user_info["name"], user_info["password"], user_info["uid"],
-                      user_info["primay_group"], user_info["groups"],
-                      user_info["comment"], user=request.client_addr)
+    user_mgr.user_add(user_info["name"], user_info.get("password"), user_info.get("uid"),
+                      user_info.get("primary_group"), user_info.get("groups"),
+                      user_info.get("home_dir"), user_info.get("login"),
+                      user_info.get("comment"), user=request.client_addr)
 
     # generate 201 response
     resp = Response(status=201)
@@ -344,9 +347,10 @@ def mod_user_info(request):
     user_info["name"] = user_name
     user_info = user_info_schema.validate(user_info)
     user_mgr = usermgr.user_mgr()
-    user_mgr.user_mod(user_info["name"], user_info["password"], user_info["uid"],
-                      user_info["primay_group"], user_info["groups"],
-                      user_info["comment"], user=request.client_addr)
+    user_mgr.user_mod(user_info["name"], user_info.get("password"), user_info.get("uid"),
+                      user_info.get("primary_group"), user_info.get("groups"),
+                      user_info.get("home_dir"), user_info.get("login"),
+                      user_info.get("comment"), user=request.client_addr)
     return Response(status=200)
 
 
@@ -366,7 +370,7 @@ def get_group_list(request):
 
 group_info_schema = Schema({
     "name": Use(unicode),     # name should be string
-    Optional("gid"): Default(Use(int), default=-1),  # uid must int
+    Optional("gid"): Use(int),  # uid must int
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -375,7 +379,7 @@ group_info_schema = Schema({
 def add_group(request):
     group_info = get_params_from_request(request, group_info_schema)
     user_mgr = usermgr.user_mgr()
-    user_mgr.group_add(group_info["name"], group_info["gid"],
+    user_mgr.group_add(group_info["name"], group_info.get("gid"),
                        user=request.client_addr)
 
     # generate 201 response

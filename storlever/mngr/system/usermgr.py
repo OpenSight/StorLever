@@ -12,12 +12,16 @@ This module implements some functions of linux user management.
 import pwd
 import grp
 from crypt import crypt
+import os
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
 
+
+NO_LOGIN_SHELL = "/sbin/nologin"
+LOGIN_SHELL = "/bin/bash"
 
 class UserManager(object):
     """contains all methods to manage the user and group in linux system"""
@@ -60,14 +64,18 @@ class UserManager(object):
 
         return_list = []
         for entry in users:
+
             return_entry = {
                 "name": entry.pw_name,
                 "uid": entry.pw_uid,
                 "password": entry.pw_passwd,
                 "comment": entry.pw_gecos,
-                "primay_group": gid_name.get(entry.pw_gid, "unknown"),
-                "groups": ",".join(user_groups[entry.pw_name])
+                "primary_group": gid_name.get(entry.pw_gid, "unknown"),
+                "groups": ",".join(user_groups[entry.pw_name]),
+                "home_dir": entry.pw_dir,
+                "login": "nologin" not in entry.pw_shell
             }
+
             return_list.append(return_entry)
         return return_list
 
@@ -79,8 +87,10 @@ class UserManager(object):
                 "uid": user.pw_uid,
                 "password": user.pw_passwd,
                 "comment": user.pw_gecos,
-                "primay_group": grp.getgrgid(user.pw_gid).gr_name,
-                "groups": ",".join(self._get_groups_for_user(name))
+                "primary_group": grp.getgrgid(user.pw_gid).gr_name,
+                "groups": ",".join(self._get_groups_for_user(name)),
+                "home_dir": user.pw_dir,
+                "login": "nologin" not in user.pw_shell
             }
             return return_entry
         except KeyError as e:
@@ -110,35 +120,47 @@ class UserManager(object):
         except KeyError as e:
             raise StorLeverError(str(e), 404)
 
-    def user_add(self, name, password="", uid=-1, primary_group=-1, groups="", comment="", user="unknown"):
+    def user_add(self, name, password=None, uid=None,
+                 primary_group=None, groups=None,
+                 home_dir=None, login=None,
+                 comment=None, user="unknown"):
         cmds = ["/usr/sbin/useradd"]
-        if uid != -1:
+        if uid is not None:
             cmds.append("-u")
             cmds.append("%d" % int(uid))
-        if primary_group != -1:
+        if primary_group is not None:
             cmds.append("-g")
             cmds.append(primary_group)
-        if groups != "":
+        if groups is not None:
             cmds.append("-G")
             cmds.append(groups)
-        if comment != "":
+        if comment is not None:
             cmds.append("-c")
             cmds.append(comment)
-        if password != "":
+        if password is not None:
             cmds.append("-p")
             enc_passwd = crypt(password, "ab")
             cmds.append(enc_passwd)
+        if login is not None:
+            cmds.append("-s")
+            if not login:
+                cmds.append(NO_LOGIN_SHELL)
+            else:
+                cmds.append(LOGIN_SHELL)
 
-        cmds.append("-M")
+        if home_dir is not None:
+            cmds.append("-d")
+            cmds.append(home_dir)
+
         cmds.append(name)
         check_output(cmds, input_ret=[2, 3, 4, 6, 9])
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "New system user %s is created by user(%s)" %
                    (name, user))
 
-    def group_add(self, name, gid=-1, user="unknown"):
+    def group_add(self, name, gid=None, user="unknown"):
         cmds = ["/usr/sbin/groupadd"]
-        if gid != -1:
+        if gid is not None:
             cmds.append("-g")
             cmds.append("%d" % int(gid))
         cmds.append(name)
@@ -157,31 +179,49 @@ class UserManager(object):
                    "System user %s is deleted by user(%s)" %
                    (name, user))
 
-    def user_mod(self, name, password="", uid=-1, primary_group=-1, groups="", comment="", user="unknown"):
+    def user_mod(self, name, password=None, uid=None,
+                 primary_group=None, groups=None,
+                 home_dir=None, login=None,
+                 comment=None, user="unknown"):
 
         if name == "root":
             raise StorLeverError("cannot modify user root", 400)
 
         cmds = ["/usr/sbin/usermod"]
-        if uid != -1:
+        if uid is not None:
             cmds.append("-u")
             cmds.append("%d" % int(uid))
-        if primary_group != -1:
+        if primary_group is not None:
             cmds.append("-g")
             cmds.append(primary_group)
-        if groups != "":
+        if groups is not None:
             cmds.append("-G")
             cmds.append(groups)
-        if comment != "":
+        if comment is not None:
             cmds.append("-c")
             cmds.append(comment)
-        if password != "":
+        if password is not None:
             cmds.append("-p")
             enc_passwd = crypt(password, "ab")
             cmds.append(enc_passwd)
+        if login is not None:
+            cmds.append("-s")
+            if not login:
+                cmds.append(NO_LOGIN_SHELL)
+            else:
+                cmds.append(LOGIN_SHELL)
+
+        if home_dir is not None:
+            cmds.append("-d")
+            cmds.append(home_dir)
+            if not os.path.exists(home_dir):
+                cmds.append("-m")
+
 
         cmds.append(name)
-        check_output(cmds, input_ret=[4, 6])
+        if len(cmds) > 2:
+            check_output(cmds, input_ret=[4, 6, 12])
+
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "System user %s is modified by user(%s)" %
                    (name, user))
