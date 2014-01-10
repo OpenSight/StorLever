@@ -9,9 +9,10 @@ filesystem base class. All filesystem type must inherit this class.
 
 """
 import os
-import math
+import stat
 from storlever.lib.command import check_output
-
+from storlever.mngr.system.usermgr import user_mgr
+from storlever.lib.exception import StorLeverError
 
 PROC_MOUNT_FILE = "/proc/mounts"
 
@@ -75,19 +76,87 @@ class FileSystem(object):
     def grow_size(self):
         pass
 
-    def create_share(self):
-        pass
+    def create_share(self, name, user=None, group=None, mode = 0777):
+        # make sure fs is available
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 400)
+        if user is None:
+            uid = -1
+        else:
+            umgr = user_mgr()
+            uid = umgr.get_user_info_by_name(user)["uid"]
+        if group is None:
+            gid = -1
+        else:
+            umgr = user_mgr()
+            gid = umgr.get_group_info_by_name(group)["gid"]
+        uid = umgr.get_user_info_by_name()
+        mount_point = self.fs_conf["mount_point"]
+        path = os.path.join(mount_point, name)
+        os.mkdir(path, mode)
+        os.chown(path, uid, gid)
 
     def delete_share(self):
         pass
 
-    def list_share(self):
+    def _get_uid_map(self):
+        umgr = user_mgr();
+        ulist = umgr.user_list()
+        uid_map = {}
+        for user in ulist:
+            uid_map[user["uid"]] = user
+
+        return uid_map
+
+    def _get_gid_map(self):
+        umgr = user_mgr();
+        glist = umgr.groupr_list()
+        gid_map = {}
+        for group in glist:
+            gid_map[group["gid"]] = group
+
+        return gid_map
+
+
+    def share_list(self):
+        mount_point = self.fs_conf["mount_point"]
+        share_list = os.listdir(mount_point)
+        uid_map = self._get_uid_map()
+        gid_map = self._get_gid_map()
+        output_list = []
+        for entry in share_list:
+            path = os.path.join(mount_point, entry)
+            entry_stat = os.stat(path)
+            if not stat.S_ISDIR(entry_stat.st_mode):
+                continue    # filter out all file
+            name = entry
+            mode = stat.S_IMODE(entry_stat.st_mode)
+            if entry_stat.st_uid in uid_map:
+                user = uid_map[entry_stat.st_uid]["name"]
+            else:
+                user = str(entry_stat.st_uid)
+            if entry_stat.st_gid in gid_map:
+                group = gid_map[entry_stat.st_gid]["name"]
+            else:
+                group = str(entry_stat.st_gid)
+
+            output_list.append({
+                "name": name,
+                "path": path,
+                "mode": mode,
+                "user": user,
+                "group": group
+            })
+
+        return output_list
+
+
+
+
+    def mod_share_owner(self, user, group):
         pass
 
-    def mod_share_owner(self):
-        pass
-
-    def mod_share_mode(self):
+    def mod_share_mode(self, mode):
         pass
 
 
