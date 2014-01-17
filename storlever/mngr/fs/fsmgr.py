@@ -217,11 +217,14 @@ class FileSystemManager(object):
 
         # check mount point
         mount_point = os.path.join(MOUNT_DIR, fs_name)
-        if not os.path.isdir(mount_point):
-            if os.path.exists(mount_point):
-                raise StorLeverError("mount point(%s) is not a directory" % mount_point)
-            else:
-                os.makedirs(mount_point)
+
+
+        if os.path.exists(mount_point):
+            if not os.path.isdir(mount_point):
+                raise StorLeverError("mount point(%s) already exists and is not directory" % mount_point)
+        else:
+            # create mount point
+            os.makedirs(mount_point)
 
         # don't check dev file exist, because for the network fs, the dev file is a network id
         # if not os.path.exists(dev_file):
@@ -271,11 +274,18 @@ class FileSystemManager(object):
                 raise StorLeverError("filesystem(%s) does not exist" % fs_name, 400)
             fs_conf = fs_dict[fs_name]
             del fs_dict[fs_name]
+
+             #umount fs first. if it failed, don't delete it in the config
+            self._umount_fs(fs_name, fs_conf)
+
             self._save_conf(fs_dict)
             self._sync_to_fstab(fs_dict)
 
-            #umount fs
-            self._umount_fs(fs_name, fs_conf)
+        try:
+            os.rmdir(fs_conf["mount_point"])
+        except OSError as e:
+            pass
+
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "filesystem %s (dev:%s, mount_point:%s, option:%s) "
