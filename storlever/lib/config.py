@@ -12,7 +12,7 @@ class Config(object):
         self.schema = schema
 
     def parse(self):
-        if self.conf_file:
+        if self.conf_file is not None and self.conf_file != "":
             try:
                 with open(self.conf_file, "r") as f:
                     self.conf = yaml.load(f)
@@ -25,7 +25,8 @@ class Config(object):
             raise ConfigError("conf file absent")
 
     def write(self):
-        if self.conf_file and self.conf:
+        if self.conf_file is not None and self.conf_file != "" and \
+                self.conf is not None:
             try:
                 with open(self.conf_file, "w") as f:
                     yaml.dump(self.conf, f, default_flow_style=False)

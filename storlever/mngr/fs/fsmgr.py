@@ -69,7 +69,7 @@ class FileSystemManager(object):
             return subprocess.check_output(
                 ["/sbin/blkid", "-s", "UUID", "-o", "value", dev_file],
                 stderr=subprocess.STDOUT,
-                shell=False)
+                shell=False).strip()
         except subprocess.CalledProcessError as e:
             if e.returncode == 2:
                 http_status = 400
@@ -89,7 +89,7 @@ class FileSystemManager(object):
             fs_dict = \
                 Config.from_file(self.conf_file, self.fs_dict_schema).conf
             # check dev_file by uuid
-            for fs_name, fs_conf in self.fs_dict.items():
+            for fs_name, fs_conf in fs_dict.items():
                 if fs_conf["dev_uuid"] != "":
                     fs_conf["dev_file"] = self._uuid_to_dev_file(fs_conf["dev_uuid"])
         return fs_dict
@@ -182,7 +182,7 @@ class FileSystemManager(object):
             fs_dict = self._load_conf()
             if fs_name not in fs_dict:
                 raise StorLeverError("Filesystem(%s) does not exist" % fs_name, 404)
-            fs_conf = self.fs_dict[fs_name]
+            fs_conf = fs_dict[fs_name]
             cls = self._get_fs_type_cls(fs_conf["type"])
 
         return cls(fs_name, fs_conf)
@@ -223,9 +223,10 @@ class FileSystemManager(object):
             else:
                 os.makedirs(mount_point)
 
-        # check dev file exist
-        if not os.path.exist(dev_file):
-            raise StorLeverError("dev file(%s) does not exist" % dev_file, 400)
+        # don't check dev file exist, because for the network fs, the dev file is a network id
+        # if not os.path.exists(dev_file):
+        #     raise StorLeverError("dev file(%s) does not exist" % dev_file, 400)
+
         dev_uuid = ""
         if not dev_file.startswith("/dev/mapper"):
             dev_uuid = self._dev_file_to_uuid(dev_file)
@@ -285,7 +286,7 @@ class FileSystemManager(object):
 
     def mkfs_on_dev(self, type, dev_file, fs_options=""):
         with self.lock:
-            cls = self._get_fs_type_cls()
+            cls = self._get_fs_type_cls(type)
         cls.mkfs(type, dev_file, fs_options)
 
 

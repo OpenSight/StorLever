@@ -90,10 +90,11 @@ class FileSystem(object):
         if group is None:
             gid = -1
         else:
-            gid = umgr.get_group_info_by_name(group)["gid"]
-        uid = umgr.get_user_info_by_name()
+            gid = umgr.get_group_by_name(group)["gid"]
+
         mount_point = self.fs_conf["mount_point"]
         path = os.path.join(mount_point, name)
+        os.umask(0)
         os.mkdir(path, mode)
         os.chown(path, uid, gid)
 
@@ -127,8 +128,8 @@ class FileSystem(object):
         return uid_map
 
     def _get_gid_map(self):
-        umgr = user_mgr();
-        glist = umgr.groupr_list()
+        umgr = user_mgr()
+        glist = umgr.group_list()
         gid_map = {}
         for group in glist:
             gid_map[group["gid"]] = group
@@ -182,7 +183,7 @@ class FileSystem(object):
         if group is None:
             gid = -1
         else:
-            gid = umgr.get_group_info_by_name(group)["gid"]
+            gid = umgr.get_group_by_name(group)["gid"]
         os.chown(path, uid, gid)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -196,7 +197,8 @@ class FileSystem(object):
         path = os.path.join(self.fs_conf["mount_point"], name)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
-        os.chmode(path, mode)
+        os.umask(0)
+        os.chmod(path, mode)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Share directory (%s) mode is changed to 0%o"
