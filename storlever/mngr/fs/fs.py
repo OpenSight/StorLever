@@ -10,14 +10,19 @@ filesystem base class. All filesystem type must inherit this class.
 """
 import os
 import stat
+import re
 from storlever.lib.command import check_output
 from storlever.mngr.system.usermgr import user_mgr
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
 
-PROC_MOUNT_FILE = "/proc/mounts"
 
+PROC_MOUNT_FILE = "/proc/mounts"
+QUOTACHECK_BIN = "/sbin/quotacheck"
+QUOTAON_BIN = "/sbin/quotaon"
+REPQUOTA_BIN = "/usr/sbin/repquota"
+SETQUOTA_BIN = "/usr/sbin/setquota"
 
 class FileSystem(object):
     def __init__(self, name, fs_conf):
@@ -38,6 +43,25 @@ class FileSystem(object):
                       "-o", self.mount_options,
                       self.fs_conf["dev_file"], self.fs_conf["mount_point"]],
                      input_ret=[32])
+        quota_enabled = False
+        quotaon_args = [QUOTAON_BIN]
+        quotacheck_args = [QUOTACHECK_BIN, "-c", "-f"]
+        if "usrquota" in self.mount_options:
+            quota_enabled = True
+            quotaon_args.append("-u")
+            quotacheck_args.append("-u")
+        if "grpquota" in self.mount_options:
+            quota_enabled = True
+            quotaon_args.append("-g")
+            quotacheck_args.append("-g")
+
+        if quota_enabled:
+            try:
+                check_output(quotacheck_args)
+                check_output(quotaon_args)
+            except Exception as e:
+                pass # omit the exception
+
 
     def umount(self):
         check_output(["/bin/umount", "-f",
@@ -77,6 +101,10 @@ class FileSystem(object):
 
     def grow_size(self):
         pass
+
+    #
+    # share related
+    #
 
     def create_share(self, name, user=None, group=None, mode=0777, operator="unknown"):
         # make sure fs is available
@@ -204,6 +232,141 @@ class FileSystem(object):
                    "Share directory (%s) mode is changed to 0%o"
                    " by user(%s)" %
                    (path, mode, operator))
+
+
+
+    #
+    # quota related
+    #
+
+    def quota_check(self):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 400)
+
+        check_output([QUOTACHECK_BIN, "-ugf",
+                      self.fs_conf["mount_point"]])
+
+    def quota_user_report(self):
+        uq_list = []
+        uq_lines = check_output([REPQUOTA_BIN, "-up", self.fs_conf["mount_point"]]).splitlines()
+        table_start = False
+        start_pattern = re.compile(r"^(-)+$")
+        entry_pattern = re.compile(r"^[-\+][-\+]$")
+        for line in uq_lines:
+            if table_start:
+                if len(line) == 0:
+                    break
+                elements = line.split()
+                if len(elements) < 10:
+                    break
+                if entry_pattern.match(elements[1]) is None:
+                    break
+
+                uq_list.append({
+                    "name": elements[0],
+                    "block_used": int(elements[2]),
+                    "block_softlimit": int(elements[3]),
+                    "block_hardlimit": int(elements[4]),
+                    "inode_used": int(elements[6]),
+                    "inode_softlimit":int(elements[7]),
+                    "inode_softlimit":int(elements[8])
+                })
+
+            elif start_pattern.match(line) is not None:
+                table_start = True
+
+        return uq_list
+
+
+    def quota_group_report(self):
+        gq_list = []
+        gq_lines = check_output([REPQUOTA_BIN, "-gp", self.fs_conf["mount_point"]]).splitlines()
+        table_start = False
+        start_pattern = re.compile(r"^(-)+$")
+        entry_pattern = re.compile(r"^[-\+][-\+]$")
+        for line in gq_lines:
+            if table_start:
+                if len(line) == 0:
+                    break
+                elements = line.split()
+                if len(elements) < 10:
+                    break
+                if entry_pattern.match(elements[1]) is None:
+                    break
+
+                gq_list.append({
+                    "name": elements[0],
+                    "block_used": int(elements[2]),
+                    "block_softlimit": int(elements[3]),
+                    "block_hardlimit": int(elements[4]),
+                    "inode_used": int(elements[6]),
+                    "inode_softlimit":int(elements[7]),
+                    "inode_softlimit":int(elements[8])
+                })
+
+            elif start_pattern.match(line) is not None:
+                table_start = True
+
+        return gq_list
+
+    def quota_user_set(self, user,
+                       block_softlimit=0,
+                       block_hardlimit=0,
+                       inode_softlimit=0,
+                       inode_hardlimit=0,
+                       operator="unknown"):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 400)
+        setquota_agrs = [
+            SETQUOTA_BIN,
+            "-u",
+            user,
+            str(block_softlimit),
+            str(block_hardlimit),
+            str(inode_softlimit),
+            str(inode_hardlimit),
+            self.fs_conf["mount_point"]
+        ]
+        check_output(setquota_agrs)
+
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "File System(%s) quota for user(%s) is changed to "
+                   "(%d,%d,%d,%d)"
+                   " by user(%s)" %
+                   (self.name, user,
+                    block_softlimit, block_hardlimit,
+                    inode_softlimit, inode_hardlimit,
+                    operator))
+
+
+    def quota_group_set(self, group,
+                        block_softlimit=0,
+                        block_hardlimit=0,
+                        inode_softlimit=0,
+                        inode_hardlimit=0,
+                        operator="unknown"):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 400)
+        setquota_agrs = [
+            SETQUOTA_BIN,
+            "-g",
+            group,
+            str(block_softlimit),
+            str(block_hardlimit),
+            str(inode_softlimit),
+            str(inode_hardlimit),
+            self.fs_conf["mount_point"]
+        ]
+        check_output(setquota_agrs)
+
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "File System(%s) quota for group(%s) is changed to "
+                   "(%d,%d,%d,%d)"
+                   " by user(%s)" %
+                   (self.name, group,
+                    block_softlimit, block_hardlimit,
+                    inode_softlimit, inode_hardlimit,
+                    operator))
 
 
 

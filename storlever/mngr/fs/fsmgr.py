@@ -14,7 +14,7 @@ import os.path
 import subprocess
 
 from storlever.lib.config import Config
-from storlever.lib.command import check_output
+from storlever.lib.command import check_output, set_selinux_permissive
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
@@ -305,6 +305,8 @@ FileSystemManager = FileSystemManager()
 cfg_mgr().register_restore_from_file_cb(FileSystemManager.sync_to_fstab)
 cfg_mgr().register_system_restore_cb(FileSystemManager.sync_to_fstab)
 
+# disable selinux impact
+set_selinux_permissive()
 
 def fs_mgr():
     """return the global user manager instance"""

@@ -84,7 +84,18 @@ def write_file_entry(path, value):
 
     return value
 
+SELINUXENABLED_BIN = "/usr/sbin/selinuxenabled"
+GETENFORCE_BIN = "/usr/sbin/getenforce"
+SETENFORCE_BIN = "/usr/sbin/setenforce"
 
-
+def set_selinux_permissive():
+    """check selinux and put it in permissive mode
+    """
+    if os.path.exists(SELINUXENABLED_BIN) and \
+                    subprocess.call([SELINUXENABLED_BIN]) == 0:
+        if os.path.exists(GETENFORCE_BIN) and \
+                "Enforcing" in check_output([GETENFORCE_BIN]) :
+            if os.path.exists(SETENFORCE_BIN):
+                check_output([SETENFORCE_BIN, "0"])
 
 
