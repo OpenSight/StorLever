@@ -23,6 +23,7 @@ QUOTACHECK_BIN = "/sbin/quotacheck"
 QUOTAON_BIN = "/sbin/quotaon"
 REPQUOTA_BIN = "/usr/sbin/repquota"
 SETQUOTA_BIN = "/usr/sbin/setquota"
+DU_BIN = "/usr/bin/du"
 
 class FileSystem(object):
     def __init__(self, name, fs_conf):
@@ -57,6 +58,8 @@ class FileSystem(object):
 
         if quota_enabled:
             try:
+                quotacheck_args.append(self.fs_conf["mount_point"])
+                quotaon_args.append(self.fs_conf["mount_point"])
                 check_output(quotacheck_args)
                 check_output(quotaon_args)
             except Exception as e:
@@ -110,6 +113,10 @@ class FileSystem(object):
         # make sure fs is available
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
+        if "." in name or ".." in name:
+            raise StorLeverError("name cannot include . or ..", 400)
+        if name.startswith("/"):
+            raise StorLeverError("name must be a relative path name", 400)
         umgr = user_mgr()
         if user is None:
             uid = -1
@@ -123,7 +130,7 @@ class FileSystem(object):
         mount_point = self.fs_conf["mount_point"]
         path = os.path.join(mount_point, name)
         os.umask(0)
-        os.mkdir(path, mode)
+        os.makedirs(path, mode)
         os.chown(path, uid, gid)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -135,6 +142,11 @@ class FileSystem(object):
         # make sure fs is available
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
+        if "." in name or ".." in name:
+            raise StorLeverError("name cannot include . or ..", 400)
+        if name.startswith("/"):
+            raise StorLeverError("name must be a relative path name", 400)
+
         path = os.path.join(self.fs_conf["mount_point"], name)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
@@ -165,14 +177,22 @@ class FileSystem(object):
         return gid_map
 
 
-    def share_list(self):
+    def share_list(self, parent=""):
+        if "." in parent or ".." in parent:
+            raise StorLeverError("parent cannot include . or ..", 400)
+        if parent.startswith("/"):
+            raise StorLeverError("parent must be a relative path name", 400)
         mount_point = self.fs_conf["mount_point"]
-        share_list = os.listdir(mount_point)
+        parent_path = os.path.join(mount_point, parent)
+        if not os.path.exists(parent_path):
+            raise StorLeverError("Parent directory not found", 404)
+
+        share_list = os.listdir(parent_path)
         uid_map = self._get_uid_map()
         gid_map = self._get_gid_map()
         output_list = []
         for entry in share_list:
-            path = os.path.join(mount_point, entry)
+            path = os.path.join(parent_path, entry)
             entry_stat = os.stat(path)
             if not stat.S_ISDIR(entry_stat.st_mode):
                 continue    # filter out all file
@@ -200,6 +220,11 @@ class FileSystem(object):
     def mod_share_owner(self, name, user = None, group = None, operator="unknown"):
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
+        if "." in name or ".." in name:
+            raise StorLeverError("name cannot include . or ..", 400)
+        if name.startswith("/"):
+            raise StorLeverError("name must be a relative path name", 400)
+
         path = os.path.join(self.fs_conf["mount_point"], name)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
@@ -222,6 +247,11 @@ class FileSystem(object):
     def mod_share_mode(self, name, mode, operator="unknown"):
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
+        if "." in name or ".." in name:
+            raise StorLeverError("name cannot include . or ..", 400)
+        if name.startswith("/"):
+            raise StorLeverError("name must be a relative path name", 400)
+
         path = os.path.join(self.fs_conf["mount_point"], name)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
@@ -233,6 +263,26 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, mode, operator))
 
+    def share_usage_stat(self, name):
+        if "." in name or ".." in name:
+            raise StorLeverError("name cannot include . or ..", 400)
+        if name.startswith("/"):
+            raise StorLeverError("name must be a relative path name", 400)
+
+        path = os.path.join(self.fs_conf["mount_point"], name)
+        if not os.path.exists(path):
+            raise StorLeverError("Share directory not found", 404)
+        output_lines = check_output([DU_BIN, "-b", path]).splitlines()
+        usage_list = []
+        for line in output_lines:
+            elements = line.split()
+            if len(elements) != 2:
+                continue
+            usage_list.append({
+                "bytes": int(elements[0]),
+                "path": elements[1]
+            })
+        return usage_list
 
 
     #
@@ -248,7 +298,7 @@ class FileSystem(object):
 
     def quota_user_report(self):
         uq_list = []
-        uq_lines = check_output([REPQUOTA_BIN, "-up", self.fs_conf["mount_point"]]).splitlines()
+        uq_lines = check_output([REPQUOTA_BIN, "-upv", self.fs_conf["mount_point"]]).splitlines()
         table_start = False
         start_pattern = re.compile(r"^(-)+$")
         entry_pattern = re.compile(r"^[-\+][-\+]$")
@@ -269,7 +319,7 @@ class FileSystem(object):
                     "block_hardlimit": int(elements[4]),
                     "inode_used": int(elements[6]),
                     "inode_softlimit":int(elements[7]),
-                    "inode_softlimit":int(elements[8])
+                    "inode_hardlimit":int(elements[8])
                 })
 
             elif start_pattern.match(line) is not None:
@@ -280,7 +330,7 @@ class FileSystem(object):
 
     def quota_group_report(self):
         gq_list = []
-        gq_lines = check_output([REPQUOTA_BIN, "-gp", self.fs_conf["mount_point"]]).splitlines()
+        gq_lines = check_output([REPQUOTA_BIN, "-gpv", self.fs_conf["mount_point"]]).splitlines()
         table_start = False
         start_pattern = re.compile(r"^(-)+$")
         entry_pattern = re.compile(r"^[-\+][-\+]$")
@@ -301,7 +351,7 @@ class FileSystem(object):
                     "block_hardlimit": int(elements[4]),
                     "inode_used": int(elements[6]),
                     "inode_softlimit":int(elements[7]),
-                    "inode_softlimit":int(elements[8])
+                    "inode_hardlimit":int(elements[8])
                 })
 
             elif start_pattern.match(line) is not None:

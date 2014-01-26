@@ -217,8 +217,6 @@ class FileSystemManager(object):
 
         # check mount point
         mount_point = os.path.join(MOUNT_DIR, fs_name)
-
-
         if os.path.exists(mount_point):
             if not os.path.isdir(mount_point):
                 raise StorLeverError("mount point(%s) already exists and is not directory" % mount_point)
@@ -246,12 +244,13 @@ class FileSystemManager(object):
         fs_conf = self.fs_conf_schema.validate(fs_conf)
 
         with self.lock:
-            # mount fs first
-            self._mount_fs(fs_name, fs_conf)
-
             fs_dict = self._load_conf()
             if fs_name in fs_dict:
                 raise StorLeverError("filesystem(%s) already exist" % fs_name, 400)
+
+            # mount fs first
+            self._mount_fs(fs_name, fs_conf)
+
             fs_dict[fs_name] = fs_conf
             self._save_conf(fs_dict)
             self._sync_to_fstab(fs_dict)

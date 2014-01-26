@@ -25,6 +25,13 @@ class Xfs(FileSystem):
         cmd = "/sbin/mkfs.xfs -f -q %s %s" % (fs_options, dev_file)
         check_output(cmd, shell=True, input_ret=[1])
 
+    def mount(self):
+        check_output(["/bin/mount", "-t", self.fs_conf["type"],
+                      "-o", self.mount_options,
+                      self.fs_conf["dev_file"], self.fs_conf["mount_point"]],
+                     input_ret=[32])
+        # xfs does not support and no needs quota_check and quota_on
+
     def fs_meta_dump(self):
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
@@ -37,6 +44,11 @@ class Xfs(FileSystem):
         check_output(["/usr/sbin/xfs_growfs", self.fs_conf["mount_point"]],
                      input_ret=[1])
 
+    def quota_check(self):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 400)
+        # xfs no needs and has no quota check function
+        pass
 
 
 # register to fs manager
