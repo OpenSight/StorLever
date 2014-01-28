@@ -109,7 +109,7 @@ class FileSystem(object):
     # share related
     #
 
-    def create_share(self, name, user=None, group=None, mode=0777, operator="unknown"):
+    def create_dir(self, name, user=None, group=None, mode=0777, operator="unknown"):
         # make sure fs is available
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
@@ -138,7 +138,7 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, operator))
 
-    def delete_share(self, name, user="unknown"):
+    def delete_dir(self, name, user="unknown"):
         # make sure fs is available
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
@@ -177,7 +177,7 @@ class FileSystem(object):
         return gid_map
 
 
-    def share_list(self, parent=""):
+    def ls_dir(self, parent=""):
         if "." in parent or ".." in parent:
             raise StorLeverError("parent cannot include . or ..", 400)
         if parent.startswith("/"):
@@ -217,7 +217,7 @@ class FileSystem(object):
 
         return output_list
 
-    def mod_share_owner(self, name, user = None, group = None, operator="unknown"):
+    def mod_dir_owner(self, name, user = None, group = None, operator="unknown"):
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
         if "." in name or ".." in name:
@@ -244,7 +244,7 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, user, group, operator))
 
-    def mod_share_mode(self, name, mode, operator="unknown"):
+    def mod_dir_mode(self, name, mode, operator="unknown"):
         if not self.is_available():
             raise StorLeverError("File system is unavailable", 400)
         if "." in name or ".." in name:
@@ -263,7 +263,7 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, mode, operator))
 
-    def share_usage_stat(self, name):
+    def dir_usage_stat(self, name):
         if "." in name or ".." in name:
             raise StorLeverError("name cannot include . or ..", 400)
         if name.startswith("/"):
