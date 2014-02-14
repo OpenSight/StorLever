@@ -124,7 +124,10 @@ class IntVal(object):
     def validate(self, data):
         if not isinstance(data, int):
             try:
-                data = int(data)
+                if (isinstance(data, str) or isinstance(data, unicode)):
+                    data = int(data, 0)
+                else:
+                    data = int(data)
             except Exception:
                 raise SchemaError('%s is not integer' % data, self._error)
         if self._values:
@@ -225,6 +228,11 @@ class Use(object):
 
     def validate(self, data):
         try:
+
+            if self._callable == int and \
+               (isinstance(data, str) or isinstance(data, unicode)):
+                return self._callable(data,0)
+
             return self._callable(data)
         except SchemaError as x:
             raise SchemaError([None] + x.autos, [self._error] + x.errors)
