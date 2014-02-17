@@ -184,8 +184,8 @@ class FtpManager(object):
         else:
             vsftpd_conf["local_root"] = ftp_conf["local_root"]
 
-        if ftp_conf("chroot_enable"):
-            if ftp_conf("chroot_list"):
+        if ftp_conf["chroot_enable"]:
+            if ftp_conf["chroot_list"]:
                 vsftpd_conf["chroot_local_user"] = "NO"
                 vsftpd_conf["chroot_list_enable"] = "YES"
             else:
