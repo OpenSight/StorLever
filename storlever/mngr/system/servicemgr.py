@@ -115,7 +115,7 @@ class ServiceManager(object):
                 "name": service,
                 "comment": params["comment"],
                 "state": params["ps"] in ps_out,
-                "auto_start": chkconfig_out[service][CHK_LEVEL] == "on"
+                "auto_start": chkconfig_out[params["init"]][CHK_LEVEL] == "on"
             }
 
             if params["ps"] == "":

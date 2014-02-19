@@ -176,7 +176,10 @@ class FtpManager(object):
         vsftpd_conf["write_enable"] = self._bool_to_yn(ftp_conf["write_enable"])
 
         vsftpd_conf["local_enable"] = self._bool_to_yn(ftp_conf["local_enable"])
-        vsftpd_conf["userlist_enable"] = self._bool_to_yn(ftp_conf["userlist_enable"])
+        if ftp_conf["local_enable"]:
+            vsftpd_conf["userlist_enable"] = self._bool_to_yn(ftp_conf["userlist_enable"])
+        else:
+            vsftpd_conf["userlist_enable"] = "NO"
         vsftpd_conf["userlist_deny"] = "NO"
         vsftpd_conf["local_umask"] = "0%o" % ftp_conf["local_umask"]
         if len(ftp_conf["local_root"]) == 0:
@@ -209,9 +212,12 @@ class FtpManager(object):
         # user_list file
         user_list_lines = []
         if ftp_conf["local_enable"] and ftp_conf["userlist_enable"]:
-            for name, user_conf in ftp_conf["user_list"]:
+            for name, user_conf in ftp_conf["user_list"].items():
                 if user_conf["login_enable"]:
                     user_list_lines.append(user_conf["user_name"] + "\n")
+            if ftp_conf["anonymous_enable"]:
+                user_list_lines.append("anonymous\n")
+                user_list_lines.append("ftp\n")
         user_list_file = os.path.join(VSFTPD_ETC_CONF_DIR, VSFTPD_ETC_USER_LIST)
         with open(user_list_file, "w") as f:
             f.writelines(user_list_lines)
@@ -219,7 +225,7 @@ class FtpManager(object):
         # chroot_list file
         chroot_list_lines = []
         if ftp_conf["chroot_enable"] and ftp_conf["chroot_list"]:
-            for name, user_conf in ftp_conf["user_list"]:
+            for name, user_conf in ftp_conf["user_list"].items():
                 if user_conf["chroot_enable"]:
                     chroot_list_lines.append(user_conf["user_name"] + "\n")
         chroot_list_file = os.path.join(VSFTPD_ETC_CONF_DIR, VSFTPD_ETC_CHROOT_LIST)
@@ -233,7 +239,7 @@ class FtpManager(object):
             ftp_conf = self._load_conf()
             self._sync_to_fstab(ftp_conf)
 
-    def set_ftp_conf(self, config={}, **kwargs):
+    def set_ftp_conf(self, config={}, operator="unkown", **kwargs):
         if not isinstance(config, dict):
             raise StorLeverError("Parameter type error", 500)
         if len(config) == 0 and len(kwargs) == 0:
@@ -269,11 +275,6 @@ class FtpManager(object):
             self._save_conf(ftp_conf)
             self._sync_to_system_conf(ftp_conf)
 
-        if "operator" in kwargs:
-            operator = kwargs["operator"]
-        else:
-            operator = "unknown"
-
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "FTP config is updated by user(%s)" %
                    (operator))
@@ -301,7 +302,7 @@ class FtpManager(object):
     def get_user_conf(self, user_name):
         with self.lock:
             ftp_conf = self._load_conf()
-        user_conf = ftp_conf["user_list"].get("user_name")
+        user_conf = ftp_conf["user_list"].get(user_name)
         if user_conf is None:
             raise StorLeverError("user_name(%s) not found" % (user_name), 404)
         result = {
@@ -315,7 +316,7 @@ class FtpManager(object):
         with self.lock:
             ftp_conf = self._load_conf()
             if user_name in ftp_conf["user_list"]:
-                 raise StorLeverError("user_name(%s) not found" % (user_name), 404)
+                 raise StorLeverError("user_name(%s) already exists" % (user_name), 404)
             try:
                 user_mgr().get_user_info_by_name(user_name)
             except Exception as e:
@@ -339,7 +340,7 @@ class FtpManager(object):
     def del_user_conf(self, user_name, operator="unkown"):
         with self.lock:
             ftp_conf = self._load_conf()
-            user_conf = ftp_conf["user_list"].get("user_name")
+            user_conf = ftp_conf["user_list"].get(user_name)
             if user_conf is None:
                 raise StorLeverError("user_name(%s) not found" % (user_name), 404)
             del ftp_conf["user_list"][user_name]
