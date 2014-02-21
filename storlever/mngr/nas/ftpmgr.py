@@ -151,13 +151,9 @@ class FtpManager(object):
 
         if not os.path.exists(VSFTPD_ETC_CONF_DIR):
             os.makedirs(VSFTPD_ETC_CONF_DIR)
-        # conf file
-        conf_file = os.path.join(VSFTPD_ETC_CONF_DIR, VSFTPD_ETC_CONF_FILE)
-        if os.path.exists(conf_file):
-            vsftpd_conf = properties(conf_file)
-        else:
-            vsftpd_conf = properties()
 
+        # conf file
+        vsftpd_conf = properties()
         vsftpd_conf["listen"] = self._bool_to_yn(ftp_conf["listen"])
         vsftpd_conf["listen_ipv6"] = self._bool_to_yn(ftp_conf["listen6"])
         vsftpd_conf["listen_port"] = ftp_conf["listen_port"]
@@ -207,6 +203,7 @@ class FtpManager(object):
         else:
             vsftpd_conf["anon_root"] = ftp_conf["anon_root"]
 
+        conf_file = os.path.join(VSFTPD_ETC_CONF_DIR, VSFTPD_ETC_CONF_FILE)
         vsftpd_conf.apply_to(conf_file)
 
         # user_list file
@@ -235,9 +232,24 @@ class FtpManager(object):
     def sync_to_system_conf(self):
         """sync the ftp conf to /etc/vsftp/"""
 
+        if not os.path.exists(self.conf_file):
+            return  # if not conf file, don't change the system config
+
         with self.lock:
             ftp_conf = self._load_conf()
-            self._sync_to_fstab(ftp_conf)
+            self._sync_to_system_conf(ftp_conf)
+
+    def system_restore_cb(self):
+        """sync the ftp conf to /etc/vsftp/"""
+
+        if not os.path.exists(self.conf_file):
+            return  # if not conf file, don't change the system config
+
+        os.remove(self.conf_file)
+
+        with self.lock:
+            ftp_conf = self._load_conf()
+            self._sync_to_system_conf(ftp_conf)
 
     def set_ftp_conf(self, config={}, operator="unkown", **kwargs):
         if not isinstance(config, dict):
@@ -375,9 +387,9 @@ class FtpManager(object):
 
 FtpManager = FtpManager()
 
+# register ftp manager callback functions to basic manager
 cfg_mgr().register_restore_from_file_cb(FtpManager.sync_to_system_conf)
-cfg_mgr().register_system_restore_cb(FtpManager.sync_to_system_conf)
-
+cfg_mgr().register_system_restore_cb(FtpManager.system_restore_cb)
 service_mgr().register_service("ftpd", "vsftpd", "/user/sbin/vsftpd", "FTP Server(vsftpd)")
 
 # disable selinux impact

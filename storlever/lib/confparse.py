@@ -544,6 +544,9 @@ $)''', re.VERBOSE)
             m = self.line.match( line )
             if m:
                 section, option, value, cont = m.group('section', 'option', 'value', 'cont')
+
+                if value is None:
+                    value = ""
                 
                 if section:
                     cur_sect = self[section] = properties()

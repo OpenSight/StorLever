@@ -151,6 +151,14 @@ class FileSystemManager(object):
             fs_dict = self._load_conf()
             self._sync_to_fstab(fs_dict)
 
+
+    def system_restore_cb(self):
+        """sync the fs conf list in storlever to /etc/fstab"""
+
+        with self.lock:
+            fs_dict = {}
+            self._sync_to_fstab(fs_dict)
+
     def _mount_fs(self, name, fs_conf):
 
         # get a fs object
@@ -302,7 +310,7 @@ class FileSystemManager(object):
 FileSystemManager = FileSystemManager()
 
 cfg_mgr().register_restore_from_file_cb(FileSystemManager.sync_to_fstab)
-cfg_mgr().register_system_restore_cb(FileSystemManager.sync_to_fstab)
+cfg_mgr().register_system_restore_cb(FileSystemManager.system_restore_cb)
 
 # disable selinux impact
 set_selinux_permissive()

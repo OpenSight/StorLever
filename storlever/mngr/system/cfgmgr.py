@@ -130,7 +130,7 @@ class CfgManager(object):
         tar_file.close()
 
         # call the register callback function for restore config
-        for callback in self.system_restore_cb:
+        for callback in self.restore_from_file_cb:
             callback()
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -152,11 +152,12 @@ class CfgManager(object):
         shutil.rmtree(STORLEVER_CONF_DIR, True)
 
     def system_restore(self, user="unkown"):
-        self._clear_conf_dir()
 
         # call the register callback function for system_restore
         for callback in self.system_restore_cb:
             callback()
+
+        self._clear_conf_dir()
 
         # invoke the other module's interface to restore
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
