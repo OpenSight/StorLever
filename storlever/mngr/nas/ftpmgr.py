@@ -32,6 +32,93 @@ VSFTPD_ETC_CONF_FILE = "vsftpd.conf"
 VSFTPD_ETC_USER_LIST = "user_list"
 VSFTPD_ETC_CHROOT_LIST = "chroot_list"
 
+FTP_USER_CONF_SCHEMA = Schema({
+    "user_name": Use(str),
+    # When enabled, the user can log in ftp
+    Optional("login_enable"): Default(BoolVal(), default=True),
+    # When enabled, the user will be placed into the chroot jail
+    Optional("chroot_enable"): Default(BoolVal(), default=False)
+})
+
+FTP_CONF_SCHEMA = Schema({
+    Optional("listen"): Default(BoolVal(), default=False),    # ftp service listen on ipv4 port
+    Optional("listen6"): Default(BoolVal(), default=False),   # ftp service listen on ipv6 port
+    Optional("listen_port"): Default(IntVal(min=1, max=65535), default=21),  # ftp port number
+
+    # The maximum amount of time between commands from a remote client.
+    # Once triggered, the connection to the remote client is closed
+    Optional("idle_session_timeout"): Default(Use(int), default=300),
+
+    # the maximum data transfer rate for anonymous users in bytes per second.
+    # The default value is 0, which does not limit the transfer rate.
+    Optional("anon_max_rate"): Default(Use(int), default=0),
+    # the maximum rate data is transferred for local users in bytes per second.
+    # The default value is 0, which does not limit the transfer rate.
+    Optional("local_max_rate"): Default(Use(int), default=0),
+
+    # the maximum number of simultaneous clients allowed to connect to
+    # the server when it is running in standalone mode. Any additional client
+    # connections would result in an error message.
+    # The default value is 0, which does not limit connections.
+    Optional("max_clients"): Default(Use(int), default=0),
+
+    # the maximum of clients allowed to connected from the same source IP address.
+    # The default value is 0, which does not limit connections.
+    Optional("max_per_ip"): Default(Use(int), default=0),
+
+    # When enabled, file downloads are permitted
+    Optional("download_enable"): Default(BoolVal(), default=True),
+    # When enabled, FTP commands which can change the file system are allowed
+    Optional("write_enable"): Default(BoolVal(), default=False),
+
+    # When enabled, local users are allowed to log into the system
+    Optional("local_enable"): Default(BoolVal(), default=False),
+    # Only valid when local_enable is true. If userlist_enable == False,
+    # all local user (except for some reserved user, like root, bin) can login ftp.
+    # Otherwise, only the users, who is in the user list and is login enabled, can
+    # login ftp
+    Optional("userlist_enable"): Default(BoolVal(), default=False),
+    # Specifies the directory ftpd changes to after a local user logs in. default is
+    # empty, which means the user's home directory
+    Optional("local_root"): Default(Use(str), default=""),
+
+    # When enabled, local users are change-rooted to their home directories after logging in.
+    Optional("chroot_enable"): Default(BoolVal(), default=False),
+    # Only valid when chroot_enable is true. If chroot_list == False,
+    # all local user are placed in a chroot jail upon log in.
+    # Otherwise, only the users, who is in the user list and is chroot enabled, would be
+    # placed in a chroot jail upon log in.
+    Optional("chroot_list"): Default(BoolVal(), default=False),
+
+    # the umask value for file creation. default is 022(18 in 10-based)
+    Optional("local_umask"): Default(IntVal(min=0, max=0777), default=18),
+
+    Optional("user_list"):  Default(Schema({DoNotCare(str): FTP_USER_CONF_SCHEMA}),
+                                      default={}),
+
+    # When enabled, anonymous users are allowed to log in.
+    # The usernames anonymous and ftp are accepted.
+    Optional("anonymous_enable"): Default(BoolVal(), default=False),
+
+    # When enabled in conjunction with the write_enable directive,
+    # anonymous users are allowed to create new directories within
+    # a parent directory which has write permissions
+    Optional("anon_mkdir_write_enable"): Default(BoolVal(), default=False),
+    # When enabled in conjunction with the write_enable directive,
+    # anonymous users are allowed to upload files within
+    # a parent directory which has write permissions.
+    Optional("anon_upload_enable"): Default(BoolVal(), default=False),
+
+    # Specifies the local user account (listed in /etc/passwd) used for the anonymous user.
+    # The home directory specified in /etc/passwd for the user is the root directory of the anonymous user.
+    Optional("anon_username"): Default(Use(str), default="ftp"),
+
+    # Specifies the directory vsftpd changes to after an anonymous user logs in. default is
+    # empty, which means the anon_username user's home directory
+    Optional("anon_root"): Default(Use(str), default=""),
+
+    DoNotCare(str): Use(str)  # for all those key we don't care
+})
 
 class FtpManager(object):
     """contains all methods to manage ethernet interface in linux system"""
@@ -40,92 +127,8 @@ class FtpManager(object):
         # need a mutex to protect create/delete bond interface
         self.lock = lock()
         self.conf_file = os.path.join(STORLEVER_CONF_DIR, FTP_CONF_FILE_NAME)
-        self.ftp_user_conf_schema = Schema({
-            "user_name": Use(str),
-            # When enabled, the user can log in ftp
-            Optional("login_enable"): Default(BoolVal(), default=True),
-            # When enabled, the user will be placed into the chroot jail
-            Optional("chroot_enable"): Default(BoolVal(), default=False)
-        })
-        self.ftp_conf_schema = Schema({
-            Optional("listen"): Default(BoolVal(), default=False),    # ftp service listen on ipv4 port
-            Optional("listen6"): Default(BoolVal(), default=False),   # ftp service listen on ipv6 port
-            Optional("listen_port"): Default(IntVal(min=1, max=65535), default=21),  # ftp port number
-
-            # The maximum amount of time between commands from a remote client.
-            # Once triggered, the connection to the remote client is closed
-            Optional("idle_session_timeout"): Default(Use(int), default=300),
-
-            # the maximum data transfer rate for anonymous users in bytes per second.
-            # The default value is 0, which does not limit the transfer rate.
-            Optional("anon_max_rate"): Default(Use(int), default=0),
-            # the maximum rate data is transferred for local users in bytes per second.
-            # The default value is 0, which does not limit the transfer rate.
-            Optional("local_max_rate"): Default(Use(int), default=0),
-
-            # the maximum number of simultaneous clients allowed to connect to
-            # the server when it is running in standalone mode. Any additional client
-            # connections would result in an error message.
-            # The default value is 0, which does not limit connections.
-            Optional("max_clients"): Default(Use(int), default=0),
-
-            # the maximum of clients allowed to connected from the same source IP address.
-            # The default value is 0, which does not limit connections.
-            Optional("max_per_ip"): Default(Use(int), default=0),
-
-            # When enabled, file downloads are permitted
-            Optional("download_enable"): Default(BoolVal(), default=True),
-            # When enabled, FTP commands which can change the file system are allowed
-            Optional("write_enable"): Default(BoolVal(), default=False),
-
-            # When enabled, local users are allowed to log into the system
-            Optional("local_enable"): Default(BoolVal(), default=False),
-            # Only valid when local_enable is true. If userlist_enable == False,
-            # all local user (except for some reserved user, like root, bin) can login ftp.
-            # Otherwise, only the users, who is in the user list and is login enabled, can
-            # login ftp
-            Optional("userlist_enable"): Default(BoolVal(), default=False),
-            # Specifies the directory ftpd changes to after a local user logs in. default is
-            # empty, which means the user's home directory
-            Optional("local_root"): Default(Use(str), default=""),
-
-            # When enabled, local users are change-rooted to their home directories after logging in.
-            Optional("chroot_enable"): Default(BoolVal(), default=False),
-            # Only valid when chroot_enable is true. If chroot_list == False,
-            # all local user are placed in a chroot jail upon log in.
-            # Otherwise, only the users, who is in the user list and is chroot enabled, would be
-            # placed in a chroot jail upon log in.
-            Optional("chroot_list"): Default(BoolVal(), default=False),
-
-            # the umask value for file creation. default is 022(18 in 10-based)
-            Optional("local_umask"): Default(IntVal(min=0, max=0777), default=18),
-
-            Optional("user_list"):  Default(Schema({DoNotCare(str): self.ftp_user_conf_schema}),
-                                              default={}),
-
-            # When enabled, anonymous users are allowed to log in.
-            # The usernames anonymous and ftp are accepted.
-            Optional("anonymous_enable"): Default(BoolVal(), default=False),
-
-            # When enabled in conjunction with the write_enable directive,
-            # anonymous users are allowed to create new directories within
-            # a parent directory which has write permissions
-            Optional("anon_mkdir_write_enable"): Default(BoolVal(), default=False),
-            # When enabled in conjunction with the write_enable directive,
-            # anonymous users are allowed to upload files within
-            # a parent directory which has write permissions.
-            Optional("anon_upload_enable"): Default(BoolVal(), default=False),
-
-            # Specifies the local user account (listed in /etc/passwd) used for the anonymous user.
-            # The home directory specified in /etc/passwd for the user is the root directory of the anonymous user.
-            Optional("anon_username"): Default(Use(str), default="ftp"),
-
-            # Specifies the directory vsftpd changes to after an anonymous user logs in. default is
-            # empty, which means the anon_username user's home directory
-            Optional("anon_root"): Default(Use(str), default=""),
-
-            DoNotCare(str): Use(str)  # for all those key we don't care
-        })
+        self.ftp_user_conf_schema = FTP_USER_CONF_SCHEMA
+        self.ftp_conf_schema = FTP_CONF_SCHEMA
 
     def _load_conf(self):
         ftp_conf = {}
@@ -390,7 +393,7 @@ FtpManager = FtpManager()
 # register ftp manager callback functions to basic manager
 cfg_mgr().register_restore_from_file_cb(FtpManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(FtpManager.system_restore_cb)
-service_mgr().register_service("ftpd", "vsftpd", "/user/sbin/vsftpd", "FTP Server(vsftpd)")
+service_mgr().register_service("ftpd", "vsftpd", "/sbin/vsftpd", "FTP Server(vsftpd)")
 
 # disable selinux impact
 set_selinux_permissive()
