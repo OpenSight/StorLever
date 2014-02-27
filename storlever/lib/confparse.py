@@ -446,7 +446,7 @@ $)''', re.VERBOSE)
 
     def simple_line ( self, section, key ) :
         if key in self.section:
-            return key + '=' + a_copy[section][key].replace('\n','\n\t') + '\n'
+            return key + '=' + self[section][key].replace('\n','\n\t') + '\n'
         else : return ""
 
     def __repr__(self):
