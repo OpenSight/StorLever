@@ -75,7 +75,7 @@ def not_found_view(exc, request):
     response = request.response
     response.status_int = exc.status_code
     type, dummy, tb = sys.exc_info()
-    return {'info': 'Resource {} not found or method {} not supported'.format(request.path, request.method),
+    return {'info': 'Resource {0} not found or method {1} not supported'.format(request.path, request.method),
             'exception': str(type),
             'traceback': []}
 
