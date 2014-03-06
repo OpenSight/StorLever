@@ -74,7 +74,7 @@ def system_uname_get(request):
 @get_view(route_name='cpu_list')
 def system_cpu_list_get(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
-    cpus = sys_mgr.cpu_list()
+    cpus = sys_mgr.get_cpu_list()
     cpu_list_dict = []
     for cpu in cpus:
         cpu_info = {'processor': cpu["processor"],
