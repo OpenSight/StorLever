@@ -479,16 +479,21 @@ $)''', re.VERBOSE)
                     result += repr ( a_copy[cur_sect] )
                     del a_copy[cur_sect]
                 
-                if section not in self.dustbin:
+                if section not in a_copy.dustbin:
                     result += line
 
                 cur_sect = section
 
             # skip the line whose option is in the dustbin
-            elif option and option in a_copy[cur_sect].dustbin:
-                pass    
-            
-            elif option and option in a_copy[cur_sect]:
+            elif option and cur_sect in a_copy and \
+                    option in a_copy[cur_sect].dustbin:
+                pass
+
+            # skip the line whose option is in a deleted section
+            elif option and cur_sect in a_copy.dustbin:
+                pass
+
+            elif option and cur_sect in a_copy and option in a_copy[cur_sect]:
                 result += replace_value_in_line (mo, a_copy[cur_sect][option])
                 del a_copy[cur_sect][option]
                                 
@@ -499,7 +504,7 @@ $)''', re.VERBOSE)
                     continue
                 option = mo.group( 'option' )
                 
-                if option and option in a_copy[cur_sect]:
+                if option and cur_sect in a_copy and option in a_copy[cur_sect]:
                     result += replace_value_in_line (mo, a_copy[cur_sect][option])
                     del a_copy[cur_sect][option]
                             
