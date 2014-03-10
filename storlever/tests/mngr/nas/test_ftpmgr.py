@@ -9,7 +9,7 @@ else:
 from storlever.mngr.nas.ftpmgr import ftp_mgr
 
 
-class TestCfgMgr(unittest.TestCase):
+class TestFtpMgr(unittest.TestCase):
 
     def test_ftp_conf(self):
         mgr = ftp_mgr()
@@ -27,6 +27,12 @@ class TestCfgMgr(unittest.TestCase):
 
     def test_ftp_user(self):
         mgr = ftp_mgr()
+        try:
+            mgr.get_user_conf("root")
+            mgr.del_user_conf("root")
+        except Exception:
+            pass
+
         mgr.add_user_conf("root", True, True)
         user_conf_list = mgr.get_user_conf_list()
         found = False
@@ -41,6 +47,10 @@ class TestCfgMgr(unittest.TestCase):
         self.assertEquals(user_conf["login_enable"], True)
         self.assertEquals(user_conf["chroot_enable"], True)
         self.assertEquals(user_conf["user_name"], "root")
+
+        mgr.set_user_conf("root", chroot_enable=False)
+        user_conf = mgr.get_user_conf("root")
+        self.assertEquals(user_conf["chroot_enable"], False)
 
         mgr.del_user_conf("root")
 
