@@ -14,10 +14,9 @@ requires = [
     'pyyaml',
     'psutil>=1.1.3',
 ]
-test_requires = []
 
 if sys.version_info < (2,7):
-    test_requires.append('unittest2')
+    requires.append('unittest2')
 
 
 
@@ -40,7 +39,7 @@ setup(name='storlever',
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
-      tests_require=requires + test_requires,
+      tests_require=requires,
       test_suite="storlever.tests",
       entry_points="""\
       [paste.app_factory]
