@@ -37,7 +37,9 @@ FTP_USER_CONF_SCHEMA = Schema({
     # When enabled, the user can log in ftp
     Optional("login_enable"): Default(BoolVal(), default=True),
     # When enabled, the user will be placed into the chroot jail
-    Optional("chroot_enable"): Default(BoolVal(), default=False)
+    Optional("chroot_enable"): Default(BoolVal(), default=False),
+
+    DoNotCare(str): Use(str)  # for all those key we don't care
 })
 
 FTP_CONF_SCHEMA = Schema({
@@ -331,7 +333,7 @@ class FtpManager(object):
         with self.lock:
             ftp_conf = self._load_conf()
             if user_name in ftp_conf["user_list"]:
-                 raise StorLeverError("user_name(%s) already exists" % (user_name), 404)
+                 raise StorLeverError("user_name(%s) already exists" % (user_name), 400)
             try:
                 user_mgr().get_user_info_by_name(user_name)
             except Exception as e:
@@ -372,7 +374,7 @@ class FtpManager(object):
     def set_user_conf(self, user_name, login_enable=None, chroot_enable=None, operator="unkown"):
         with self.lock:
             ftp_conf = self._load_conf()
-            user_conf = ftp_conf["user_list"].get("user_name")
+            user_conf = ftp_conf["user_list"].get(user_name)
             if user_conf is None:
                 raise StorLeverError("user_name(%s) not found" % (user_name), 404)
             if login_enable is not None:
