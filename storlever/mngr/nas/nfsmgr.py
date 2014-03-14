@@ -198,7 +198,7 @@ class NfsManager(object):
 
         new_export_point = {
             "path": path,
-            "clients":clients,
+            "clients": clients,
         }
         new_export_point = self.export_point_conf_schema.validate(new_export_point)
 
@@ -218,6 +218,8 @@ class NfsManager(object):
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "export point with path(%s) config is added by operator(%s)" %
                    (path, operator))
+
+        return len(nfs_conf) - 1
 
     def del_export_conf(self, index, operator="unkown"):
         with self.lock:
@@ -285,6 +287,8 @@ class NfsManager(object):
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Client (%s) for export point (%s)is added by operator(%s)" %
                    (host, export_point["path"], operator))
+
+        return len(client_list) - 1
 
     def del_client(self, export_index, client_index, operator="unkown"):
         with self.lock:
