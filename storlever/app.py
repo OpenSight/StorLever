@@ -31,9 +31,6 @@ def main(global_config, **settings):
         set_lock_factory_from_name(settings.get("lock.module"),
                                    settings.get("lock.factory"))
 
-
-
-
     # make JSON as the default renderer
     config.add_renderer(None, JSON(indent=json_indent))
 
@@ -41,8 +38,9 @@ def main(global_config, **settings):
     # check storlever.rest.__init__.py for more detail
     config.include('storlever.rest', route_prefix='storlever/api/v1')
 
-    # scan to register view callables
-    config.scan()
-    
+    # route and view configuration of Web UI can be found in module storlever.web
+    # check storlever.web.__init__.py for more detail
+    config.include('storlever.web')
+
     return config.make_wsgi_app()
 

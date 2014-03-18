@@ -15,6 +15,7 @@ import pyramid.exceptions
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.events import subscriber, NewResponse
+from pyramid.renderers import render_to_response
 
 from storlever.lib.schema import SchemaError as ValidationFailure
 from storlever.lib.exception import StorLeverError
@@ -75,9 +76,13 @@ def not_found_view(exc, request):
     response = request.response
     response.status_int = exc.status_code
     type, dummy, tb = sys.exc_info()
-    return {'info': 'Resource {0} not found or method {1} not supported'.format(request.path, request.method),
-            'exception': str(type),
-            'traceback': []}
+    if not request.path.startswith('/storlever/api/'):
+        return render_to_response('storlever:templates/404.pt', {},
+                              request=request)
+    else:
+        return {'info': 'Resource {0} not found or method {1} not supported'.format(request.path, request.method),
+                'exception': str(type),
+                'traceback': []}
 
 
 @subscriber(NewResponse)
