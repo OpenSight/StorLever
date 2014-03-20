@@ -91,7 +91,7 @@ def add_response_header(event):
     add all custom header here
     """
     response = event.response
-    response.headers['X-Powered-By'] = 'Pyramid framework'
+    response.headers['X-Powered-By'] = 'OpenSight (opensight.com.cn)'
 
 
 def get_params_from_request(request, schema=None):

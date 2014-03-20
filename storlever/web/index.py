@@ -23,7 +23,12 @@ def includeme(config):
     config.add_route('root', '/')
 
 
-@get_view(route_name='root', renderer='storlever:templates/index.pt')
+@get_view(route_name='root', permission="web", renderer='storlever:templates/index.pt')
 def index_get(request):
+    session = request.session
+    print session.new
+    if session.new:
+        session["login"] = "admin"
+
     return {"project": "storlever"}
 
