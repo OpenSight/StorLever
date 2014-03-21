@@ -198,10 +198,8 @@ class NtpManager(object):
             line += " noquery"
         if restrict_conf["noserve"]:
             line += " noserve"
-        if restrict_conf["nomodify"]:
-            line += " nomodify"
-        if restrict_conf["noserve"]:
-            line += " noserve"
+        if restrict_conf["notrap"]:
+            line += " notrap"
 
         line += "\n"
         return line
@@ -214,8 +212,8 @@ class NtpManager(object):
             os.makedirs(NTP_ETC_STORLEVER_CONF_DIR)
 
         # write the etc storlever config
-        file_name = os.path.join(NTP_ETC_STORLEVER_CONF_DIR, NTP_ETC_STORLEVER_CONF_FILE)
-        with open(file_name, "w") as f:
+        storlever_file_name = os.path.join(NTP_ETC_STORLEVER_CONF_DIR, NTP_ETC_STORLEVER_CONF_FILE)
+        with open(storlever_file_name, "w") as f:
             f.write("# server list\n")
             for server_conf in ntp_conf["server_list"]:
                 f.write(self._server_conf_to_line(server_conf))
@@ -229,11 +227,11 @@ class NtpManager(object):
         already_include = False
         with open(file_name, "r") as f:
             for line in f:
-                if NTP_ETC_STORLEVER_CONF_FILE in line:
+                if storlever_file_name in line:
                     already_include = True
         if not already_include:
             with open(file_name, "a") as f:
-                f.write("\nincludefile %s\n" % file_name)
+                f.write("\nincludefile %s\n" % storlever_file_name)
 
     def sync_to_system_conf(self):
         """sync the ntp conf to /etc/ntp.conf"""
@@ -452,7 +450,7 @@ class NtpManager(object):
                    "NTP restrict (%s) config is updated by operator(%s)" %
                    (restrict_list[index]["restrict_addr"], operator))
 
-    def get_ntp_connections(self):
+    def get_peer_list(self):
 
         connections = []
         ll = check_output([NTPQ_CMD, '-pn']).splitlines()
@@ -461,15 +459,16 @@ class NtpManager(object):
             if len(s) < 10:
                 raise StorLeverError("ntpq output format cannot be regonized" ,
                                      500)
+
             connections.append({
                 "state": l[0],
                 "remote": s[0],
                 "refid": s[1],
                 "stratum": int(s[2]),
                 "type": s[3],
-                "when": float(s[4]),
-                "poll": float(s[5]),
-                "reach": float(s[6]),
+                "when": s[4],
+                "poll": int(s[5]),
+                "reach": int(s[6], 8),
                 "delay": float(s[7]),
                 "offset": float(s[8]),
                 "jitter": float(s[9])
