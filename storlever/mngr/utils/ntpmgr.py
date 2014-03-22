@@ -224,14 +224,27 @@ class NtpManager(object):
 
         # add storlever config to ntp.conf
         file_name = os.path.join(NTP_ETC_CONF_DIR, NTP_ETC_CONF_FILE)
-        already_include = False
         with open(file_name, "r") as f:
-            for line in f:
-                if storlever_file_name in line:
-                    already_include = True
-        if not already_include:
-            with open(file_name, "a") as f:
-                f.write("\nincludefile %s\n" % storlever_file_name)
+            lines = f.readlines()
+
+        if "# begin storlever\n" in lines:
+            before_storlever = lines[0:lines.index("# begin storlever\n")]
+        else:
+            before_storlever = lines[0:]
+            if not before_storlever[-1].endswith("\n"):
+                before_storlever[-1] += "\n"
+
+        if "# end storlever\n" in lines:
+            after_storlever = lines[lines.index("# end storlever\n") + 1:]
+        else:
+            after_storlever = []
+
+        with open(file_name, "w") as f:
+            f.writelines(before_storlever)
+            f.write("# begin storlever\n")
+            f.write("includefile %s\n" % storlever_file_name)
+            f.write("# end storlever\n")
+            f.writelines(after_storlever)
 
     def sync_to_system_conf(self):
         """sync the ntp conf to /etc/ntp.conf"""
