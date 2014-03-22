@@ -245,8 +245,7 @@ class Use(object):
 
 class ListVal(object):
     """
-    schema to Validate string against to regular express, return unicode type
-    @data should be string which can match the given regular express
+    schema to Validate list which can convert a string/unicode to the list by a sep char
     """
     def __init__(self, element_type, sep=",", error=None):
         self._error = error
