@@ -13,7 +13,6 @@ from pyramid.config import Configurator
 from pyramid.renderers import JSON
 
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
-
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from storlever.lib.lock import set_lock_factory_from_name

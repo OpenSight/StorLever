@@ -232,6 +232,8 @@ class Use(object):
             if self._callable == int and \
                (isinstance(data, str) or isinstance(data, unicode)):
                 return self._callable(data,0)
+            if self._callable == str or self._callable == unicode:
+                return self._callable(data).strip()
 
             return self._callable(data)
         except SchemaError as x:
@@ -240,6 +242,24 @@ class Use(object):
             f = self._callable.__name__
             raise SchemaError('%s(%r) raised %r' % (f, data, x), self._error)
 
+
+class ListVal(object):
+    """
+    schema to Validate string against to regular express, return unicode type
+    @data should be string which can match the given regular express
+    """
+    def __init__(self, element_type, sep=",", error=None):
+        self._error = error
+        self._schema = Schema([element_type])
+
+    def validate(self, data):
+        if not isinstance(data, list):
+            try:
+                data = data.split(self.sep)
+            except Exception:
+                raise SchemaError('%s is not valid string or list' % data, self._error)
+
+        return self._schema.validate(data)
 
 def priority(s):
     if isinstance(s, DoNotCare):
