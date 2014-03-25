@@ -6,5 +6,5 @@ def includeme(config):
     config.include(__name__ + '.lvm')
     config.include(__name__ + '.block')
     config.include(__name__ + '.fs')
-    config.include(__name__ + '.utilities')
+    config.include(__name__ + '.utils')
     config.scan()             # scan to register view callables, must be last statement
