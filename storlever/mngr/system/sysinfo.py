@@ -111,7 +111,7 @@ class SysManager(object):
         return time.time()
 
     def get_selinux_state(self):
-        output = check_output(["/usr/sbin/getenforce"]).lower()
+        output = check_output(["/usr/sbin/getenforce"]).lower().strip()
         return output
 
     def set_selinux_state(self, state, user="unknown"):
@@ -122,7 +122,9 @@ class SysManager(object):
         }
         param = state_str_to_int.get(state)
         if param is not None:
-            check_output(["/usr/sbin/setenforce", str(param)])
+            old_state = check_output(["/usr/sbin/getenforce"]).lower().strip()
+            if old_state != "disabled":
+                check_output(["/usr/sbin/setenforce", str(param)])
 
         if not os.path.exists(SELINUX_CONF_DIR):
             os.makedirs(SELINUX_CONF_DIR)

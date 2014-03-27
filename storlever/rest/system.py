@@ -571,6 +571,5 @@ def put_selinux_state(request):
     params = get_params_from_request(request, selinux_mod_schema)
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
     sys_mgr.set_selinux_state(params['state'], user=request.client_addr)
-    if params['state'] == "disabled":
-        return "System should be reboot when selinux state is changed to disabled"
-    return Response(status=200)
+    return "System should be reboot when selinux state is changed"
+
