@@ -128,9 +128,19 @@ class SysManager(object):
 
         if not os.path.exists(SELINUX_CONF_DIR):
             os.makedirs(SELINUX_CONF_DIR)
+        conf_path = os.path.join(SELINUX_CONF_DIR, SELINUX_CONF_FILE)
+        conf = properties()
+        conf.delete("SELINUX")
+        conf.apply_to(conf_path)
+        with open(conf_path, "r") as f:
+            content = f.read()
+        if content.endswith("\n") or len(content) == 0:
+            content += "SELINUX=%s\n" % state
+        else:
+            content += "\nSELINUX=%s\n" % state
+        with open(conf_path, "w") as f:
+            f.write(content)
 
-        conf = properties(SELINUX=state)
-        conf.apply_to(os.path.join(SELINUX_CONF_DIR, SELINUX_CONF_FILE))
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "selinux state is set to %s by user(%s)" %
                    (state, user))
