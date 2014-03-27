@@ -12,13 +12,18 @@ This module implements some functions of sys infomation acquisition for mngr.
 import datetime
 import time
 import tarfile
+import os
 
 from storlever.lib import logger
 from storlever.lib.command import check_output
 import logging
+from storlever.lib.confparse import properties
 
 LOG_DIR = "/var/log"
 LOG_FILE_PATH_PREFIX = "/tmp/syslog"
+
+SELINUX_CONF_DIR = "/etc/selinux/"
+SELINUX_CONF_FILE = "config"
 
 
 class SysManager(object):
@@ -104,6 +109,29 @@ class SysManager(object):
     def get_timestamp(self):
         """get the timestamp of the system"""
         return time.time()
+
+    def get_selinux_state(self):
+        output = check_output(["/usr/sbin/getenforce"]).lower()
+        return output
+
+    def set_selinux_state(self, state, user="unknown"):
+        state_str_to_int = {
+            "enforcing": 1,
+            "permissive": 0,
+            "disabled": 0
+        }
+        param = state_str_to_int.get(state)
+        if param is not None:
+            check_output(["/usr/sbin/setenforce", str(param)])
+
+        if not os.path.exists(SELINUX_CONF_DIR):
+            os.makedirs(SELINUX_CONF_DIR)
+
+        conf = properties(SELINUX=state)
+        conf.apply_to(os.path.join(SELINUX_CONF_DIR, SELINUX_CONF_FILE))
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "selinux state is set to %s by user(%s)" %
+                   (state, user))
 
 
 SysManager = SysManager()
