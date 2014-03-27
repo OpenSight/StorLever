@@ -25,7 +25,7 @@ from storlever.mngr.system import usermgr
 from storlever.mngr.system import servicemgr
 from storlever.mngr.system import cfgmgr
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
-    Use, IntVal, Default, SchemaError, BoolVal
+    Use, IntVal, Default, SchemaError, BoolVal, StrRe
 from storlever.lib.exception import StorLeverError
 
 
@@ -56,7 +56,7 @@ def includeme(config):
     config.add_route('storlever_conf', '/system/conf_tar')
     config.add_route('backup_conf_to_file', '/system/backup_conf')
     config.add_route('restore_conf_from_file', '/system/restore_conf')
-
+    config.add_route('selinux_state', '/system/selinux')
 
 
 @get_view(route_name='uname')
@@ -552,3 +552,24 @@ def restore_conf_from_file(request):
     cfg_mgr.restore_from_file(params["file"], user=request.client_addr)
 
     return Response(status=200)
+
+
+@get_view(route_name='selinux_state')
+def get_selinux_state(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    return {"state": sys_mgr.get_selinux_state()}
+
+
+selinux_mod_schema = Schema({
+    "state": Default(StrRe(r"^(enforcing|permissive|disabled)$"),
+                     default="permissive")
+})
+
+
+@put_view(route_name='selinux_state')
+def put_selinux_state(request):
+    params = get_params_from_request(request, selinux_mod_schema)
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.set_selinux_state(params['state'], user=request.client_addr)
+    return "System should be reboot when selinux state is changed"
+
