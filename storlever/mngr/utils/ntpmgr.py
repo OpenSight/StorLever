@@ -30,7 +30,7 @@ NTP_CONF_FILE_NAME = "ntp_conf.yaml"
 NTP_ETC_CONF_DIR = "/etc/"
 NTP_ETC_CONF_FILE = "ntp.conf"
 NTP_ETC_STORLEVER_CONF_DIR = "/etc/ntp/"
-NTP_ETC_STORLEVER_CONF_FILE = "ntp_storlever.conf"
+NTP_ETC_STORLEVER_CONF_FILE = "ntp.storlever.conf"
 NTPQ_CMD = "/usr/sbin/ntpq"
 
 
