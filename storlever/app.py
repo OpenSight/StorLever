@@ -11,13 +11,30 @@ StorLever's main file to make a WSGI application.
 
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
+
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.authentication import SessionAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from storlever.lib.lock import set_lock_factory_from_name
+from storlever.lib.security import AclRootFactory
+
 
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    config = Configurator(settings=settings)
+
+    storlever_session_factory = UnencryptedCookieSessionFactoryConfig('storlever201308')
+    storlever_authn_policy = SessionAuthenticationPolicy()
+    storlever_authz_policy = ACLAuthorizationPolicy()
+
+
+    config = Configurator(session_factory=storlever_session_factory,
+                          root_factory=AclRootFactory,
+                          authentication_policy=storlever_authn_policy,
+                          authorization_policy=storlever_authz_policy,
+                          settings=settings)
+
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     # get user-specific config from setting
@@ -31,9 +48,6 @@ def main(global_config, **settings):
         set_lock_factory_from_name(settings.get("lock.module"),
                                    settings.get("lock.factory"))
 
-
-
-
     # make JSON as the default renderer
     config.add_renderer(None, JSON(indent=json_indent))
 
@@ -41,8 +55,9 @@ def main(global_config, **settings):
     # check storlever.rest.__init__.py for more detail
     config.include('storlever.rest', route_prefix='storlever/api/v1')
 
-    # scan to register view callables
-    config.scan()
-    
+    # route and view configuration of Web UI can be found in module storlever.web
+    # check storlever.web.__init__.py for more detail
+    config.include('storlever.web')
+
     return config.make_wsgi_app()
 

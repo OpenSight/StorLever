@@ -13,6 +13,7 @@ requires = [
     'waitress',
     'pyyaml',
     'psutil>=1.1.3',
+    'pyramid_chameleon',
 ]
 
 if sys.version_info < (2,7):
