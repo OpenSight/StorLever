@@ -63,6 +63,12 @@ class SystemService(object):
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "Service %s is restarted by user(%s)" % (self.name, user))
 
+    def reload(self, user="unkown"):
+        check_output([INIT_SCRIPT_DIR + self.init_script, "reload"])
+        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
+                   "Service %s is reloaded configure by user(%s)" % (self.name, user))
+
+
     def start(self, user="unkown"):
         check_output([INIT_SCRIPT_DIR + self.init_script, "start"])
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,

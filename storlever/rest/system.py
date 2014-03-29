@@ -429,6 +429,7 @@ service_mod_schema = Schema({
     Optional("state"): BoolVal(),  # state must bool
     Optional("restart"): BoolVal(),  # restart must bool
     Optional("auto_start"): BoolVal(),  # auto_start must bool
+    Optional("reload"): BoolVal(),  # reload must bool
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -449,6 +450,9 @@ def put_service(request):
     elif "restart" in cmd:
         if cmd["restart"]:
             service.restart(request.client_addr)
+    elif "reload" in cmd:
+        if cmd["restart"]:
+            service.reload(request.client_addr)
 
     if "auto_start" in cmd:
         if cmd["auto_start"]:
