@@ -75,11 +75,13 @@ class EthInterfaceManager(object):
         return interfaces
 
 
+EthInterfaceManager = EthInterfaceManager()
+		
 def if_mgr():
     """return the global user manager instance"""
     return EthInterfaceManager
 
-EthInterfaceManager = EthInterfaceManager()
+
 
 # register cfg file
 cfg_mgr().register_config_file("/etc/modprobe.d/bond.conf")

@@ -20,7 +20,6 @@ from pyramid.renderers import render_to_response
 from storlever.lib.schema import SchemaError as ValidationFailure
 from storlever.lib.exception import StorLeverError
 
-
 class _rest_view(view_config):
     def __init__(self, **settings):
         method = self.__class__.__name__.split('_')[0].upper()
