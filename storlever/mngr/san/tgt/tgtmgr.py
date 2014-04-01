@@ -13,7 +13,6 @@ to output iscsi targets
 
 import os
 import os.path
-import subprocess
 
 from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
@@ -22,23 +21,25 @@ from storlever.lib import logger
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
     Default, DoNotCare, BoolVal, IntVal
-from storlever.mngr.system.usermgr import user_mgr
-from storlever.lib.lock import lock
-from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
-from storlever.mngr.system.servicemgr import service_mgr
-from storlever.lib.confparse import properties, ini
-
 
 TGT_CONF_FILE_NAME = "tgt_conf.yaml"
 TGT_ETC_CONF_DIR = "/etc/tgt/"
 TGT_ETC_CONF_FILE = "targets.conf"
-TGT_ETC_STORLEVER_FILE = "targets.storlever.conf"
+TGT_ETC_STORLEVER_FILE = "targets.conf.storlever"
 TGTADMIN_CMD = "/usr/sbin/tgt-admin"
+
+from storlever.lib.lock import lock
+from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
+from storlever.mngr.system.servicemgr import service_mgr
+from target import Target
+
+
+
 
 LUN_CONF_SCHEMA = Schema({
 
     # lun number
-    "lun": IntVal(min=1, 255),
+    "lun": IntVal(1, 255),
 
     # iqn of this target
     "path": Use(str),
@@ -61,16 +62,16 @@ LUN_CONF_SCHEMA = Schema({
 
     # if a direct mapped logical unit (LUN) with the same properties as the
     # physical device (such as VENDOR_ID, SERIAL_NUM, etc.)
-    Optional("direct_map"): Default(BoolVal, default=False),
+    Optional("direct_map"): Default(BoolVal(), default=False),
 
     # enable write cache or not
-    Optional("write_cache"): Default(BoolVal, default=True),
+    Optional("write_cache"): Default(BoolVal(), default=True),
 
     # readonly an read-write
-    Optional("readonly"): Default(BoolVal, default=False),
+    Optional("readonly"): Default(BoolVal(), default=False),
 
     # online or offline
-    Optional("online"): Default(BoolVal, default=True),
+    Optional("online"): Default(BoolVal(), default=True),
     
     # scsi id, if empty, it would automatically be set to a default value
     Optional("scsi_id"): Default(Use(str), default=""),
@@ -101,7 +102,7 @@ TARGET_CONF_SCHEMA = Schema({
     # specified, it is not used.
     Optional("outgoinguser_list"): Default([Use(str)], default=[]),
 
-    Optional("lun_list"): Default([], default=[]),
+    Optional("lun_list"): Default([LUN_CONF_SCHEMA], default=[]),
 
     DoNotCare(str): Use(str)  # for all those key we don't care
 
@@ -156,12 +157,13 @@ class TgtManager(object):
                 return target_conf
         raise StorLeverError("Target (iqn:%s) Not Found" % iqn, 404)
 
-    def _set_target_conf(self, iqn, target_conf):
+    def _set_target_conf(self, iqn, new_target_conf):
         tgt_conf = self._load_conf()
         for i, target_conf in enumerate(tgt_conf["target_list"]):
             if target_conf["iqn"] == iqn:
-                tgt_conf["target_list"][i] = target_conf
+                tgt_conf["target_list"][i] = new_target_conf
                 self._save_conf(tgt_conf)
+                self._sync_to_system_conf(tgt_conf)
                 return
         raise StorLeverError("Target (iqn:%s) Not Found" % iqn, 404)
 
@@ -220,6 +222,8 @@ class TgtManager(object):
             line += self._lun_conf_to_line(lun_conf)
 
         line += "</target>\n"
+
+        return line
 
     def _sync_to_system_conf(self, tgt_conf):
         if not os.path.exists(TGT_ETC_CONF_DIR):
@@ -314,7 +318,7 @@ class TgtManager(object):
             self._sync_to_system_conf(tgt_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Samba config is updated by user(%s)" %
+                   "tgt config is updated by user(%s)" %
                    (operator))
 
     def get_tgt_conf(self):
@@ -343,7 +347,13 @@ class TgtManager(object):
         return iqn_list
 
     def get_target_by_iqn(self, iqn):
-        pass
+        with self.lock:
+            tgt_conf = self._load_conf()
+        for target_conf in tgt_conf["target_list"]:
+            if target_conf["iqn"] == iqn:
+                return Target(iqn, target_conf, self)
+
+        raise StorLeverError("tgt target (iqn:%s) Not Found" % (iqn), 404)
 
     def create_target(self, iqn, operator="unkown"):
 
@@ -385,7 +395,7 @@ class TgtManager(object):
                 if target_conf["iqn"] == iqn:
                     delete_conf = target_conf
             if delete_conf is None:
-                raise StorLeverError("tgt target (iqn%s) Not Found" % (iqn), 404)
+                raise StorLeverError("tgt target (iqn:%s) Not Found" % (iqn), 404)
             else:
                 tgt_conf["target_list"].remove(delete_conf)
 
@@ -394,7 +404,7 @@ class TgtManager(object):
             self._sync_to_system_conf(tgt_conf)
 
         try:
-            check_output([TGTADMIN_CMD, "--delete", iqn])
+            check_output([TGTADMIN_CMD, "-f", "--delete", iqn])
         except StorLeverError:
             pass
 
@@ -407,10 +417,7 @@ TgtManager = TgtManager()
 # register ftp manager callback functions to basic manager
 cfg_mgr().register_restore_from_file_cb(TgtManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(TgtManager.system_restore_cb)
-service_mgr().register_service("tgt", "tgtd", "tgtd", "iscsi target output Server")
-
-# disable selinux impact
-set_selinux_permissive()
+service_mgr().register_service("tgt", "tgtd", "tgtd", "iSCSI Target Server")
 
 def tgt_mgr():
     """return the global user manager instance"""
