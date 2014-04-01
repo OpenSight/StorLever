@@ -417,6 +417,7 @@ class SmbManager(object):
             "write_list": write_list,
             "veto_files": veto_files
         }
+        share_conf = self.share_conf_schema.validate(share_conf)
 
         with self.lock:
             smb_conf = self._load_conf()
@@ -490,6 +491,7 @@ class SmbManager(object):
                 share_conf["write_list"] = write_list
             if veto_files is not None:
                 share_conf["veto_files"] = veto_files
+
 
             # save new conf
             self._save_conf(smb_conf)
