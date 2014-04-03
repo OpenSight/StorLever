@@ -112,11 +112,11 @@ TGT_CONF_SCHEMA = Schema({
 
 
     # Define iscsi incoming discovery authentication setting. If it is
-    # empty, no authentication is performed.
+    # empty, no authentication is performed. The format is username:passwd
     Optional("incomingdiscoveryuser"): Default(Use(str), default=""),
 
     # Define iscsi outgoing discovery authentication setting. If it is
-    # empty, no authentication is performe
+    # empty, no authentication is performe  The format is username:passwd
     Optional("outgoingdiscoveryuser"): Default(Use(str), default=""),
 
     # target list

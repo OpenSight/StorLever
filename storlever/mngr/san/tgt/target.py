@@ -71,11 +71,11 @@ class Target(object):
 
     # incominguser_list
     def get_incominguser_list(self):
-        hide_list = []
+        user_list = []
         for user in self.conf["incominguser_list"]:
             name, sep, password = user.partition(":")
-            hide_list.append( name.strip() + ":" + "*")
-        return hide_list
+            user_list.append( name.strip())
+        return user_list
 
     def set_incominguser(self, name, passwd, operator="unkown"):
         with self.mgr.lock:
@@ -125,12 +125,11 @@ class Target(object):
 
     # incominguser_list
     def get_outgoinguser_list(self):
-        hide_list = []
+        user_list = []
         for user in self.conf["outgoinguser_list"]:
             name, sep, password = user.partition(":")
-            hide_list.append( name.strip() + ":" + "*")
-
-        return hide_list
+            user_list.append( name.strip())
+        return user_list
 
     def set_outgoinguser(self, name, passwd, operator="unkown"):
         with self.mgr.lock:
