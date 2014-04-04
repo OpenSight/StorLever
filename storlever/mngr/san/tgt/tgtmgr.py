@@ -25,7 +25,7 @@ from storlever.lib.schema import Schema, Use, Optional, \
 TGT_CONF_FILE_NAME = "tgt_conf.yaml"
 TGT_ETC_CONF_DIR = "/etc/tgt/"
 TGT_ETC_CONF_FILE = "targets.conf"
-TGT_ETC_STORLEVER_FILE = "targets.conf.storlever"
+TGT_ETC_STORLEVER_FILE = "targets.storlever.conf"
 TGTADMIN_CMD = "/usr/sbin/tgt-admin"
 
 from storlever.lib.lock import lock
