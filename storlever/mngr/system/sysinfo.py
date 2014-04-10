@@ -110,6 +110,16 @@ class SysManager(object):
         """get the timestamp of the system"""
         return time.time()
 
+    def flush_page_cache(self):
+        """flush page cache from memory"""
+        # sync
+        check_output(["/bin/sync"])
+        # clean cache
+        with open("/proc/sys/vm/drop_caches", "w") as f:
+            f.write("3")
+
+
+
     def get_selinux_state(self):
         output = check_output(["/usr/sbin/getenforce"]).lower().strip()
         return output

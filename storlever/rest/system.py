@@ -37,6 +37,7 @@ def includeme(config):
     config.add_route('cpu_times', '/system/cpu_times')
     config.add_route('per_cpu_times', '/system/per_cpu_times')
     config.add_route('memory', '/system/memory')
+    config.add_route('flush_page_cache', '/system/flush_page_cache')
     config.add_route('ps', '/system/ps')
     config.add_route('disk_io_counters', '/system/disk_io_counters')
     config.add_route('per_disk_io_counters', '/system/per_disk_io_counters')
@@ -146,6 +147,14 @@ def system_memory_get(request):
                           'cached': memory_info.cached}
 
     return memory_info_output
+
+
+@put_view(route_name='flush_page_cache')
+@post_view(route_name='flush_page_cache')
+def system_memory_get(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    sys_mgr.flush_page_cache()
+    return Response(status=200)
 
 
 

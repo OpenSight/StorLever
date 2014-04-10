@@ -9,20 +9,17 @@ StorLever's main file to make a WSGI application.
 
 """
 
-from pyramid.config import Configurator
-from pyramid.renderers import JSON
-
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
-from pyramid.authentication import SessionAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
-from storlever.lib.lock import set_lock_factory_from_name
-from storlever.lib.security import AclRootFactory
-
-
-
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+    from storlever.lib.lock import set_lock_factory_from_name
+    from storlever.lib.security import AclRootFactory
+    from pyramid.config import Configurator
+    from pyramid.renderers import JSON
+
+    from pyramid.session import UnencryptedCookieSessionFactoryConfig
+    from pyramid.authentication import SessionAuthenticationPolicy
+    from pyramid.authorization import ACLAuthorizationPolicy
 
     storlever_session_factory = UnencryptedCookieSessionFactoryConfig('storlever201308')
     storlever_authn_policy = SessionAuthenticationPolicy()
