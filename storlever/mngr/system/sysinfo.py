@@ -15,7 +15,7 @@ import tarfile
 import os
 
 from storlever.lib import logger
-from storlever.lib.command import check_output
+from storlever.lib.command import check_output, write_file_entry
 import logging
 from storlever.lib.confparse import properties
 
@@ -115,10 +115,7 @@ class SysManager(object):
         # sync
         check_output(["/bin/sync"])
         # clean cache
-        with open("/proc/sys/vm/drop_caches", "w") as f:
-            f.write("3")
-
-
+        write_file_entry("/proc/sys/vm/drop_caches", "3\n")
 
     def get_selinux_state(self):
         output = check_output(["/usr/sbin/getenforce"]).lower().strip()
