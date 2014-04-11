@@ -6,7 +6,7 @@ from pyramid.response import FileResponse
 from storlever.mngr.network import ifmgr
 from storlever.mngr.network import netif
 from pyramid.response import Response
-from storlever.mngr.network import BondManager
+from storlever.mngr.network.bond import BondManager
 
 def includeme(config):
     # network resource

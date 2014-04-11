@@ -11,21 +11,9 @@ This module implements block device manager
 
 import os
 import os.path
-import subprocess
 
-from storlever.lib.config import Config
-from storlever.lib.command import check_output, set_selinux_permissive
+from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
-from storlever.lib import logger
-import logging
-from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
-from storlever.mngr.system.usermgr import user_mgr
-from storlever.lib.lock import lock
-from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
-from storlever.mngr.system.servicemgr import service_mgr
-from storlever.lib.confparse import properties, ini
-
 
 
 BLOCKDEV_CMD = "/sbin/blockdev"
@@ -66,7 +54,7 @@ class BlockManager(object):
 
         return block_list
 
-    def flush_buf(self, block_name):
+    def flush_block_buf(self, block_name):
         if os.path.exists(block_name):
             dev_file = block_name
         elif os.path.exists(os.path.join("/dev/mapper/", block_name)):
