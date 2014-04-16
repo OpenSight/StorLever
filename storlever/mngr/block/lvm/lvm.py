@@ -75,15 +75,16 @@ class _LVM(object):
             vg = dm_list_next(names, vg)
         return vg_list
 
-    def get_vg(self, name, mode=_VG.MODE_READ):
+    def get_vg(self, name, mode=None):
+        if mode is None:
+            mode = _VG.MODE_READx
         return _VG(self, name, mode=mode)
 
 
 class _VG(object):
     """
-    For VG creation
-    Used ONLY in with context, for example:
-    with _VGNew(lvm, 'new_vg') as vg:
+    Used _VG object ONLY in with context, for example:
+    with _VG(lvm, 'new_vg') as vg:
         vg.set_extent_size()
         vg.add_pv()
     """
@@ -96,14 +97,14 @@ class _VG(object):
         self._lvm = lvm
         if not lvm or not lvm.hdlr:
             raise StorLeverError('')
-        self._name = name
+        self.name = name
         self._mode = mode
         if mode == self.MODE_READ:
-            self._hdlr = lvm_vg_open(self._lvm.hdlr, self._name, 'r', 0)
+            self._hdlr = lvm_vg_open(self._lvm.hdlr, self.name, 'r', 0)
         elif mode == self.MODE_WRITE:
-            self._hdlr = lvm_vg_open(self._lvm.hdlr, self._name, 'w', 0)
+            self._hdlr = lvm_vg_open(self._lvm.hdlr, self.name, 'w', 0)
         elif mode == self.MODE_NEW:
-            self._hdlr = lvm_vg_create(self._lvm.hdlr, self._name)
+            self._hdlr = lvm_vg_create(self._lvm.hdlr, self.name)
         else:
             raise StorLeverError('Unknown VG operation mode')
         if not bool(self._hdlr):
@@ -124,7 +125,7 @@ class _VG(object):
 
     def __enter__(self):
         if not self._hdlr:
-            self._hdlr = lvm_vg_create(self._lvm_hdlr, self._name)
+            self._hdlr = lvm_vg_create(self._lvm_hdlr, self.name)
             if not bool(self._hdlr):
                 self.raise_from_error()
         return self
@@ -173,7 +174,142 @@ class _VG(object):
     @check_hdlr
     def delete(self):
         if lvm_vg_remove(self._hdlr) != 0:
-            self.raise_from_error('Failed to delete VG {0}'.format(self._name))
+            self.raise_from_error('Failed to delete VG {0}'.format(self.name))
+
+    @check_hdlr
+    def get_uuid(self):
+        return lvm_vg_get_uuid(self._hdlr)
+
+    @check_hdlr
+    def get_name(self):
+        return lvm_vg_get_name(self._hdlr)
+
+    @check_hdlr
+    def get_size(self):
+        return lvm_vg_get_size(self._hdlr)
+
+    @check_hdlr
+    def get_free_size(self):
+        return lvm_vg_get_free_size(self._hdlr)
+
+    @check_hdlr
+    def get_extent_size(self):
+        return lvm_vg_get_extent_size(self._hdlr)
+
+    @check_hdlr
+    def get_extent_count(self):
+        return lvm_vg_get_extent_count(self._hdlr)
+
+    @check_hdlr
+    def get_free_extent_count(self):
+        return lvm_vg_get_free_extent_count(self._hdlr)
+
+    @check_hdlr
+    def iter_lv(self):
+        lv_hdlr_list = lvm_vg_list_lvs(self._hdlr)
+        if not bool(lv_hdlr_list):
+            return
+        lv = dm_list_first(lv_hdlr_list)
+        while lv:
+            c = cast(lv, POINTER(lvm_lv_list))
+            yield _LV(self, hdlr=c.contents.lv)
+            if dm_list_end(lv_hdlr_list, lv):
+                # end of linked list
+                break
+            lv = dm_list_next(lv_hdlr_list, lv)
+
+    @check_hdlr
+    def get_lv_by_name(self, name):
+        return _LV(self, name=name)
+
+    def get_lv_by_uuid(self, uuid):
+        return _LV(self, uuid=uuid)
+
+    @check_hdlr
+    def iter_pv(self):
+        pv_hdlr_list = lvm_vg_list_pvs(self._hdlr)
+        if not bool(pv_hdlr_list):
+            return
+        pv = dm_list_first(pv_hdlr_list)
+        while pv:
+            c = cast(pv, POINTER(lvm_pv_list))
+            yield _PV(self, hdlr=c.contents.lv)
+            if dm_list_end(pv_hdlr_list, pv):
+                # end of linked list
+                break
+            pv = dm_list_next(pv_hdlr_list, pv)
+
+    @property
+    def hdlr(self):
+        return self._hdlr
+
+
+class _LV(object):
+    """
+    No need of with context for _LV object, as LV handler do not need to be closed explicitly,
+    since LV handler is closed automatically when VG handler is closed
+    """
+    def __init__(self, vg, hdlr=None, name=None, uuid=None):
+        self._vg = vg
+        if not vg or not vg.hdlr:
+            raise StorLeverError('No valid VG handler')
+        if hdlr:
+            self._hdlr = hdlr
+        elif name:
+            self._hdlr = lvm_lv_from_name(vg.hdlr, name)
+            if not bool(self._hdlr):
+                raise StorLeverError('No LV {0} under VG {1}'.format(name, vg.name))
+        elif uuid:
+            self._hdlr = lvm_lv_from_uuid(vg.hdlr, uuid)
+            if not bool(self._hdlr):
+                raise StorLeverError('No LV {0} under VG {1}'.format(uuid, vg.name))
+        else:
+            raise StorLeverError('No valid parameter given to get a LV handler')
+        name = self.get_name()
+        uuid = self.get_uuid()
+        size = self.get_size()
+
+    def get_name(self):
+        return lvm_lv_get_name(self._hdlr)
+
+    def get_uuid(self):
+        return lvm_lv_get_uuid(self._hdlr)
+
+    def get_size(self):
+        return lvm_lv_get_size(self._hdlr)
+
+
+class _PV(object):
+    def __init__(self, vg, hdlr=None, name=None, uuid=None):
+        self._vg = vg
+        if not vg or not vg.hdlr:
+            raise StorLeverError('No valid VG handler')
+        if hdlr:
+            self._hdlr = hdlr
+        elif name:
+            self._hdlr = lvm_pv_from_name(vg.hdlr, name)
+            if not bool(self._hdlr):
+                raise StorLeverError('No LV {0} under VG {1}'.format(name, vg.name))
+        elif uuid:
+            self._hdlr = lvm_pv_from_uuid(vg.hdlr, uuid)
+            if not bool(self._hdlr):
+                raise StorLeverError('No LV {0} under VG {1}'.format(uuid, vg.name))
+        else:
+            raise StorLeverError('No valid parameter given to get a LV handler')
+        name = self.get_name()
+        uuid = self.get_uuid()
+        size = self.get_size()
+
+    def get_name(self):
+        return lvm_pv_get_name(self._hdlr)
+
+    def get_uuid(self):
+        return lvm_pv_get_uuid(self._hdlr)
+
+    def get_size(self):
+        return lvm_pv_get_size(self._hdlr)
+
+
 
 
 class VG(object):
