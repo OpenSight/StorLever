@@ -4,6 +4,22 @@ from lvm2app import *
 from storlever.lib.exception import StorLeverError
 
 
+class DeferAndCache(object):
+    """
+    Used as a decorator to defer the calculation of object attribute's value
+    util the first time it is accessed,
+    and also cache the calculated value, so it will not be calculated again, once calculated
+    """
+    def __init__(self, calc_func):
+        self._calc_func = calc_func
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        value = self._calc_func(instance)
+        return value
+
+
 class _LVM(object):
 
     def __init__(self):
@@ -24,6 +40,14 @@ class _LVM(object):
             lvm_quit(self._hdlr)
             self._hdlr = None
 
+    def check_hdlr(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if self._hdlr is None:
+                raise StorLeverError('Empty LVM handler, unable to process')
+            return func(self, *args, **kwargs)
+        return wrapper
+
     @property
     def hdlr(self):
         return self._hdlr
@@ -36,10 +60,12 @@ class _LVM(object):
         else:
             raise StorLeverError(lvm_errmsg(self._hdlr))
 
+    @check_hdlr
     def _create_pv(self, device):
         if lvm_pv_create(self._hdlr, device, 0) != 0:
             self.raise_from_error(info='Can not create PV on {0}'.format(device))
 
+    @check_hdlr
     def create_vg(self, vg_name, devices=None, pe_size=64):
         """
         :param vg_name: string of volume group name
@@ -48,18 +74,17 @@ class _LVM(object):
         :return: None
         """
         # TODO maybe we need to check if block device in "devices" is already used
-        if self._hdlr is None:
-            raise StorLeverError('')
-
         with _VG(self, vg_name, mode=_VG.MODE_NEW) as vg:
             vg.set_extent_size(pe_size)
             for device in devices:
                 vg.add_pv(device)
 
+    @check_hdlr
     def delete_vg(self, vg_name):
         with _VG(self, vg_name, mode=_VG.MODE_WRITE) as vg:
             vg.delete()
 
+    @check_hdlr
     def list_vg_names(self):
         vg_list = []
         names = lvm_list_vg_names(self._hdlr)
@@ -75,9 +100,10 @@ class _LVM(object):
             vg = dm_list_next(names, vg)
         return vg_list
 
+    @check_hdlr
     def get_vg(self, name, mode=None):
         if mode is None:
-            mode = _VG.MODE_READx
+            mode = _VG.MODE_READ
         return _VG(self, name, mode=mode)
 
 
@@ -233,7 +259,7 @@ class _VG(object):
         pv = dm_list_first(pv_hdlr_list)
         while pv:
             c = cast(pv, POINTER(lvm_pv_list))
-            yield _PV(self, hdlr=c.contents.lv)
+            yield _PV(self, hdlr=c.contents.pv)
             if dm_list_end(pv_hdlr_list, pv):
                 # end of linked list
                 break
@@ -246,8 +272,8 @@ class _VG(object):
 
 class _LV(object):
     """
-    No need of with context for _LV object, as LV handler do not need to be closed explicitly,
-    since LV handler is closed automatically when VG handler is closed
+    Always use this inside VG's with context
+    since LV's handler is inside VG's handler
     """
     def __init__(self, vg, hdlr=None, name=None, uuid=None):
         self._vg = vg
@@ -265,9 +291,9 @@ class _LV(object):
                 raise StorLeverError('No LV {0} under VG {1}'.format(uuid, vg.name))
         else:
             raise StorLeverError('No valid parameter given to get a LV handler')
-        name = self.get_name()
-        uuid = self.get_uuid()
-        size = self.get_size()
+        self.name = self.get_name()
+        self.uuid = self.get_uuid()
+        self.size = self.get_size()
 
     def get_name(self):
         return lvm_lv_get_name(self._hdlr)
@@ -280,6 +306,9 @@ class _LV(object):
 
 
 class _PV(object):
+    """
+    Always use this inside VG's with context
+    """
     def __init__(self, vg, hdlr=None, name=None, uuid=None):
         self._vg = vg
         if not vg or not vg.hdlr:
@@ -296,9 +325,9 @@ class _PV(object):
                 raise StorLeverError('No LV {0} under VG {1}'.format(uuid, vg.name))
         else:
             raise StorLeverError('No valid parameter given to get a LV handler')
-        name = self.get_name()
-        uuid = self.get_uuid()
-        size = self.get_size()
+        self.name = self.get_name()
+        self.uuid = self.get_uuid()
+        self.size = self.get_size()
 
     def get_name(self):
         return lvm_pv_get_name(self._hdlr)
@@ -310,38 +339,58 @@ class _PV(object):
         return lvm_pv_get_size(self._hdlr)
 
 
+class LVM(object):
+    def __init__(self):
+        self.vgs = {}
+        with _LVM() as _lvm:
+            for vg_name in _lvm.list_vg_names():
+                self.vgs[vg_name] = None
+
+    def get_vg(self, vg_name):
+        if vg_name not in self.vgs:
+            raise StorLeverError('No such VG', 404)
+
+        if self.vgs[vg_name] is None:
+            self.vgs[vg_name] = VG(vg_name)
 
 
 class VG(object):
-    def __init__(self, lvm, name):
-        self._lvm = lvm
-        if not lvm or not lvm.hdlr:
-            raise StorLeverError('')
-        self._name = name
-        self._hdlr = lvm_vg_open(self._lvm.hdlr, self._name, 'r', 0)
-        if not bool(self._hdlr):
-            self.raise_from_error()
+    def __init__(self, name):
+        with _LVM() as _lvm:
+            _vg = _VG(_lvm, name)
+            self.name = _vg.name
+            self.uuid = _vg.uuid
+            self.size = _vg.size
+        self._pvs = None
+        self._lvs = None
 
-    def raise_from_error(self, info=''):
-        if not self._lvm or not self._lvm.hdlr:
-            raise StorLeverError('')
-        self._lvm.raise_from_error(info)
+    @property
+    def pvs(self):
+        if self._pvs is None:
+            self._pvs = {}
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.name) as _vg:
+                    for _pv in _vg.iter_pv():
+                        self._pvs[_pv.name] = PV(_pv.name)
+        return self._pvs
 
-    def __enter__(self):
-        if not self._hdlr:
-            self._hdlr = lvm_vg_open(self._lvm.hdlr, self._name, 'r', 0)
-            if not bool(self._hdlr):
-                self.raise_from_error()
-        return self
+    @property
+    def lvs(self):
+        if self._lvs is None:
+            self._lvs = {}
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.name) as _vg:
+                    for _lv in _vg.iter_lv():
+                        self._lvs[_lv.name] = LV(_lv.name)
+        return self._lvs
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        hdlr, self._hdlr = self._hdlr, None
-        if hdlr:
-            if lvm_vg_close(hdlr) != 0:
-                raise self.raise_from_error('Failed to close VG handler')
-
-    def available_size(self):
-        pass
+    def check_detail(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if self._hdlr is None:
+                raise StorLeverError('Empty VG handler, unable to process')
+            return func(self, *args, **kwargs)
+        return wrapper
 
     def delete(self):
         pass
@@ -362,23 +411,15 @@ class VG(object):
         pass
 
 
+class PV(object):
+    def __init__(self, name):
+        self.name = name
+        pass
+
+
 class LV(object):
-    def __init__(self):
-        self.name = ''
-        self.size = 0
-        self.vg = None
-        self.type = 'linear'
-        self.stripe_size = 0
-        self.stripe_number = 0
-        self.mirror_number = 0
-
-    def delete(self):
-        pass
-
-    def grow(self):
-        pass
-
-    def shrink(self):
+    def __init__(self, name):
+        self.name = name
         pass
 
 
