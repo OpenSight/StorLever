@@ -88,21 +88,33 @@ class ScsiManager(object):
         delete_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/delete")
         write_file_entry(delete_path, "1\n")
 
+    def rescan_dev(self, scsi_id):
+        '''rescan the device can update the device's state(including size) in host system'''
+
+        # dev_list = self.get_scsi_dev_list()
+        # seleted_scsi = None
+        # for dev_entry in dev_list:
+        #    if dev_entry["scsi_id"] == scsi_id:
+        #        seleted_scsi = dev_entry
+        #if seleted_scsi is None:
+        #    raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+
+        state_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/rescan")
+        write_file_entry(state_path, "1\n")
+
     def remote_offline_dev(self, scsi_id):
-        import pdb
-        pdb.set_trace()
-        dev_list = self.get_scsi_dev_list()
-        seleted_scsi = None
-        for dev_entry in dev_list:
-            if dev_entry["scsi_id"] == scsi_id:
-                seleted_scsi = dev_entry
-        if seleted_scsi is None:
-            raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+        # dev_list = self.get_scsi_dev_list()
+        # seleted_scsi = None
+        #for dev_entry in dev_list:
+        #    if dev_entry["scsi_id"] == scsi_id:
+        #        seleted_scsi = dev_entry
+        #if seleted_scsi is None:
+        #    raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
 
         state_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/state")
         write_file_entry(state_path, "offline\n")
 
-    def scan_bus(self, host=[], channels=[], targets=[], luns=[],
+    def rescan_bus(self, host=[], channels=[], targets=[], luns=[],
                  remove=False, force_rescan=False, force_remove=False):
         cmd_list = [SCSI_RESCAN_CMD]
         if remove:
