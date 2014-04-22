@@ -60,7 +60,7 @@ def check_output(cmd, shell=False, input_ret=[]):
         info = e.output
 
         # re-raise the storlever's error
-        raise exception.StorLeverError(info, http_status)
+        raise exception.StorLeverCmdError(e.returncode, info, http_status)
 
 
 def read_file_entry(path, default_value = None):
