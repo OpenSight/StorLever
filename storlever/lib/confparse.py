@@ -119,6 +119,7 @@ class properties(dict):
         self.dustbin, self.template = [], ""
         self.order = _order
         self.proxy=proxy(self)
+        self.sep = False
 
         if isinstance( _fileordict, str ) or isinstance( _fileordict, list):
             self.template=_fileordict
@@ -130,13 +131,18 @@ class properties(dict):
                 self.dustbin = _fileordict.dustbin[:]
             if  hasattr( _fileordict, 'order' ):
                 self.order = _fileordict.order[:]
-                
+            if hasattr(_fileordict, 'sep'):
+                self.sep = _fileordict.sep
+
         if kwargs:
             for k,v in kwargs.items():
                 self[k] = str( v )
 
     def copy(self):
         return properties(self)
+
+    def set_sep(self, sep):
+        self.sep = sep
 
     line=re.compile("""
 (^
@@ -231,7 +237,11 @@ $)""", re.VERBOSE)
         return d
 
     def linerepr ( self, k ) :
-        if k in self: return k + '=' + self[k].replace('\n','\n\t') + '\n'
+        if self.sep:
+            sep = " = "
+        else:
+            sep = "="
+        if k in self: return k + sep + self[k].replace('\n','\n\t') + '\n'
         else : return ""
 
     def __repr__(self):
@@ -387,6 +397,7 @@ class ini(dict):
 
         self.dustbin, self.defaults, self.template = [], {}, ""
         self.proxy=proxy(self)
+        self.sep = False
 
         if type(_fileordict)==str:
             self.template=_fileordict
@@ -400,6 +411,9 @@ class ini(dict):
                 self.defaults.update(_fileordict)
             if hasattr(_fileordict, 'dustbin'):
                 self.dustbin = _fileordict.dustbin[:]
+            if hasattr(_fileordict, "sep"):
+                self.sep = _fileordict.sep
+
                 
         if kwargs:
             self.defaults.update(kwargs)
@@ -438,6 +452,11 @@ $)''', re.VERBOSE)
         if item in self:
             dict.__delitem__(self, item)
 
+    def set_sep(self, sep):
+        self.sep = sep
+        for key, sec in self.items():
+            sec.set_sep(sep)
+
     def get(self, section, option, default=None):
         try:
             return self[section][option]
@@ -445,8 +464,13 @@ $)''', re.VERBOSE)
             return self.defaults[option]
 
     def simple_line ( self, section, key ) :
+        if self.sep:
+            sep = " = "
+        else:
+            sep = "="
+
         if key in self.section:
-            return key + '=' + self[section][key].replace('\n','\n\t') + '\n'
+            return key + sep + self[section][key].replace('\n','\n\t') + '\n'
         else : return ""
 
     def __repr__(self):
@@ -456,6 +480,7 @@ $)''', re.VERBOSE)
         
         # Because we pop the written lines, we need to pop on a _copy_
         a_copy, result, cur_sect = ini(self), '', ''
+        a_copy.set_sep(self.sep)
 
         try: fp = file( self.template )
         except: fp = []

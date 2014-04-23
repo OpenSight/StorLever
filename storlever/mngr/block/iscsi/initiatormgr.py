@@ -59,6 +59,7 @@ class IscsiInitiatorManager(object):
                 conf = properties(name_file)
             else:
                 conf = properties()
+
         return conf.get("InitiatorName", "iqn.2014-01.cn.com.opensight:default")
 
     def set_initiator_iqn(self, iqn, operator="unkown"):
@@ -67,6 +68,7 @@ class IscsiInitiatorManager(object):
                 os.makedirs(ISCSI_INITIATOR_ETC_CONF_DIR)
             name_file = os.path.join(ISCSI_INITIATOR_ETC_CONF_DIR, ISCSI_INITIATOR_ETC_NAME_FILE)
             conf = properties(InitiatorName=iqn)
+            conf.set_sep(True)
             conf.apply_to(name_file)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
@@ -90,6 +92,7 @@ class IscsiInitiatorManager(object):
         if the entry does not exists in the conf, it would be created
         """
         conf = properties(new_conf)
+        conf.set_sep(True)
         with self.lock:
             if not os.path.exists(ISCSI_INITIATOR_ETC_CONF_DIR):
                 os.makedirs(ISCSI_INITIATOR_ETC_CONF_DIR)
@@ -102,6 +105,7 @@ class IscsiInitiatorManager(object):
 
     def del_global_conf_entry(self, keys=[], operator="unkown"):
         conf = properties()
+        conf.set_sep(True)
         if isinstance(keys, list):
             for key in keys:
                 conf.delete(key)
@@ -141,10 +145,10 @@ class IscsiInitiatorManager(object):
             iface_list.append({
                 "iface_name": iface_name,
                 "transport_name": params[0],
-                "hardware_address": params[1],
-                "ip_address": params[2],
-                "net_iface_name": params[3],
-                "initiator_name": params[4],
+                "hwaddress": params[1],
+                "ipaddress": params[2],
+                "net_ifacename": params[3],
+                "initiatorname": params[4],
             })
         return iface_list
 
@@ -177,12 +181,12 @@ class IscsiInitiatorManager(object):
         if iface_name in ("default", "iser"):
             raise StorLeverError("iface (default, iser) cannot be deleted", 400)
         iface_list = self.get_iface_list()
-        found = False
         for iface in iface_list:
             if iface["iface_name"] == iface_name:
-                found = True
-        if found is False:
+                break;
+        else:
             raise StorLeverError("iface (%s) Not Found" % iface_name, 404)
+
 
         check_output([ISCSIADM_CMD, "-m", "iface", "-I", iface_name, "-o", "delete"],
                                 input_ret=[2, 6, 7, 21, 22])
@@ -235,13 +239,13 @@ class IscsiInitiatorManager(object):
 
     def delete_node(self, target, portal, operator="unkown"):
         node_list = self.get_node_list()
-        found = False
+
         login = False
         for node in node_list:
             if node["target"] == target and node["portal"] == portal:
-                found = True
                 login = node["login"]
-        if not found:
+                break
+        else:
             raise StorLeverError("Node (%s, %s) Not Found" % (target, portal), 404)
 
         if login:

@@ -217,9 +217,12 @@ class SmbManager(object):
         else:
             smb_etc_conf = ini()
 
+        smb_etc_conf.set_sep(True)
+
         # global configs
         if "global" not in smb_etc_conf:
             smb_etc_conf["global"] = properties()
+            smb_etc_conf["global"].set_sep(True)
 
         if smb_conf["workgroup"] == "":
             smb_etc_conf["global"].delete("workgroup")
@@ -266,6 +269,7 @@ class SmbManager(object):
         for share_name, share_conf in smb_conf["share_list"].items():
             if share_name not in smb_etc_conf:
                 smb_etc_conf[share_name] = properties()
+                smb_etc_conf[share_name].set_sep(True)
 
             if share_conf["path"] == "":
                 smb_etc_conf[share_name].delete("path")
