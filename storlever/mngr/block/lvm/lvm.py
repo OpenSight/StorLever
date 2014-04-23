@@ -6,17 +6,19 @@ from storlever.lib.exception import StorLeverError
 
 class DeferAndCache(object):
     """
-    Used as a decorator to defer the calculation of object attribute's value
-    util the first time it is accessed,
+    Used as a decorator to defer the calculation of object attribute value
+    until the first time it is accessed,
     and also cache the calculated value, so it will not be calculated again, once calculated
     """
     def __init__(self, calc_func):
         self._calc_func = calc_func
+        self._attr_name = calc_func.__name__
 
     def __get__(self, instance, owner):
         if instance is None:
             return self
         value = self._calc_func(instance)
+        instance.__dict__[self._attr_name] = value
         return value
 
 
@@ -198,6 +200,12 @@ class _VG(object):
             raise self.raise_from_error()
 
     @check_hdlr
+    def remove_pv(self, device):
+        rc = lvm_vg_reduce(self._hdlr, device)
+        if rc != 0:
+            raise self.raise_from_error()
+
+    @check_hdlr
     def delete(self):
         if lvm_vg_remove(self._hdlr) != 0:
             self.raise_from_error('Failed to delete VG {0}'.format(self.name))
@@ -245,11 +253,20 @@ class _VG(object):
             lv = dm_list_next(lv_hdlr_list, lv)
 
     @check_hdlr
+    def get_max_lv(self):
+        return lvm_vg_get_max_lv(self._hdlr)
+
+    @check_hdlr
     def get_lv_by_name(self, name):
         return _LV(self, name=name)
 
+    @check_hdlr
     def get_lv_by_uuid(self, uuid):
         return _LV(self, uuid=uuid)
+
+    @check_hdlr
+    def create_lv(self, name, size):
+        lvm_vg_create_lv_linear(self._hdlr, name, size)
 
     @check_hdlr
     def iter_pv(self):
@@ -264,6 +281,14 @@ class _VG(object):
                 # end of linked list
                 break
             pv = dm_list_next(pv_hdlr_list, pv)
+
+    @check_hdlr
+    def get_pv_count(self):
+        return lvm_vg_get_pv_count(self._hdlr)
+
+    @check_hdlr
+    def get_max_pv(self):
+        return lvm_vg_get_max_pv(self._hdlr)
 
     @property
     def hdlr(self):
@@ -328,6 +353,7 @@ class _PV(object):
         self.name = self.get_name()
         self.uuid = self.get_uuid()
         self.size = self.get_size()
+        self.free = self.get_free_size()
 
     def get_name(self):
         return lvm_pv_get_name(self._hdlr)
@@ -338,62 +364,72 @@ class _PV(object):
     def get_size(self):
         return lvm_pv_get_size(self._hdlr)
 
+    def get_free_size(self):
+        return lvm_pv_get_free(self._hdlr)
+
 
 class LVM(object):
     def __init__(self):
         self.vgs = {}
         with _LVM() as _lvm:
             for vg_name in _lvm.list_vg_names():
-                self.vgs[vg_name] = None
+                self.vgs[vg_name] = VG(vg_name)
 
-    def get_vg(self, vg_name):
-        if vg_name not in self.vgs:
-            raise StorLeverError('No such VG', 404)
-
-        if self.vgs[vg_name] is None:
-            self.vgs[vg_name] = VG(vg_name)
+    def new_vg(self, vg_name, devices, pe_size=64):
+        if vg_name in self.vgs:
+            raise StorLeverError('VG {} already exists'.format(vg_name))
+        # TODO more check
+        with _LVM() as _lvm:
+            _lvm.create_vg(vg_name, devices, pe_size=pe_size)
+            return VG(vg_name)
 
 
 class VG(object):
     def __init__(self, name):
         with _LVM() as _lvm:
-            _vg = _VG(_lvm, name)
-            self.name = _vg.name
-            self.uuid = _vg.uuid
-            self.size = _vg.size
-        self._pvs = None
-        self._lvs = None
+            with _VG(_lvm, name) as _vg:
+                self.name = _vg.name
+                self.uuid = _vg.get_uuid()
+                self.size = _vg.get_size()
+                self.free_size = _vg.get_free_size()
 
-    @property
+    @DeferAndCache
     def pvs(self):
-        if self._pvs is None:
-            self._pvs = {}
-            with _LVM() as _lvm:
-                with _VG(_lvm, self.name) as _vg:
-                    for _pv in _vg.iter_pv():
-                        self._pvs[_pv.name] = PV(_pv.name)
-        return self._pvs
+        pvs = {}
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                for _pv in _vg.iter_pv():
+                    pvs[_pv.name] = PV(self, _pv.name, _pv.uuid, _pv.size)
+        return pvs
 
-    @property
+    @DeferAndCache
     def lvs(self):
-        if self._lvs is None:
-            self._lvs = {}
-            with _LVM() as _lvm:
-                with _VG(_lvm, self.name) as _vg:
-                    for _lv in _vg.iter_lv():
-                        self._lvs[_lv.name] = LV(_lv.name)
-        return self._lvs
+        lvs = {}
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                for _lv in _vg.iter_lv():
+                    lvs[_lv.name] = LV(self, _lv.name, _lv.uuid, _lv.size)
+        return lvs
 
-    def check_detail(func):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            if self._hdlr is None:
-                raise StorLeverError('Empty VG handler, unable to process')
-            return func(self, *args, **kwargs)
-        return wrapper
+    def _get_detail(self):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                self.__dict__['extent_size'] = _vg.get_extent_size()
+                self.__dict__['extent_count'] = _vg.get_extent_count()
+                self.__dict__['free_extent_count'] = _vg.get_free_extent_count()
+                self.__dict__['pv_count'] = _vg.get_pv_count()
+                self.__dict__['max_pv'] = _vg.get_max_pv()
+                self.__dict__['max_lv'] = _vg.get_max_lv()
+
+    def get_pv(self, pv_name):
+        if pv_name in self.pvs:
+            return self.pvs[pv_name]
+        else:
+            raise StorLeverError('No such PV {0} in VG {1}'.format(pv_name, self.name))
 
     def delete(self):
-        pass
+        with _LVM() as _lvm:
+            _lvm.delete_vg(self.name)
 
     def create_lv(self):
         pass
@@ -401,25 +437,34 @@ class VG(object):
     def delete_lv(self):
         pass
 
-    def grow(self):
-        pass
+    def grow(self, device):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
+                _vg.add_pv(device)
 
-    def shrink(self):
-        pass
+    def shrink(self, device):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
+                _vg.remove_pv(device)
 
     def replace_pv(self):
         pass
 
 
 class PV(object):
-    def __init__(self, name):
+    def __init__(self, vg, name, uuid, size):
+        self.vg = vg
         self.name = name
-        pass
+        self.uuid = uuid
+        self.size = size
 
 
 class LV(object):
-    def __init__(self, name):
+    def __init__(self, vg, name, uuid, size):
+        self.vg = vg
         self.name = name
+        self.uuid = uuid
+        self.size = size
         pass
 
 
