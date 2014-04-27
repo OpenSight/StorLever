@@ -266,7 +266,10 @@ class _VG(object):
 
     @check_hdlr
     def create_lv(self, name, size):
-        lvm_vg_create_lv_linear(self._hdlr, name, size)
+        lv_hdlr = lvm_vg_create_lv_linear(self._hdlr, name, size)
+        if not bool(lv_hdlr):
+            self.raise_from_error(info='Failed to create LV {} in VG {}'.format(name, self.name))
+        return _LV(self, hdlr=lv_hdlr)
 
     @check_hdlr
     def iter_pv(self):
@@ -281,6 +284,10 @@ class _VG(object):
                 # end of linked list
                 break
             pv = dm_list_next(pv_hdlr_list, pv)
+
+    @check_hdlr
+    def get_pv_by_name(self, name):
+        return _PV(self, name=name)
 
     @check_hdlr
     def get_pv_count(self):
@@ -329,6 +336,14 @@ class _LV(object):
     def get_size(self):
         return lvm_lv_get_size(self._hdlr)
 
+    def resize(self, size):
+        if lvm_lv_resize(self._hdlr, size) != 0:
+            self._vg.raise_from_error('Failed to resize LV {}'.format(self.name))
+
+    def delete(self):
+        if lvm_vg_remove_lv(self._hdlr) != 0:
+            self._vg.raise_from_error('Failed to remove LV {}'.format(self.name))
+
 
 class _PV(object):
     """
@@ -366,6 +381,9 @@ class _PV(object):
 
     def get_free_size(self):
         return lvm_pv_get_free(self._hdlr)
+
+    def delete(self):
+        self._vg.remove_pv(self.name)
 
 
 class LVM(object):
@@ -422,20 +440,19 @@ class VG(object):
                 self.__dict__['max_lv'] = _vg.get_max_lv()
 
     def get_pv(self, pv_name):
-        if pv_name in self.pvs:
-            return self.pvs[pv_name]
-        else:
-            raise StorLeverError('No such PV {0} in VG {1}'.format(pv_name, self.name))
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                return _vg.get_pv_by_name(pv_name)
 
     def delete(self):
         with _LVM() as _lvm:
             _lvm.delete_vg(self.name)
 
-    def create_lv(self):
-        pass
-
-    def delete_lv(self):
-        pass
+    def create_lv(self, vg_name, size):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                _lv = _vg.create_lv(vg_name, size)
+                return LV(self, _lv.name, _lv.uuid, _lv.size)
 
     def grow(self, device):
         with _LVM() as _lvm:
@@ -449,6 +466,18 @@ class VG(object):
 
     def replace_pv(self):
         pass
+
+    def get_lv(self, lv_name):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                _lv = _vg.get_lv_by_name(lv_name)
+                return LV(self, _lv.name, _lv.uuid, _lv.size)
+
+    def get_pv(self, pv_name):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.name) as _vg:
+                _pv = _vg.get_pv_by_name(pv_name)
+                return PV(self, _pv.name, _pv.uuid, _pv.size)
 
 
 class PV(object):
@@ -466,5 +495,15 @@ class LV(object):
         self.uuid = uuid
         self.size = size
         pass
+
+    def resize(self, size):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.vg.name) as _vg:
+                _vg.get_lv_by_name(self.name).resize(size)
+
+    def delete(self):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.vg.name) as _vg:
+                _vg.get_lv_by_name(self.name).delete()
 
 
