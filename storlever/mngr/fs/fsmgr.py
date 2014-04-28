@@ -237,7 +237,8 @@ class FileSystemManager(object):
         #     raise StorLeverError("dev file(%s) does not exist" % dev_file, 400)
 
         dev_uuid = ""
-        if not dev_file.startswith("/dev/mapper"):
+
+        if (not dev_file.startswith("/dev/mapper")) and os.path.exists(dev_file):
             dev_uuid = self._dev_file_to_uuid(dev_file)
 
         fs_conf = {

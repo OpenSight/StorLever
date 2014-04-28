@@ -75,8 +75,8 @@ class FileSystem(object):
         with open(PROC_MOUNT_FILE, "r") as f:
             for line in f:
                 mount_entry = line.split()
-                if mount_entry[0] == self.fs_conf["dev_file"] and \
-                   mount_entry[1] == self.fs_conf["mount_point"]:
+                if mount_entry[0].rstrip(" /") == self.fs_conf["dev_file"].rstrip(" /") and \
+                   mount_entry[1].strip() == self.fs_conf["mount_point"].strip():
                     return True
         return False
 
@@ -109,13 +109,13 @@ class FileSystem(object):
     # share related
     #
 
-    def create_dir(self, name, user=None, group=None, mode=0777, operator="unknown"):
+    def create_dir(self, relative_path, user=None, group=None, mode=0777, operator="unknown"):
         # make sure fs is available
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
-        if "." in name or ".." in name:
+            raise StorLeverError("File system is unavailable", 500)
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("name cannot include . or ..", 400)
-        if name.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("name must be a relative path name", 400)
         umgr = user_mgr()
         if user is None:
@@ -128,7 +128,7 @@ class FileSystem(object):
             gid = umgr.get_group_by_name(group)["gid"]
 
         mount_point = self.fs_conf["mount_point"]
-        path = os.path.join(mount_point, name)
+        path = os.path.join(mount_point, relative_path)
         os.umask(0)
         os.makedirs(path, mode)
         os.chown(path, uid, gid)
@@ -138,16 +138,18 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, operator))
 
-    def delete_dir(self, name, user="unknown"):
+    def delete_dir(self, relative_path, user="unknown"):
         # make sure fs is available
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
-        if "." in name or ".." in name:
+            raise StorLeverError("File system is unavailable", 500)
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("name cannot include . or ..", 400)
-        if name.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("name must be a relative path name", 400)
 
-        path = os.path.join(self.fs_conf["mount_point"], name)
+        path = os.path.join(self.fs_conf["mount_point"], relative_path)
+        if path == self.fs_conf["mount_point"]:
+            raise StorLeverError("Cannot delete the root dir of filesystem", 400)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
         check_output(["/bin/rm", "-rf", path],
@@ -177,15 +179,19 @@ class FileSystem(object):
         return gid_map
 
 
-    def ls_dir(self, parent=""):
-        if "." in parent or ".." in parent:
+    def ls_dir(self, relative_path=""):
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("parent cannot include . or ..", 400)
-        if parent.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("parent must be a relative path name", 400)
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 500)
+
         mount_point = self.fs_conf["mount_point"]
-        parent_path = os.path.join(mount_point, parent)
+        parent_path = os.path.join(mount_point, relative_path)
         if not os.path.exists(parent_path):
             raise StorLeverError("Parent directory not found", 404)
+
 
         share_list = os.listdir(parent_path)
         uid_map = self._get_uid_map()
@@ -209,7 +215,8 @@ class FileSystem(object):
 
             output_list.append({
                 "name": name,
-                "path": path,
+                "abspath": path,
+                "relpath": os.path.join(relative_path, name),
                 "mode": mode,
                 "user": user,
                 "group": group
@@ -217,15 +224,15 @@ class FileSystem(object):
 
         return output_list
 
-    def mod_dir_owner(self, name, user = None, group = None, operator="unknown"):
+    def mod_dir_owner(self, relative_path, user = None, group = None, operator="unknown"):
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
-        if "." in name or ".." in name:
+            raise StorLeverError("File system is unavailable", 500)
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("name cannot include . or ..", 400)
-        if name.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("name must be a relative path name", 400)
 
-        path = os.path.join(self.fs_conf["mount_point"], name)
+        path = os.path.join(self.fs_conf["mount_point"], relative_path)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
         umgr = user_mgr()
@@ -244,15 +251,15 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, user, group, operator))
 
-    def mod_dir_mode(self, name, mode, operator="unknown"):
+    def mod_dir_mode(self, relative_path, mode, operator="unknown"):
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
-        if "." in name or ".." in name:
+            raise StorLeverError("File system is unavailable", 500)
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("name cannot include . or ..", 400)
-        if name.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("name must be a relative path name", 400)
 
-        path = os.path.join(self.fs_conf["mount_point"], name)
+        path = os.path.join(self.fs_conf["mount_point"], relative_path)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
         os.umask(0)
@@ -263,13 +270,15 @@ class FileSystem(object):
                    " by user(%s)" %
                    (path, mode, operator))
 
-    def dir_usage_stat(self, name):
-        if "." in name or ".." in name:
+    def dir_usage_stat(self, relative_path=""):
+        if "." in relative_path or ".." in relative_path:
             raise StorLeverError("name cannot include . or ..", 400)
-        if name.startswith("/"):
+        if relative_path.startswith("/"):
             raise StorLeverError("name must be a relative path name", 400)
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 500)
 
-        path = os.path.join(self.fs_conf["mount_point"], name)
+        path = os.path.join(self.fs_conf["mount_point"], relative_path)
         if not os.path.exists(path):
             raise StorLeverError("Share directory not found", 404)
         output_lines = check_output([DU_BIN, "-b", path]).splitlines()
@@ -291,12 +300,14 @@ class FileSystem(object):
 
     def quota_check(self):
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
+            raise StorLeverError("File system is unavailable", 500)
 
         check_output([QUOTACHECK_BIN, "-ugf",
                       self.fs_conf["mount_point"]])
 
     def quota_user_report(self):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 500)
         uq_list = []
         uq_lines = check_output([REPQUOTA_BIN, "-upv", self.fs_conf["mount_point"]]).splitlines()
         table_start = False
@@ -329,6 +340,8 @@ class FileSystem(object):
 
 
     def quota_group_report(self):
+        if not self.is_available():
+            raise StorLeverError("File system is unavailable", 500)
         gq_list = []
         gq_lines = check_output([REPQUOTA_BIN, "-gpv", self.fs_conf["mount_point"]]).splitlines()
         table_start = False
@@ -366,7 +379,7 @@ class FileSystem(object):
                        inode_hardlimit=0,
                        operator="unknown"):
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
+            raise StorLeverError("File system is unavailable", 500)
         setquota_agrs = [
             SETQUOTA_BIN,
             "-u",
@@ -396,7 +409,7 @@ class FileSystem(object):
                         inode_hardlimit=0,
                         operator="unknown"):
         if not self.is_available():
-            raise StorLeverError("File system is unavailable", 400)
+            raise StorLeverError("File system is unavailable", 500)
         setquota_agrs = [
             SETQUOTA_BIN,
             "-g",
