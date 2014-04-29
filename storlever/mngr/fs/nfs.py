@@ -93,8 +93,8 @@ class Nfs(FileSystem):
             raise StorLeverError("NFS service on %s is not available" % ip, 400)
 
         check_output(["/bin/mount", "-t", self.fs_conf["type"],
-                      "-o", self.mount_options,
-                      self.fs_conf["dev_file"], self.fs_conf["mount_point"]],
+                     "-o", self.mount_options,
+                     self.fs_conf["dev_file"], self.fs_conf["mount_point"]],
                      input_ret=[32])
         # nfs does not support and no needs quota_check and quota_on
 

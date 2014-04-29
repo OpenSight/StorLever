@@ -34,7 +34,7 @@ class TestFsMgr(unittest.TestCase):
         self.assertEquals(f.fs_conf["dev_file"], dev_file)
         self.assertEquals(f.fs_conf["comment"], "test")
         self.assertTrue(f.is_available())
-        self.assertTrue(f.usage_info()["percent"] < 10)
+        self.assertTrue(f.usage_info()["total"] > 0)
         self.assertTrue(len(f.fs_meta_dump()) != 0)
         f.grow_size()
         with open("/etc/fstab", "r") as fstab:

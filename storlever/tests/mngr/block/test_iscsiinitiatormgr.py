@@ -8,12 +8,12 @@ else:
 
 from storlever.mngr.block.iscsi.initiatormgr import iscsi_initiator_mgr
 
-test_login_node = ""
+test_login_node = None
 
 
 def get_test_node():
     global test_login_node
-    if test_login_node is None or test_login_node == "":
+    if test_login_node is None:
         test_login_node = raw_input("Please input a node(format: IQN Portal) for login test(empty means no test):")
 
     return test_login_node
