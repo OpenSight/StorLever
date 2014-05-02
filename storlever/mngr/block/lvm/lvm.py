@@ -268,7 +268,7 @@ class _VG(object):
     def create_lv(self, name, size):
         lv_hdlr = lvm_vg_create_lv_linear(self._hdlr, name, size)
         if not bool(lv_hdlr):
-            self.raise_from_error(info='Failed to create LV {} in VG {}'.format(name, self.name))
+            self.raise_from_error(info='Failed to create LV {0} in VG {1}'.format(name, self.name))
         return _LV(self, hdlr=lv_hdlr)
 
     @check_hdlr
@@ -338,11 +338,11 @@ class _LV(object):
 
     def resize(self, size):
         if lvm_lv_resize(self._hdlr, size) != 0:
-            self._vg.raise_from_error('Failed to resize LV {}'.format(self.name))
+            self._vg.raise_from_error('Failed to resize LV {0}'.format(self.name))
 
     def delete(self):
         if lvm_vg_remove_lv(self._hdlr) != 0:
-            self._vg.raise_from_error('Failed to remove LV {}'.format(self.name))
+            self._vg.raise_from_error('Failed to remove LV {0}'.format(self.name))
 
 
 class _PV(object):
@@ -395,11 +395,16 @@ class LVM(object):
 
     def new_vg(self, vg_name, devices, pe_size=64):
         if vg_name in self.vgs:
-            raise StorLeverError('VG {} already exists'.format(vg_name))
+            raise StorLeverError('VG {0} already exists'.format(vg_name))
         # TODO more check
         with _LVM() as _lvm:
             _lvm.create_vg(vg_name, devices, pe_size=pe_size)
             return VG(vg_name)
+
+    def refresh(self):
+        with _LVM() as _lvm:
+            for vg_name in _lvm.list_vg_names():
+                self.vgs[vg_name] = VG(vg_name)
 
 
 class VG(object):
@@ -439,6 +444,36 @@ class VG(object):
                 self.__dict__['max_pv'] = _vg.get_max_pv()
                 self.__dict__['max_lv'] = _vg.get_max_lv()
 
+    @DeferAndCache
+    def extent_size(self):
+        self._get_detail()
+        return self.extent_size
+
+    @DeferAndCache
+    def extent_count(self):
+        self._get_detail()
+        return self.extent_count
+
+    @DeferAndCache
+    def free_extent_count(self):
+        self._get_detail()
+        return self.free_extent_count
+
+    @DeferAndCache
+    def pv_count(self):
+        self._get_detail()
+        return self.pv_count
+
+    @DeferAndCache
+    def max_pv(self):
+        self._get_detail()
+        return self.max_pv
+
+    @DeferAndCache
+    def max_lv(self):
+        self._get_detail()
+        return self.max_lv
+
     def get_pv(self, pv_name):
         with _LVM() as _lvm:
             with _VG(_lvm, self.name) as _vg:
@@ -450,7 +485,7 @@ class VG(object):
 
     def create_lv(self, vg_name, size):
         with _LVM() as _lvm:
-            with _VG(_lvm, self.name) as _vg:
+            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
                 _lv = _vg.create_lv(vg_name, size)
                 return LV(self, _lv.name, _lv.uuid, _lv.size)
 
