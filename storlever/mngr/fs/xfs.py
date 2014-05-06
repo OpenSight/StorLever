@@ -16,7 +16,15 @@ from storlever.mngr.fs.fsmgr import FileSystemManager
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "xfs",
+    "rpms": [
+        "xfsprogs"
+    ],
+    "comment": "Provides the xfs filesystem type support"
+}
 
 class Xfs(FileSystem):
 
@@ -50,7 +58,7 @@ class Xfs(FileSystem):
         # xfs no needs and has no quota check function
         pass
 
-
+ModuleManager.register_module(**MODULE_INFO)
 # register to fs manager
 FileSystemManager.add_fs_type("xfs", Xfs)
 

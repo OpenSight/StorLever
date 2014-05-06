@@ -18,6 +18,18 @@ from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "user",
+    "rpms": [
+        "shadow-utils",
+        "setup"
+    ],
+    "comment": "Provides the user/group management of the system, "
+               "like query/add/del/configure user/group"
+}
+
 
 
 NO_LOGIN_SHELL = "/sbin/nologin"
@@ -238,6 +250,7 @@ class UserManager(object):
 
 UserManager = UserManager()
 
+ModuleManager.register_module(**MODULE_INFO)
 
 def user_mgr():
     """return the global user manager instance"""

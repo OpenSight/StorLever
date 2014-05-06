@@ -23,6 +23,16 @@ from storlever.lib import logger
 import logging
 
 import subprocess
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "iscsi_initiator",
+    "rpms": [
+        "iscsi-initiator-utils",
+    ],
+    "comment": "Provides the management functions for iscsi initiator(open-iscsi)"
+}
+
 
 ISCSIADM_CMD = "/sbin/iscsiadm"
 ISCSI_INITIATOR_ETC_CONF_DIR = "/etc/iscsi"
@@ -387,7 +397,7 @@ cfg_mgr().register_config_file(os.path.join(ISCSI_INITIATOR_DB_PATH, "ifaces/"))
 cfg_mgr().register_config_file(os.path.join(ISCSI_INITIATOR_DB_PATH, "nodes/"))
 service_mgr().register_service("iscsid", "iscsid", "iscsid", "iSCSI Initiator daemon")
 service_mgr().register_service("iscsi", "iscsi", "", "iSCSI Initiator login Script")
-
+ModuleManager.register_module(**MODULE_INFO)
 
 
 def iscsi_initiator_mgr():

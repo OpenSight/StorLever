@@ -16,6 +16,18 @@ from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "service",
+    "rpms": [
+        "chkconfig",
+        "initscripts",
+    ],
+    "comment": "Provides the management function of system service/daemon, "
+               "like service start/stop/restart "
+}
+
 
 
 INIT_SCRIPT_DIR = "/etc/init.d/"
@@ -168,6 +180,8 @@ class ServiceManager(object):
 
 
 service_manager = ServiceManager()
+
+ModuleManager.register_module(**MODULE_INFO)
 
 
 def service_mgr():

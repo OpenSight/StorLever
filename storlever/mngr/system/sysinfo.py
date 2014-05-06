@@ -13,11 +13,27 @@ import datetime
 import time
 import tarfile
 import os
+from platform import linux_distribution
 
 from storlever.lib import logger
 from storlever.lib.command import check_output, write_file_entry
 import logging
 from storlever.lib.confparse import properties
+from modulemgr import ModuleManager
+
+
+MODULE_INFO = {
+    "module_name": "system",
+    "rpms": [
+        "util-linux-ng",
+        "upstart",
+        "coreutils",
+        "libselinux-utils"
+    ],
+    "comment": "Provides the fundamental functions of the low-lever system, "
+               "like date, time, log, shutdown, reboot, and etc"
+}
+
 
 LOG_DIR = "/var/log"
 LOG_FILE_PATH_PREFIX = "/tmp/syslog"
@@ -30,7 +46,15 @@ class SysManager(object):
     """contains all methods to manage the system"""
 
     def __init__(self):
-        pass
+        self.dist_name = None
+        self.dist_version = None
+        self.dist_id = None
+
+    def get_dist_info(self):
+        if self.distname is None:
+            self.dist_name, self.dist_version, self.dist_id = \
+                linux_distribution()
+        return self.dist_name, self.dist_version, self.dist_id
 
     def get_cpu_list(self):
         """get every cpu info from system"""
@@ -155,6 +179,7 @@ class SysManager(object):
 
 SysManager = SysManager()
 
+ModuleManager.register_module(**MODULE_INFO)
 
 def sys_mgr():
     """return the global system manager instance"""

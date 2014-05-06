@@ -14,7 +14,15 @@ import os.path
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "block",
+    "rpms": [
+        "util-linux-ng",
+    ],
+    "comment": "Provides the management functions for block device"
+}
 
 BLOCKDEV_CMD = "/sbin/blockdev"
 LSBLK_CMD = "/bin/lsblk"
@@ -68,6 +76,7 @@ class BlockManager(object):
 
 
 BlockManager = BlockManager()
+ModuleManager.register_module(**MODULE_INFO)
 
 def block_mgr():
     """return the global block manager instance"""

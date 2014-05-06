@@ -32,7 +32,15 @@ from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
 from target import Target
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "tgt",
+    "rpms": [
+        "scsi-target-utils",
+    ],
+    "comment": "Provides the management functions for iscsi target server(tgt)"
+}
 
 
 
@@ -418,6 +426,7 @@ TgtManager = TgtManager()
 cfg_mgr().register_restore_from_file_cb(TgtManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(TgtManager.system_restore_cb)
 service_mgr().register_service("tgt", "tgtd", "tgtd", "iSCSI Target Server")
+ModuleManager.register_module(**MODULE_INFO)
 
 def tgt_mgr():
     """return the global user manager instance"""

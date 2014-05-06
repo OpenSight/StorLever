@@ -15,6 +15,15 @@ from storlever.mngr.system.cfgmgr import cfg_mgr
 from storlever.lib import logger
 import logging
 from storlever.lib.exception import StorLeverError
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "DNS",
+    "rpms": [ ],
+    "comment": "Provides the configuration functions for DNS of the network system"
+}
+
+
 
 RESOLVE_FILE = "/etc/resolv.conf"
 
@@ -89,7 +98,7 @@ DnsManager = DnsManager()
 
 # register cfg file
 cfg_mgr().register_config_file(RESOLVE_FILE)
-
+ModuleManager.register_module(**MODULE_INFO)
 
 
 

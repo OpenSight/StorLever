@@ -23,6 +23,17 @@ from storlever.lib.schema import Schema, Use, Optional, \
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
+from storlever.mngr.system.modulemgr import ModuleManager
+
+
+MODULE_INFO = {
+    "module_name": "NFS_export",
+    "rpms": [
+        "nfs-utils",
+        "setup"
+    ],
+    "comment": "Provides the management functions for NFS server/export"
+}
 
 
 NFS_CONF_FILE_NAME = "nfs_conf.yaml"
@@ -347,6 +358,7 @@ cfg_mgr().register_system_restore_cb(NfsManager.system_restore_cb)
 service_mgr().register_service("nfs", "nfs", "nfsd", "NFS Server")
 service_mgr().register_service("rpcbind", "rpcbind", "rpcbind", "Universal addresses to RPC program number mapper")
 service_mgr().register_service("nfslock", "nfslock", "rpc.statd", "NFS file locking service")
+ModuleManager.register_module(**MODULE_INFO)
 
 # disable selinux impact
 set_selinux_permissive()

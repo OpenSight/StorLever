@@ -16,7 +16,16 @@ import re
 from storlever.lib.command import check_output, write_file_entry, read_file_entry
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.block.blockmgr import BLOCKDEV_CMD
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "scsi",
+    "rpms": [
+        "lsscsi",
+        "sg3_utils"
+    ],
+    "comment": "Provides the management functions for scsi device"
+}
 
 LSSCSI_CMD = "/usr/bin/lsscsi"
 SCSI_RESCAN_CMD = "/usr/bin/rescan-scsi-bus.sh"
@@ -136,6 +145,7 @@ class ScsiManager(object):
         out = check_output(cmd_list)
 
 ScsiManager = ScsiManager()
+ModuleManager.register_module(**MODULE_INFO)
 
 def scsi_mgr():
     """return the global block manager instance"""

@@ -20,6 +20,17 @@ import os
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "config",
+    "rpms": [
+    ],
+    "comment": "Provides the configure management for storlever, "
+               "like reset/backup/restore"
+}
+
+
 
 STORLEVER_CONF_DIR = "/etc/storlever"
 
@@ -166,6 +177,7 @@ class CfgManager(object):
 
 CfgManager = CfgManager()
 
+ModuleManager.register_module(**MODULE_INFO)
 
 def cfg_mgr():
     """return the global cfg manager instance"""

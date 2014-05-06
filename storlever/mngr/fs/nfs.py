@@ -13,6 +13,17 @@ from storlever.lib.command import check_output
 from storlever.mngr.fs.fs import FileSystem
 from storlever.mngr.fs.fsmgr import FileSystemManager
 from storlever.lib.exception import StorLeverError, StorLeverCmdError
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "nfs_client",
+    "rpms": [
+        "nfs-utils",
+        "rpcbind"
+    ],
+    "comment": "Provides the nfs filesystem type support"
+}
+
 
 RPCINFO_CMD = "/usr/sbin/rpcinfo"
 NFSSTAT_CMD = "/usr/sbin/nfsstat"
@@ -132,6 +143,8 @@ class Nfs(FileSystem):
                         operator="unknown"):
         # nfs has no quota support
         raise StorLeverError("NFS does not support quota", 500)
+
+ModuleManager.register_module(**MODULE_INFO)
 
 # register to fs manager
 FileSystemManager.add_fs_type("nfs", Nfs)

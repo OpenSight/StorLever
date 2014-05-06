@@ -25,6 +25,20 @@ from storlever.mngr.fs import fs
 
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "filesystem",
+    "rpms": [
+        "util-linux-ng",
+        "setup",
+        "quota",
+        "coreutils"
+    ],
+    "comment": "Provides the management functions of the file system in OS"
+}
+
+
 
 
 FS_CONF_FILE_NAME = "fs_conf.yaml"
@@ -312,6 +326,8 @@ FileSystemManager = FileSystemManager()
 
 cfg_mgr().register_restore_from_file_cb(FileSystemManager.sync_to_fstab)
 cfg_mgr().register_system_restore_cb(FileSystemManager.system_restore_cb)
+ModuleManager.register_module(**MODULE_INFO)
+
 
 # disable selinux impact
 set_selinux_permissive()

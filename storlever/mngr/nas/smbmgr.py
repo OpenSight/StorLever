@@ -25,7 +25,15 @@ from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
 from storlever.lib.confparse import properties, ini
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "SAMBA",
+    "rpms": [
+        "samba",
+    ],
+    "comment": "Provides the management functions for SAMBA server"
+}
 
 SMB_CONF_FILE_NAME = "smb_conf.yaml"
 SMB_ETC_CONF_DIR = "/etc/samba/"
@@ -590,6 +598,8 @@ cfg_mgr().register_restore_from_file_cb(SmbManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(SmbManager.system_restore_cb)
 service_mgr().register_service("smb", "smb", "smbd", "Samba Server")
 service_mgr().register_service("nmb", "nmb", "smbd", "Netbios Name Server")
+ModuleManager.register_module(**MODULE_INFO)
+
 
 # disable selinux impact
 set_selinux_permissive()

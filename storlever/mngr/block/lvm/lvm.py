@@ -2,6 +2,14 @@ import os.path
 from functools import wraps
 from lvm2app import *
 from storlever.lib.exception import StorLeverError
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "lvm",
+    "rpms": [],
+    "comment": "Provides the management functions for lvm subsystem(lvm2)"
+}
+
 
 
 class DeferAndCache(object):
@@ -542,3 +550,4 @@ class LV(object):
                 _vg.get_lv_by_name(self.name).delete()
 
 
+ModuleManager.register_module(**MODULE_INFO)
