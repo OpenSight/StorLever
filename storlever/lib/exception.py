@@ -5,8 +5,8 @@ storlever.lib.exception
 This module defines the exception class which should be
 sub-classed from by all other Exception used in StorLever project.
 
-:copyright: (c) 2013 by Yiting Huang.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 

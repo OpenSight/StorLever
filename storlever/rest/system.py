@@ -4,8 +4,8 @@ storlever.rest.system
 
 This module implements the rest API for system.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 

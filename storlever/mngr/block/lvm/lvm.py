@@ -1,3 +1,14 @@
+"""
+storlever.mngr.block.lvm.lvm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+lvm manager of storlever
+
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
+
+"""
+
 import os.path
 from functools import wraps
 from lvm2app import *

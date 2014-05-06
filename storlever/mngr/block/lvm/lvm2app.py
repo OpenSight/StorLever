@@ -5,8 +5,8 @@ storlever.mngr.block.lvm.lvm2app
 Ctypes binding of liblvm2app.so.
 Most of codes are copy from project lvm2py https://github.com/xzased/lvm2py
 
-:copyright: (c) 2013 by Yiting Huang.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 

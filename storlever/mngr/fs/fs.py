@@ -4,8 +4,8 @@ storlever.mngr.fs.fs
 
 filesystem base class. All filesystem type must inherit this class.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 import os

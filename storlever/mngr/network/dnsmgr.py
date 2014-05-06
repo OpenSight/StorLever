@@ -4,8 +4,8 @@ storlever.mngr.network.dnsmgr
 
 This module implements some functions of DNS for linux network.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
