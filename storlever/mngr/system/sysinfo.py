@@ -51,7 +51,7 @@ class SysManager(object):
         self.dist_id = None
 
     def get_dist_info(self):
-        if self.distname is None:
+        if self.dist_name is None:
             self.dist_name, self.dist_version, self.dist_id = \
                 linux_distribution()
         return self.dist_name, self.dist_version, self.dist_id
