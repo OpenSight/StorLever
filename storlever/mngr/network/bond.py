@@ -4,7 +4,7 @@ storlever.mngr.network.bond
 
 This module implements some functions of network interface bond management.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """

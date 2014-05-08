@@ -4,7 +4,7 @@ storlever.mngr.nas.nfsmgr
 
 This module implements NFS server management.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """

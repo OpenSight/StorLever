@@ -1,5 +1,5 @@
 """
-Copyright (c) 2014 by OpenSight (opensight.com.cn).
+Copyright (c) 2014 by OpenSight (www.opensight.cn).
 Copyright (c) 2012 Vladimir Keleshev, <vladimir@keleshev.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of

@@ -4,7 +4,7 @@ storlever.mngr.fs.fsmgr
 
 This module implements fs management.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """

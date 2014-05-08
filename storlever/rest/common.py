@@ -4,7 +4,7 @@ storlever.common
 
 This module implements some common API for REST.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """
@@ -90,7 +90,7 @@ def add_response_header(event):
     add all custom header here
     """
     response = event.response
-    response.headers['X-Powered-By'] = 'OpenSight (opensight.com.cn)'
+    response.headers['X-Powered-By'] = 'OpenSight (www.opensight.cn)'
 
 
 def get_params_from_request(request, schema=None):

@@ -6,7 +6,7 @@ This module implements iscsi targets management.
 Linux has multi kinds of targets manage utils, this manager make use of stgt
 to output iscsi targets
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """

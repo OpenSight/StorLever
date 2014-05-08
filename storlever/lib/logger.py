@@ -4,7 +4,7 @@ storlever.lib.logger
 
 This module implements log utils for storlever.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """

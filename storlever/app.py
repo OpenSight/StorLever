@@ -4,7 +4,7 @@ storlever.common
 
 StorLever's main file to make a WSGI application.
 
-:copyright: (c) 2014 by OpenSight (opensight.com.cn).
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
 :license: AGPLv3, see LICENSE for more details.
 
 """
