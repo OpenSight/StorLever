@@ -4,8 +4,8 @@ storlever.mngr.nas.smbmgr
 
 This module implements samba server management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -25,7 +25,15 @@ from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
 from storlever.lib.confparse import properties, ini
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "SAMBA",
+    "rpms": [
+        "samba",
+    ],
+    "comment": "Provides the management functions for SAMBA server"
+}
 
 SMB_CONF_FILE_NAME = "smb_conf.yaml"
 SMB_ETC_CONF_DIR = "/etc/samba/"
@@ -217,9 +225,12 @@ class SmbManager(object):
         else:
             smb_etc_conf = ini()
 
+        smb_etc_conf.set_sep(True)
+
         # global configs
         if "global" not in smb_etc_conf:
             smb_etc_conf["global"] = properties()
+            smb_etc_conf["global"].set_sep(True)
 
         if smb_conf["workgroup"] == "":
             smb_etc_conf["global"].delete("workgroup")
@@ -266,6 +277,7 @@ class SmbManager(object):
         for share_name, share_conf in smb_conf["share_list"].items():
             if share_name not in smb_etc_conf:
                 smb_etc_conf[share_name] = properties()
+                smb_etc_conf[share_name].set_sep(True)
 
             if share_conf["path"] == "":
                 smb_etc_conf[share_name].delete("path")
@@ -586,6 +598,8 @@ cfg_mgr().register_restore_from_file_cb(SmbManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(SmbManager.system_restore_cb)
 service_mgr().register_service("smb", "smb", "smbd", "Samba Server")
 service_mgr().register_service("nmb", "nmb", "smbd", "Netbios Name Server")
+ModuleManager.register_module(**MODULE_INFO)
+
 
 # disable selinux impact
 set_selinux_permissive()

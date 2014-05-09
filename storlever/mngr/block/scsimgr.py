@@ -4,8 +4,8 @@ storlever.mngr.block.scsimgr
 
 This module implements scsi device manager
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -16,7 +16,16 @@ import re
 from storlever.lib.command import check_output, write_file_entry, read_file_entry
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.block.blockmgr import BLOCKDEV_CMD
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "scsi",
+    "rpms": [
+        "lsscsi",
+        "sg3_utils"
+    ],
+    "comment": "Provides the management functions for scsi device"
+}
 
 LSSCSI_CMD = "/usr/bin/lsscsi"
 SCSI_RESCAN_CMD = "/usr/bin/rescan-scsi-bus.sh"
@@ -88,21 +97,33 @@ class ScsiManager(object):
         delete_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/delete")
         write_file_entry(delete_path, "1\n")
 
+    def rescan_dev(self, scsi_id):
+        '''rescan the device can update the device's state(including size) in host system'''
+
+        # dev_list = self.get_scsi_dev_list()
+        # seleted_scsi = None
+        # for dev_entry in dev_list:
+        #    if dev_entry["scsi_id"] == scsi_id:
+        #        seleted_scsi = dev_entry
+        #if seleted_scsi is None:
+        #    raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+
+        state_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/rescan")
+        write_file_entry(state_path, "1\n")
+
     def remote_offline_dev(self, scsi_id):
-        import pdb
-        pdb.set_trace()
-        dev_list = self.get_scsi_dev_list()
-        seleted_scsi = None
-        for dev_entry in dev_list:
-            if dev_entry["scsi_id"] == scsi_id:
-                seleted_scsi = dev_entry
-        if seleted_scsi is None:
-            raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+        # dev_list = self.get_scsi_dev_list()
+        # seleted_scsi = None
+        #for dev_entry in dev_list:
+        #    if dev_entry["scsi_id"] == scsi_id:
+        #        seleted_scsi = dev_entry
+        #if seleted_scsi is None:
+        #    raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
 
         state_path = os.path.join("/sys/class/scsi_device/", scsi_id, "device/state")
         write_file_entry(state_path, "offline\n")
 
-    def scan_bus(self, host=[], channels=[], targets=[], luns=[],
+    def rescan_bus(self, host=[], channels=[], targets=[], luns=[],
                  remove=False, force_rescan=False, force_remove=False):
         cmd_list = [SCSI_RESCAN_CMD]
         if remove:
@@ -124,6 +145,7 @@ class ScsiManager(object):
         out = check_output(cmd_list)
 
 ScsiManager = ScsiManager()
+ModuleManager.register_module(**MODULE_INFO)
 
 def scsi_mgr():
     """return the global block manager instance"""

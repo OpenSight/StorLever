@@ -37,7 +37,7 @@ class TestScsiMgr(unittest.TestCase):
                 found = True
         self.assertFalse(found)
 
-        mgr.scan_bus()
+        mgr.rescan_bus()
 
         dev_list = mgr.get_scsi_dev_list()
         found = False

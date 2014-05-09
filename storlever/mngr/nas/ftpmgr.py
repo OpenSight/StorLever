@@ -4,8 +4,8 @@ storlever.mngr.nas.ftpmgr
 
 This module implements ftp server management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -25,6 +25,15 @@ from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
 from storlever.lib.confparse import properties
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "FTP",
+    "rpms": [
+        "vsftpd"
+    ],
+    "comment": "Provides the management functions for FTP server"
+}
 
 FTP_CONF_FILE_NAME = "ftp_conf.yaml"
 VSFTPD_ETC_CONF_DIR = "/etc/vsftpd/"
@@ -396,6 +405,7 @@ FtpManager = FtpManager()
 cfg_mgr().register_restore_from_file_cb(FtpManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(FtpManager.system_restore_cb)
 service_mgr().register_service("ftpd", "vsftpd", "/sbin/vsftpd", "FTP Server(vsftpd)")
+ModuleManager.register_module(**MODULE_INFO)
 
 # disable selinux impact
 set_selinux_permissive()

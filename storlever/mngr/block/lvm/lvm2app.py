@@ -5,8 +5,8 @@ storlever.mngr.block.lvm.lvm2app
 Ctypes binding of liblvm2app.so.
 Most of codes are copy from project lvm2py https://github.com/xzased/lvm2py
 
-:copyright: (c) 2013 by Yiting Huang.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -207,6 +207,8 @@ lvm_pv_from_uuid.restype = pv_t
 lvm_pv_from_name = lvmlib.lvm_pv_from_name
 lvm_pv_from_name.argtypes = [vg_t, c_char_p]
 lvm_pv_from_name.restype = pv_t
+lvm_pv_remove = lvmlib.lvm_pv_remove
+lvm_pv_remove.argtypes = [lvm_t, c_char_p]
 
 # LV Functions
 lvm_lv_get_name = lvmlib.lvm_lv_get_name
@@ -228,6 +230,8 @@ lvm_lv_activate = lvmlib.lvm_lv_activate
 lvm_lv_activate.argtypes = [lv_t]
 lvm_lv_deactivate = lvmlib.lvm_lv_deactivate
 lvm_lv_deactivate.argtypes = [lv_t]
+lvm_lv_resize = lvmlib.lvm_lv_resize
+lvm_lv_resize.argtypes = [lv_t, c_ulonglong]
 lvm_lv_from_uuid = lvmlib.lvm_lv_from_uuid
 lvm_lv_from_uuid.argtypes = [vg_t, c_char_p]
 lvm_lv_from_uuid.restype = lv_t

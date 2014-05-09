@@ -4,8 +4,8 @@ storlever.mngr.fs.fsmgr
 
 This module implements fs management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -25,6 +25,20 @@ from storlever.mngr.fs import fs
 
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "filesystem",
+    "rpms": [
+        "util-linux-ng",
+        "setup",
+        "quota",
+        "coreutils"
+    ],
+    "comment": "Provides the management functions of the file system in OS"
+}
+
+
 
 
 FS_CONF_FILE_NAME = "fs_conf.yaml"
@@ -237,7 +251,8 @@ class FileSystemManager(object):
         #     raise StorLeverError("dev file(%s) does not exist" % dev_file, 400)
 
         dev_uuid = ""
-        if not dev_file.startswith("/dev/mapper"):
+
+        if (not dev_file.startswith("/dev/mapper")) and os.path.exists(dev_file):
             dev_uuid = self._dev_file_to_uuid(dev_file)
 
         fs_conf = {
@@ -311,6 +326,8 @@ FileSystemManager = FileSystemManager()
 
 cfg_mgr().register_restore_from_file_cb(FileSystemManager.sync_to_fstab)
 cfg_mgr().register_system_restore_cb(FileSystemManager.system_restore_cb)
+ModuleManager.register_module(**MODULE_INFO)
+
 
 # disable selinux impact
 set_selinux_permissive()

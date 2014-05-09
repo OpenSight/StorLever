@@ -4,8 +4,8 @@ storlever.mngr.utils.ntpmgr
 
 This module implements ntp server management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -24,6 +24,16 @@ from storlever.lib.schema import Schema, Use, Optional, \
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
+from storlever.mngr.system.modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "ntp",
+    "rpms": [
+        "ntp"
+    ],
+    "comment": "Provides the configuration management of the NTP server in sytem , "
+               "like setup the peer server, set self stratum, and etc"
+}
 
 
 NTP_CONF_FILE_NAME = "ntp_conf.yaml"
@@ -494,7 +504,7 @@ NtpManager = NtpManager()
 cfg_mgr().register_restore_from_file_cb(NtpManager.sync_to_system_conf)
 cfg_mgr().register_system_restore_cb(NtpManager.system_restore_cb)
 service_mgr().register_service("ntp", "ntpd", "ntpd", "NTP Server(ntpd)")
-
+ModuleManager.register_module(**MODULE_INFO)
 
 def ntp_mgr():
     """return the global user manager instance"""

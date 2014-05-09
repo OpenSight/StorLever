@@ -4,8 +4,8 @@ storlever.mngr.system.cfgmgr
 
 This module implements some functions of storlever cfg management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -20,6 +20,17 @@ import os
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from modulemgr import ModuleManager
+
+MODULE_INFO = {
+    "module_name": "config",
+    "rpms": [
+    ],
+    "comment": "Provides the configure management for storlever, "
+               "like reset/backup/restore"
+}
+
+
 
 STORLEVER_CONF_DIR = "/etc/storlever"
 
@@ -166,6 +177,7 @@ class CfgManager(object):
 
 CfgManager = CfgManager()
 
+ModuleManager.register_module(**MODULE_INFO)
 
 def cfg_mgr():
     """return the global cfg manager instance"""

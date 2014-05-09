@@ -37,7 +37,8 @@ class TestFsDir(unittest.TestCase):
             if each_dir["name"] == "test":
                 found = True
                 self.assertEquals(each_dir["mode"], 0777)
-                self.assertEquals(each_dir["path"], "/mnt/test_dir/test")
+                self.assertEquals(each_dir["abspath"], "/mnt/test_dir/test")
+                self.assertEquals(each_dir["relpath"], "test")
                 self.assertEquals(each_dir["user"], "root")
                 self.assertEquals(each_dir["group"], "root")
         self.assertTrue(found)
@@ -52,7 +53,7 @@ class TestFsDir(unittest.TestCase):
         usage_list = f.dir_usage_stat("test")
         found = False
         for each_usage in usage_list:
-            if each_usage["path"] == "/mnt/test_dir/test":
+            if each_usage["abspath"] == "/mnt/test_dir/test":
                 found = True
         self.assertTrue(found)
 

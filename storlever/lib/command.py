@@ -4,8 +4,8 @@ storlever.lib.command
 
 This module implements command call for storlever.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 import subprocess
@@ -60,7 +60,7 @@ def check_output(cmd, shell=False, input_ret=[]):
         info = e.output
 
         # re-raise the storlever's error
-        raise exception.StorLeverError(info, http_status)
+        raise exception.StorLeverCmdError(e.returncode, info, http_status)
 
 
 def read_file_entry(path, default_value = None):

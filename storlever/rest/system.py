@@ -4,8 +4,8 @@ storlever.rest.system
 
 This module implements the rest API for system.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -27,11 +27,13 @@ from storlever.mngr.system import cfgmgr
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError, BoolVal, StrRe
 from storlever.lib.exception import StorLeverError
+from storlever.mngr.system import modulemgr
 
 
 def includeme(config):
     config.add_route('cpu_list', '/system/cpu_list')
     config.add_route('uname', '/system/uname')
+    config.add_route('dist', '/system/dist')
     config.add_route('cpu_percent', '/system/cpu_percent')
     config.add_route('per_cpu_percent', '/system/per_cpu_percent')
     config.add_route('cpu_times', '/system/cpu_times')
@@ -58,6 +60,8 @@ def includeme(config):
     config.add_route('backup_conf_to_file', '/system/backup_conf')
     config.add_route('restore_conf_from_file', '/system/restore_conf')
     config.add_route('selinux_state', '/system/selinux')
+    config.add_route('module_list', '/system/module_list')
+    config.add_route('module_info', '/system/module_list/{module_name}')
 
 
 @get_view(route_name='uname')
@@ -71,6 +75,16 @@ def system_uname_get(request):
                       'processor': sys_uname[5]}
     return sys_uname_dict
 
+@get_view(route_name='dist')
+def dist_get(request):
+    sys_mgr = sysinfo.sys_mgr()
+    dist_name, dist_version, dist_id = sys_mgr.get_dist_info()
+    dist = {
+        'dist_name': dist_name,
+        'dist_version': dist_version,
+        'dist_id': dist_id
+    }
+    return dist
 
 @get_view(route_name='cpu_list')
 def system_cpu_list_get(request):
@@ -586,3 +600,19 @@ def put_selinux_state(request):
     sys_mgr.set_selinux_state(params['state'], user=request.client_addr)
     return "System should be reboot when selinux state is changed"
 
+
+@get_view(route_name='module_list')
+def get_module_list(request):
+    module_mgr = modulemgr.module_mgr()      # get module manager
+    module_name_list = module_mgr.get_modules_name_list()
+
+    return module_name_list
+
+
+@get_view(route_name='module_info')
+def get_module_info(request):
+    module_name = request.matchdict["module_name"]
+    module_mgr = modulemgr.module_mgr()      # get module manager
+    module_info = module_mgr.get_module_info(module_name)
+
+    return module_info

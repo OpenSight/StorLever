@@ -23,8 +23,9 @@ if sys.version_info < (2,7):
 
 
 setup(name='storlever',
-      version='0.0',
-      description='storlever',
+      version='0.1',
+      description='Management/Configure System for network and storage '
+                  'resource in linux system, with RESTful API',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
       "Programming Language :: Python",
@@ -35,7 +36,7 @@ setup(name='storlever',
       author='',
       author_email='',
       url='',
-      keywords='web pyramid pylons',
+      keywords='storage restful web',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,

@@ -4,8 +4,8 @@ storlever.mngr.fs.ext4
 
 ext4 filesystem class..
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 import os
@@ -16,7 +16,15 @@ from storlever.mngr.fs.fsmgr import FileSystemManager
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "ext4",
+    "rpms": [
+        "e2fsprogs"
+    ],
+    "comment": "Provides the ext4 filesystem type support"
+}
 
 class Ext4(FileSystem):
 
@@ -37,7 +45,7 @@ class Ext4(FileSystem):
         check_output(["/sbin/resize2fs", self.fs_conf["dev_file"]],
                      input_ret=[1])
 
-
+ModuleManager.register_module(**MODULE_INFO)
 
 # register to fs manager
 FileSystemManager.add_fs_type("ext4", Ext4)

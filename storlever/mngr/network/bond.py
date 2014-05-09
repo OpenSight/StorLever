@@ -4,8 +4,8 @@ storlever.mngr.network.bond
 
 This module implements some functions of network interface bond management.
 
-:copyright: (c) 2013 by jk.
-:license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
 
 """
 
@@ -26,7 +26,15 @@ from storlever.mngr.network.ifmgr import SYSFS_NET_DEV, if_mgr, \
     check_network_manager_exist
 from storlever.mngr.network import ifconfig
 from storlever.lib.confparse import properties
+from storlever.mngr.system.modulemgr import ModuleManager
 
+MODULE_INFO = {
+    "module_name": "bond",
+    "rpms": [
+        "initscripts",
+    ],
+    "comment": "Provides the management functions for bonding network interface"
+}
 
 MODPROBE_CONF = "/etc/modprobe.d/bond.conf"
 BONDING_MASTERS = SYSFS_NET_DEV + "bonding_masters"
