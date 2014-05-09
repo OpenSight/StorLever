@@ -64,7 +64,6 @@ def network_get(request):
 def get_single_list(request):
     eth_face = ifmgr.if_mgr()
     eth_list = eth_face.interface_name_list()
-    print eth_list
     eth_list_dict = []
     for port_name in eth_list:
         if 'bond' in port_name:
@@ -200,7 +199,6 @@ def get_dns(request):
 def modify_dns(request):
     params = get_params_from_request(request)
     servers = str(params['servers']).split(",")
-    print servers
     dns_manager = dnsmgr.dns_mgr()
     dns_manager.set_name_servers(servers, request.client_addr)
     return Response(status=200)
