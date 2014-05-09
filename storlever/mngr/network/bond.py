@@ -63,13 +63,16 @@ class BondGroup(EthInterface):
         path = os.path.join(SYSFS_NET_DEV, self.name, "bonding/slaves")
         return read_file_entry(path).split()
 
-    def set_bond_config(self, miimon, mode):
+    def set_bond_config(self, miimon, mode,ip,netmask,gateway):
 
         if mode not in modeMap:
             StorLeverError("mdoe(%d) is not supported" % mode, 400)
 
         self.conf["BONDING_OPTS"] = \
             '"miimon=%d mode=%d"' % (miimon, mode)
+        self.conf["IPADDR"] = ip
+        self.conf["NETMASK"] = netmask
+        self.conf["GATEWAY"] = gateway
         self.save_conf()
 
         if self.ifconfig_interface.is_up():

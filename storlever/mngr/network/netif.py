@@ -175,21 +175,3 @@ class EthInterface(object):
 
         return stat
 
-
-def get_port_info(port_name):
-    netif_info = EthInterface(port_name)
-    ip_info = netif_info.get_ip_config()
-    property_info = netif_info.property_info
-    link_state = netif_info.link_state
-    statistic_info = netif_info.statistic_info
-    port_info = {'name': port_name,
-                 'ip': ip_info[0],
-                 'netmask': ip_info[1],
-                 'gateway': ip_info[2],
-                 'mac': property_info["mac"],
-                 'speed': link_state['speed'],
-                 'linkup': link_state['link_up'],
-                 'tx': statistic_info['tx_bytes'],
-                 'rx': statistic_info['rx_bytes']
-                 }
-    return port_info
