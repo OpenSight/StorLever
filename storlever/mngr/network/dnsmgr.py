@@ -55,7 +55,7 @@ class DnsManager(object):
 
         return servers
 
-    def set_name_servers(self, servers, user="unknown"):
+    def set_name_servers(self, servers=[], user="unknown"):
 
         if not isinstance(servers, list):
             raise StorLeverError("servers must be type of list", 400)
