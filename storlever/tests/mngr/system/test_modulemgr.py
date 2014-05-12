@@ -14,18 +14,28 @@ class TestModuleMgr(unittest.TestCase):
         manager = module_mgr()
         module_list = manager.get_modules_name_list()
         self.assertFalse("test" in module_list)
-        manager.register_module("test", ["coreutils"], "test module")
+        manager.register_module("test", ["coreutils"], ["/bin/ls"], "test module")
         module_list = manager.get_modules_name_list()
         self.assertTrue("test" in module_list)
         module_info = manager.get_module_info("test")
         self.assertEquals(module_info["module_name"], "test")
         self.assertEquals(module_info["comment"], "test module")
         found = False
-        for rpm_info in module_info["rpms"]:
-            found = True
-            self.assertEquals(rpm_info["package_name"], "coreutils")
-            self.assertTrue(rpm_info["installed"])
+        for requires in module_info["requires"]:
+            if requires["name"] == "coreutils":
+                found = True
+                self.assertEquals(requires["type"], "rpm")
+                self.assertTrue(requires["installed"])
         self.assertTrue(found)
+
+        found = False
+        for requires in module_info["requires"]:
+            if requires["name"] == "/bin/ls":
+                found = True
+                self.assertEquals(requires["type"], "file")
+                self.assertTrue(requires["installed"])
+        self.assertTrue(found)
+
         manager.unregister_module("test")
         module_list = manager.get_modules_name_list()
         self.assertFalse("test" in module_list)

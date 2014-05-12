@@ -24,8 +24,6 @@ from modulemgr import ModuleManager
 
 MODULE_INFO = {
     "module_name": "config",
-    "rpms": [
-    ],
     "comment": "Provides the configure management for storlever, "
                "like reset/backup/restore"
 }
@@ -64,7 +62,7 @@ class CfgManager(object):
         self.restore_from_file_cb = []
         self.system_restore_cb = []
 
-    def register_config_file(self, file_name, pattern=None):
+    def register_config_file(self, file_name, pattern=None, *args, **kwargs):
         """register a config to cfg mananger
 
         Other module can register its config file(except in STORLEVER_CONF_DIR) to cfg manager
@@ -77,12 +75,12 @@ class CfgManager(object):
         """
         self.managed_config_files.append({"name": file_name, "patten": pattern})
 
-    def register_restore_from_file_cb(self, fun):
+    def register_restore_from_file_cb(self, fun, *args, **kwargs):
         """ register a callback function after cfg manager restore the config from file
         """
         self.restore_from_file_cb.append(fun)
 
-    def register_system_restore_cb(self, fun):
+    def register_system_restore_cb(self, fun, *args, **kwargs):
         """register a callback function after cfg manager perform a system restore
         """
         self.system_restore_cb.append(fun)

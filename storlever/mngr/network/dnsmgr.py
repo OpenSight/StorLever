@@ -19,7 +19,6 @@ from storlever.mngr.system.modulemgr import ModuleManager
 
 MODULE_INFO = {
     "module_name": "DNS",
-    "rpms": [ ],
     "comment": "Provides the configuration functions for DNS of the network system"
 }
 

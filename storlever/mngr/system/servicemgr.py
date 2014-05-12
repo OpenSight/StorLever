@@ -156,7 +156,7 @@ class ServiceManager(object):
         else:
             raise StorLeverError("service does not exist", 404)
 
-    def register_service(self, name, init_script, ps_pattern="", comment=""):
+    def register_service(self, name, init_script, ps_pattern="", comment="", *args, **kwargs):
         """register a service into service manager to handle.
 
         other module can register its self service to service manager, so that

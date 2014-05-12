@@ -30,9 +30,11 @@ MODULE_CONF_SCHEMA = Schema({
 
     Optional("rpms"):  Default([Use(str)], default=[]),
 
+    Optional("extra_files"):  Default([Use(str)], default=[]),
+
     Optional("comment"): Default(Use(str), default=""),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 RPM_CMD = "/bin/rpm"
@@ -44,10 +46,11 @@ class ModuleManager(object):
         self.managed_modules = {}
         self.module_schema = MODULE_CONF_SCHEMA
 
-    def register_module(self, module_name, rpms=[], comment=""):
+    def register_module(self, module_name, rpms=[], extra_files=[], comment="", *args, **kwargs):
         module_conf = {
             "module_name": module_name,
             "rpms": rpms,
+            "extra_files": extra_files,
             "comment": comment
         }
 
@@ -71,22 +74,29 @@ class ModuleManager(object):
         if module_name not in self.managed_modules:
             raise StorLeverError("Module(%s) Not Found" % (module_name), 404)
         module_conf = self.managed_modules[module_name]
-        rpm_info_list = []
+        deps_info_list = []
         for rpm in module_conf["rpms"]:
             installed = True
             try:
                 check_output([RPM_CMD, "-q", rpm])
             except StorLeverCmdError:
                 installed = False
-            rpm_info_list.append({
-                "package_name": rpm,
+            deps_info_list.append({
+                "name": rpm,
+                "type": "rpm",
                 "installed": installed
+            })
+        for file_path in module_conf["extra_files"]:
+            deps_info_list.append({
+                "name": file_path,
+                "type": "file",
+                "installed": os.path.exists(file_path)
             })
 
         module_info = {
             "module_name": module_conf["module_name"],
+            "requires": deps_info_list,
             "comment": module_conf["comment"],
-            "rpms": rpm_info_list
         }
 
         return module_info

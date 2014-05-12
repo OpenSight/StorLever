@@ -15,7 +15,7 @@ from storlever.mngr.system.modulemgr import ModuleManager
 MODULE_INFO = {
     "module_name": "http",
     "rpms": [
-        "ntp"
+        "httpd"
     ],
     "comment": "Provides some simple support for the http server"
 }

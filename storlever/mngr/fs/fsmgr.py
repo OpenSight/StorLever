@@ -193,7 +193,7 @@ class FileSystemManager(object):
 
         return cls
 
-    def add_fs_type(self, type, cls):
+    def add_fs_type(self, type, cls, *args, **kwargs):
         """add the fs class with specific type name"""
         with self.lock:
             self.support_fs_type[type] = cls
