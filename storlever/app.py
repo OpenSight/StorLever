@@ -9,6 +9,11 @@ StorLever's main file to make a WSGI application.
 
 """
 
+import pkg_resources
+
+STORLEVER_ENTRY_POINT_GROUP = 'storlever.extensions'
+
+
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
@@ -56,5 +61,20 @@ def main(global_config, **settings):
     # check storlever.web.__init__.py for more detail
     config.include('storlever.web')
 
+    # loads all the extensions with entry point group "storlever.extenstions"
+    launch_extensions(config)
+
     return config.make_wsgi_app()
+
+def launch_extensions(config):
+
+    for entry_point in pkg_resources.iter_entry_points(group=STORLEVER_ENTRY_POINT_GROUP):
+        try:
+            # Grab the function that is the actual plugin.
+            plugin = entry_point.load()
+            # call the extension's main function
+            plugin(config)
+        except ImportError as e:
+            pass
+
 
