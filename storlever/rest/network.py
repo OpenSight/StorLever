@@ -80,9 +80,9 @@ def get_port_stat(request):
     return stat_info
 
 port_mod_schema = Schema({
-    Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # ip addr
-    Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # netmask addr
-    Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # gateway addr
+    Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # ip addr
+    Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # netmask addr
+    Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # gateway addr
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -140,9 +140,9 @@ bond_add_schema = Schema({
     "mode": IntVal(0, 6),
     "miimon": IntVal(0, 65535),
     Optional("ifs"): Default(ListVal(Use(str)), default=[]),
-    Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # ip addr
-    Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # netmask addr
-    Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), defalut=""),  # gateway addr
+    Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # ip addr
+    Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # netmask addr
+    Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # gateway addr
     DoNotCare(str): object  # for all those key we don't care
 })
 
