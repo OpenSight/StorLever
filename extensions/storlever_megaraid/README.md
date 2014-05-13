@@ -26,7 +26,7 @@ Add storlever_megaraid to storlever is very simple, following the steps below:
 
 1.  Install storlever following the storlever's readme
 2.  Install storlever_megaraid. storlever_megaraid is a pure python project which is very easy to installed.
-    Just type the following CMD in the storlever_megaraid's project's directory
+    Just type the following CMD in the storlever_megaraid's project's directory:
 
 
         python setup.py install
