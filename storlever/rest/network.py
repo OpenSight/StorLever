@@ -1,4 +1,16 @@
-from storlever.rest.common import (get_view, post_view, 
+"""
+storlever.rest.network
+~~~~~~~~~~~~~~~~
+
+This module implements the rest API for network module.
+
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
+
+"""
+
+
+from storlever.rest.common import (get_view, post_view,
                                    put_view, delete_view)
 from storlever.rest.common import get_params_from_request
 from storlever.lib.exception import StorLeverError

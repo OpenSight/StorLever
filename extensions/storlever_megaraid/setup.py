@@ -8,24 +8,14 @@ README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.md')).read()
 
 requires = [
-    'pyramid',
-    'pyramid_debugtoolbar',
-    'waitress',
-    'pyyaml',
-    'psutil>=1.1.3',
-    'pyramid_chameleon',
+    'storlever',
 ]
 
-if sys.version_info < (2,7):
-    requires.append('unittest2')
 
 
-
-
-setup(name='storlever',
+setup(name='storlever_megaraid',
       version='0.1.0',
-      description='Management/Configure System for network and storage '
-                  'resource in linux system, with RESTful API',
+      description='the megaraid support extension for storlever',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
       "Programming Language :: Python",
@@ -36,15 +26,15 @@ setup(name='storlever',
       author='',
       author_email='',
       url='',
-      keywords='storage restful web',
+      keywords='megaraid raid lsi storage restful',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
       tests_require=requires,
-      test_suite="storlever.tests",
+      test_suite="storlever_megaraid.tests",
       entry_points="""\
-      [paste.app_factory]
-      main = storlever:main
+      [storlever.extensions]
+      main = storlever_megaraid:main
       """,
       )
