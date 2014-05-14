@@ -35,6 +35,6 @@ setup(name='storlever_megaraid',
       test_suite="storlever_megaraid.tests",
       entry_points="""\
       [storlever.extensions]
-      main = storlever_megaraid:main
+      main = storlever_megaraid.app:main
       """,
       )

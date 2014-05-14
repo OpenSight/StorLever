@@ -45,6 +45,6 @@ setup(name='storlever',
       test_suite="storlever.tests",
       entry_points="""\
       [paste.app_factory]
-      main = storlever:main
+      main = storlever.app:main
       """,
       )
