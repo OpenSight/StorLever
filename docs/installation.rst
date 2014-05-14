@@ -44,6 +44,6 @@ For test run or debug, it's better to stick with the development server, which c
 reload your code when code change found, and it can printout useful debug information when unexpected
 exception raised in the code, and some other helpful functionality for code debug::
 
-    $ pserver --reload development.ini
+    $ pserve --reload storlever_dev.ini
 
 Now you should be able to call REST API via <server_ip>:6543
