@@ -18,7 +18,9 @@ class TestFsDir(unittest.TestCase):
     def setUp(self):
         mgr = fs_mgr()
         dev_file = get_block_dev()
-        mgr.mkfs_on_dev("ext4", get_block_dev())
+        if dev_file == "":
+            return
+        mgr.mkfs_on_dev("ext4", dev_file)
         mgr.add_fs("test_dir", "ext4", dev_file, comment="test")
 
     def tearDown(self):

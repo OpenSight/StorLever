@@ -7,8 +7,15 @@ else:
     import unittest2 as unittest
 
 from storlever.mngr.block.scsimgr import scsi_mgr
-from storlever.tests.mngr.fs.utils import get_block_dev
 
+
+def get_block_dev():
+    global test_block
+    if test_block is None:
+        test_block = raw_input("Please input a free scsi dev(dev file path) for scsi test:")
+        test_block = test_block.strip()
+
+    return test_block
 
 class TestScsiMgr(unittest.TestCase):
 
@@ -22,6 +29,8 @@ class TestScsiMgr(unittest.TestCase):
     def test_scsi_op(self):
         mgr = scsi_mgr()
         test_dev_file = get_block_dev()
+        if test_dev_file == "":
+            return
         dev_list = mgr.get_scsi_dev_list()
         test_scsi_id = None
         for dev_entry in dev_list:

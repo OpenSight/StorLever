@@ -7,14 +7,17 @@ else:
 
 from storlever.mngr.network.ifmgr import if_mgr
 from storlever.mngr.network.bond import bond_mgr
-
+from utils import get_net_if
 
 class TestBondMgr(unittest.TestCase):
 
     def test_bond(self):
         manager = if_mgr()
         ifs_list = manager.interface_name_list()
-        test_ifs_name = ifs_list[-1]
+        test_ifs_name = get_net_if()
+        if test_ifs_name == "":
+            return
+        self.assertTrue(test_ifs_name in ifs_list)
         ifs = manager.get_interface_by_name(test_ifs_name)  # last interface to test
         ip, mask, gateway = ifs.get_ip_config()
         bond_manager = bond_mgr()

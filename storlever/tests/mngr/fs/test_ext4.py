@@ -15,7 +15,10 @@ class TestMkfs(unittest.TestCase):
 
     def test_mkfs_no_option(self):
         mgr = fs_mgr()
-        mgr.mkfs_on_dev("ext4", get_block_dev())
+        dev_file = get_block_dev()
+        if dev_file == "":
+            return
+        mgr.mkfs_on_dev("ext4", dev_file)
 
 
 class TestFsMgr(unittest.TestCase):
@@ -27,7 +30,9 @@ class TestFsMgr(unittest.TestCase):
     def test_add_fs(self):
         mgr = fs_mgr()
         dev_file = get_block_dev()
-        mgr.mkfs_on_dev("ext4", get_block_dev())
+        if dev_file == "":
+            return
+        mgr.mkfs_on_dev("ext4", dev_file)
         mgr.add_fs("test_ext4", "ext4", dev_file, comment="test")
         self.assertTrue("test_ext4" in mgr.fs_name_list())
         f = mgr.get_fs_by_name("test_ext4")
