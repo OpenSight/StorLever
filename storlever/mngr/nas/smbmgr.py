@@ -17,6 +17,7 @@ from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
+from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
     Default, DoNotCare, BoolVal, IntVal
@@ -123,7 +124,7 @@ SHARE_CONF_SCHEMA = Schema({
     # the mode mask in the parameter directory mask is applied
     Optional("force_directory_mode"): Default(IntVal(min=0, max=0777), default=0),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 
 })
 
@@ -181,7 +182,7 @@ SMB_CONF_SCHEMA = Schema({
     Optional("share_list"):  Default(Schema({DoNotCare(str): SHARE_CONF_SCHEMA}),
                                        default={}),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 class SmbManager(object):
@@ -354,6 +355,10 @@ class SmbManager(object):
         if len(config) == 0 and len(kwargs) == 0:
             return
         config.update(kwargs)
+        not_allowed_keys = (
+            "share_list",
+        )
+        config = filter_dict(config, not_allowed_keys, True)
 
         if "guest_account" in config and config["guest_account"] is not None:
             try:
@@ -384,7 +389,11 @@ class SmbManager(object):
         with self.lock:
             smb_conf = self._load_conf()
 
-        del smb_conf["share_list"] # remove user_list field
+        not_allowed_keys = (
+            "share_list",
+        )
+        smb_conf = filter_dict(smb_conf, not_allowed_keys, True)
+
 
         return smb_conf
 

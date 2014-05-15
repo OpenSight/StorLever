@@ -84,7 +84,7 @@ NTP_SERVER_CONF_SCHEMA = Schema({
     Optional("flag3"): Default(IntVal(min=0, max=1), default=0),
     Optional("flag4"): Default(IntVal(min=0, max=1), default=0),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 NTP_RESTRICT_CONF_SCHEMA = Schema({
@@ -121,7 +121,7 @@ NTP_RESTRICT_CONF_SCHEMA = Schema({
     # by	remote event logging programs
     Optional("notrap"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 
@@ -131,7 +131,7 @@ NTP_CONF_SCHEMA = Schema({
 
     Optional("restrict_list"):  Default([NTP_RESTRICT_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 

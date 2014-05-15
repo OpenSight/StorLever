@@ -62,7 +62,7 @@ class FileSystemManager(object):
             "mount_option": Use(str),  # mount option of this fs
             "check_onboot": BoolVal(),  # fsck fs on boot
             Optional("comment"): Default(Use(str), default=""),  # comment,
-            DoNotCare(str): Use(str)  # for all those key we don't care
+            DoNotCare(str): object  # for all those key we don't care
         })
         self.fs_dict_schema = Schema({
             DoNotCare(str): self.fs_conf_schema

@@ -17,10 +17,12 @@ import os.path
 from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
 from storlever.lib.exception import StorLeverError
+from storlever.lib.utils import filter_dict
 from storlever.lib import logger
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
     Default, DoNotCare, BoolVal, IntVal
+
 
 TGT_CONF_FILE_NAME = "tgt_conf.yaml"
 TGT_ETC_CONF_DIR = "/etc/tgt/"
@@ -87,7 +89,7 @@ LUN_CONF_SCHEMA = Schema({
     # scsi id, if empty, it would automatically be set to a default value
     Optional("scsi_sn"): Default(Use(str), default=""),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 
@@ -112,7 +114,7 @@ TARGET_CONF_SCHEMA = Schema({
 
     Optional("lun_list"): Default([LUN_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 
 })
 
@@ -130,7 +132,7 @@ TGT_CONF_SCHEMA = Schema({
     # target list
     Optional("target_list"):  Default([TARGET_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 class TgtManager(object):
@@ -309,12 +311,14 @@ class TgtManager(object):
         if len(config) == 0 and len(kwargs) == 0:
             return
         config.update(kwargs)
+        not_allowed_keys = (
+            "target_list",
+        )
+        config = filter_dict(config, not_allowed_keys, True)
 
         with self.lock:
             tgt_conf = self._load_conf()
             for name, value in config.items():
-                if name == "target_list":
-                    continue
                 if name in tgt_conf and value is not None:
                     tgt_conf[name] = value
 
@@ -333,7 +337,10 @@ class TgtManager(object):
         with self.lock:
             tgt_conf = self._load_conf()
 
-        del tgt_conf["target_list"] # remove user_list field
+        not_allowed_keys = (
+            "target_list",
+        )
+        tgt_conf = filter_dict(tgt_conf, not_allowed_keys, True)
 
         # hide the password
         if tgt_conf["incomingdiscoveryuser"] != "":

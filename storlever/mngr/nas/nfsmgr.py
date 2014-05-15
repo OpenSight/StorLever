@@ -17,6 +17,7 @@ from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
+from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
     Default, DoNotCare, BoolVal, IntVal, StrRe
@@ -79,7 +80,7 @@ EXPORT_CLIENT_CONF_SCHEMA = Schema({
     # The options to be used for host
     Optional("options"): Default(StrRe("^(\S)*$"), default=""),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 
@@ -90,7 +91,7 @@ EXPORT_POINT_CONF_SCHEMA = Schema({
     # client list for this export point
     "clients": Default([EXPORT_CLIENT_CONF_SCHEMA],default=[]),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 
 })
 

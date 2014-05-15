@@ -16,6 +16,7 @@ import os.path
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
+from storlever.lib.utils import filter_dict
 import logging
 from tgtadmparse import TgtStatus
 from tgtmgr import TGTADMIN_CMD

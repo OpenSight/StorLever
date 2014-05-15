@@ -17,6 +17,7 @@ from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
+from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
     Default, DoNotCare, BoolVal, IntVal
@@ -48,7 +49,7 @@ FTP_USER_CONF_SCHEMA = Schema({
     # When enabled, the user will be placed into the chroot jail
     Optional("chroot_enable"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 FTP_CONF_SCHEMA = Schema({
@@ -128,7 +129,7 @@ FTP_CONF_SCHEMA = Schema({
     # empty, which means the anon_username user's home directory
     Optional("anon_root"): Default(Use(str), default=""),
 
-    DoNotCare(str): Use(str)  # for all those key we don't care
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 class FtpManager(object):
@@ -271,13 +272,15 @@ class FtpManager(object):
         if len(config) == 0 and len(kwargs) == 0:
             return
         config.update(kwargs)
+        not_allowed_keys = (
+            "user_list",
+        )
+        config = filter_dict(config, not_allowed_keys, True)
 
 
         with self.lock:
             ftp_conf = self._load_conf()
             for name, value in config.items():
-                if name == "user_list":
-                    continue
                 if name in ftp_conf and value is not None:
                     ftp_conf[name] = value
 
@@ -309,7 +312,10 @@ class FtpManager(object):
         with self.lock:
             ftp_conf = self._load_conf()
 
-        del ftp_conf["user_list"] # remove user_list field
+        not_allowed_keys = (
+            "user_list",
+        )
+        ftp_conf = filter_dict(ftp_conf, not_allowed_keys, True)
 
         return ftp_conf
 
