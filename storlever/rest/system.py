@@ -589,7 +589,8 @@ def get_selinux_state(request):
 
 selinux_mod_schema = Schema({
     "state": Default(StrRe(r"^(enforcing|permissive|disabled)$"),
-                     default="permissive")
+                     default="permissive"),
+    DoNotCare(str): object  # for all those key we don't care
 })
 
 
