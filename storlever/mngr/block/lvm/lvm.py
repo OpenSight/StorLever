@@ -14,13 +14,17 @@ from functools import wraps
 from lvm2app import *
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.system.modulemgr import ModuleManager
+from storlever.lib.lock import lock
+
+from storlever.lib import logger
+import logging
+
 
 MODULE_INFO = {
     "module_name": "lvm",
     "rpms": [],
     "comment": "Provides the management functions for lvm subsystem(lvm2)"
 }
-
 
 
 class DeferAndCache(object):
@@ -410,30 +414,34 @@ class _PV(object):
         self._vg.remove_pv(self.name)
 
 
-class LVM(object):
+class LVMManager(object):
     def __init__(self):
-        self.vgs = {}
-        with _LVM() as _lvm:
-            for vg_name in _lvm.list_vg_names():
-                self.vgs[vg_name] = VG(self, vg_name)
+        self.lock = lock()
 
     def new_vg(self, vg_name, devices, pe_size=64):
-        if vg_name in self.vgs:
-            raise StorLeverError('VG {0} already exists'.format(vg_name))
-        # TODO more check
-        with _LVM() as _lvm:
-            _lvm.create_vg(vg_name, devices, pe_size=pe_size)
-        self.vgs[vg_name] = VG(self, vg_name)
-        return self.vgs[vg_name]
+        with self.lock:
+            with _LVM() as _lvm:
+                _lvm.create_vg(vg_name, devices, pe_size=pe_size)
+        return self.get_vg(vg_name)
 
-    def refresh(self):
+    def get_vg(self, vg_name):
+        with _LVM() as _lvm:
+            if vg_name in _lvm.list_vg_names():
+                return VG(self, vg_name)
+            else:
+                raise StorLeverError('No VG {0} exists'.format(vg_name))
+
+    def get_all_vg(self):
+        vgs = {}
         with _LVM() as _lvm:
             for vg_name in _lvm.list_vg_names():
-                self.vgs[vg_name] = VG(self, vg_name)
+                vgs[vg_name] = VG(self, vg_name)
+        return vgs
 
 
 class VG(object):
     def __init__(self, lvm, name):
+        self.lock = lvm.lock
         self.lvm = lvm
         with _LVM() as _lvm:
             with _VG(_lvm, name) as _vg:
@@ -500,39 +508,38 @@ class VG(object):
         self._get_detail()
         return self.max_lv
 
-    def get_pv(self, pv_name):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.name) as _vg:
-                return _vg.get_pv_by_name(pv_name)
-
     def delete(self):
-        pvs = self.pvs
-        with _LVM() as _lvm:
-            _lvm.delete_vg(self.name)
-        self.lvm.vgs.pop(self.name, None)
-        for pv in self.pvs.itervalues():
-            pv.delete()
+        with self.lock:
+            with _LVM() as _lvm:
+                _lvm.delete_vg(self.name)
+            for pv in self.pvs.itervalues():
+                pv.delete()
 
     def create_lv(self, lv_name, size):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
-                _lv = _vg.create_lv(lv_name, size)
-                lv = LV(self, _lv.name, _lv.uuid, _lv.size)
-        self.lvs[lv_name] = lv
-        return lv
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
+                    _lv = _vg.create_lv(lv_name, size)
+                    lv = LV(self, _lv.name, _lv.uuid, _lv.size)
+            self.lvs[lv_name] = lv
+            return lv
 
     def grow(self, device):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
-                _vg.add_pv(device)
-                pv = _vg.get_pv_by_name(device)
-        self.pvs[device] = pv
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
+                    _vg.add_pv(device)
+                    pv = _vg.get_pv_by_name(device)
+            self.pvs[device] = pv
 
     def shrink(self, device):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
-                _vg.remove_pv(device)
-        self.pvs.pop(device, None)
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
+                    _vg.remove_pv(device)
+            pv = self.pvs.pop(device, None)
+            if pv:
+                pv.delete()
 
     def replace_pv(self):
         pass
@@ -564,6 +571,7 @@ class PV(object):
 
 class LV(object):
     def __init__(self, vg, name, uuid, size):
+        self.lock = vg.lock
         self.vg = vg
         self.name = name
         self.uuid = uuid
@@ -571,17 +579,26 @@ class LV(object):
         pass
 
     def resize(self, size):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.vg.name) as _vg:
-                _vg.get_lv_by_name(self.name).resize(size)
-                size = _vg.get_lv_by_name(self.name).get_size()
-        self.size = size
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name) as _vg:
+                    _vg.get_lv_by_name(self.name).resize(size)
+                    size = _vg.get_lv_by_name(self.name).get_size()
+            self.size = size
 
     def delete(self):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
-                _vg.get_lv_by_name(self.name).delete()
-        self.vg.lvs.pop(self.name, None)
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
+                    _vg.get_lv_by_name(self.name).delete()
+            self.vg.lvs.pop(self.name, None)
+
+
+LVMManager = LVMManager()
+
+
+def lvm_mgr():
+    return LVMManager
 
 
 ModuleManager.register_module(**MODULE_INFO)
