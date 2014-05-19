@@ -8,7 +8,7 @@ else:
 
 from storlever.mngr.block.lvm.lvm import lvm_mgr
 from storlever.lib.exception import StorLeverError
-from storlever.tests.mngr.fs.utils import get_block_dev, get_extra_block_dev
+from storlever.tests.mngr.block.utils import get_block_dev, get_extra_block_dev
 
 
 class TestLVM(unittest.TestCase):
