@@ -416,7 +416,7 @@ class NtpManager(object):
             self._sync_to_system_conf(ntp_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Restrict (%s) config is added by operator(%s)" %
+                   "NTP Restrict (%s) config is added by operator(%s)" %
                    (restrict_addr, operator))
         return len(restrict_list) - 1
 
@@ -434,7 +434,7 @@ class NtpManager(object):
             self._sync_to_system_conf(ntp_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Restrict (%s) config is deleted by operator(%s)" %
+                   "NTP Restrict (%s) config is deleted by operator(%s)" %
                    (restrict_conf["restrict_addr"], operator))
 
     def set_restrict(self, index, restrict_addr=None, ipv6=None, mask=None,

@@ -454,7 +454,7 @@ class SmbManager(object):
             self._sync_to_system_conf(smb_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "samba share (%s) config is added by operator(%s)" %
+                   "Samba share (%s) config is added by operator(%s)" %
                    (share_name, operator))
 
     def del_share_conf(self, share_name, operator="unkown"):
@@ -470,7 +470,7 @@ class SmbManager(object):
             self._sync_to_system_conf(smb_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "samba share (%s) config is deleted by operator(%s)" %
+                   "Samba share (%s) config is deleted by operator(%s)" %
                    (share_name, operator))
 
     def set_share_conf(self, share_name, path=None, comment=None,
@@ -519,7 +519,7 @@ class SmbManager(object):
             self._sync_to_system_conf(smb_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "samba share (%s) config is updated by operator(%s)" %
+                   "Samba share (%s) config is updated by operator(%s)" %
                    (share_name, operator))
 
     def get_connection_list(self):

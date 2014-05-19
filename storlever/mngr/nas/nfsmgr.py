@@ -228,7 +228,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "export point with path(%s) config is added by operator(%s)" %
+                   "NFS export point with path(%s) config is added by operator(%s)" %
                    (path, operator))
 
         return len(nfs_conf) - 1
@@ -246,7 +246,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "export point (path:%s) is deleted by operator(%s)" %
+                   "NFS export point (path:%s) is deleted by operator(%s)" %
                    (export_point["path"], operator))
 
     def set_export_conf(self, index, path=None, clients=None, operator="unkown"):
@@ -272,7 +272,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "export point (index:%s) config is updated by operator(%s)" %
+                   "NFS export point (index:%s) config is updated by operator(%s)" %
                    (index, operator))
 
     def add_client(self, export_index, host, options="", operator="unkown"):
@@ -297,7 +297,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Client (%s) for export point (%s)is added by operator(%s)" %
+                   "NFS Client (%s) for export point (%s)is added by operator(%s)" %
                    (host, export_point["path"], operator))
 
         return len(client_list) - 1
@@ -320,7 +320,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Client (%s) for export point (%s) is deleted by operator(%s)" %
+                   "NFS Client (%s) for export point (%s) is deleted by operator(%s)" %
                    (client["host"], export_point["path"], operator))
 
     def update_client(self, export_index, client_index, host=None, options=None, operator="unkown"):
@@ -347,7 +347,7 @@ class NfsManager(object):
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "Client (%s) for export point (%s) is updated by operator(%s)" %
+                   "NFS Client (%s) for export point (%s) is updated by operator(%s)" %
                    (client_list[client_index]["host"], export_point["path"], operator))
 
 
