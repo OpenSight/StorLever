@@ -13,6 +13,7 @@ import platform
 import time
 import os
 from datetime import datetime
+import socket
 
 import psutil
 from pyramid.response import FileResponse
@@ -31,9 +32,9 @@ from storlever.mngr.system import modulemgr
 
 
 def includeme(config):
+
+    config.add_route('system_localhost', '/system/localhost')
     config.add_route('cpu_list', '/system/cpu_list')
-    config.add_route('uname', '/system/uname')
-    config.add_route('dist', '/system/dist')
     config.add_route('cpu_percent', '/system/cpu_percent')
     config.add_route('per_cpu_percent', '/system/per_cpu_percent')
     config.add_route('cpu_times', '/system/cpu_times')
@@ -64,27 +65,44 @@ def includeme(config):
     config.add_route('module_info', '/system/module_list/{module_name}')
 
 
-@get_view(route_name='uname')
-def system_uname_get(request):
-    sys_uname = platform.uname()
-    sys_uname_dict = {'system': sys_uname[0],
-                      'node': sys_uname[1],
-                      'release': sys_uname[2],
-                      'version': sys_uname[3],
-                      'machine': sys_uname[4],
-                      'processor': sys_uname[5]}
-    return sys_uname_dict
 
-@get_view(route_name='dist')
-def dist_get(request):
+@get_view(route_name='system_localhost')
+def get_system_localhost(request):
     sys_mgr = sysinfo.sys_mgr()
+    sys_uname = platform.uname()
+    hostname = sys_mgr.get_hostname()
     dist_name, dist_version, dist_id = sys_mgr.get_dist_info()
-    dist = {
+    uptime = datetime.now() - datetime.fromtimestamp(psutil.BOOT_TIME)
+    av1, av2, av3 = os.getloadavg()
+    info = {
+        'hostname': hostname,
+        'system': sys_uname[0],
+        'release': sys_uname[2],
+        'version': sys_uname[3],
+        'machine': sys_uname[4],
+        'processor': sys_uname[5],
         'dist_name': dist_name,
         'dist_version': dist_version,
-        'dist_id': dist_id
+        'dist_id': dist_id,
+        "uptime": str(uptime).split('.')[0],
+        "loadavg":[av1, av2, av3]
     }
-    return dist
+    return info
+
+local_host_schema = Schema({
+    Optional("hostname"): Use(str),     # name should be string
+    DoNotCare(str): object  # for all those key we don't care
+})
+
+
+@put_view(route_name='system_localhost')
+def put_system_localhost(request):
+    sys_mgr = sysinfo.sys_mgr()      # get sys manager
+    params = get_params_from_request(request, local_host_schema)
+    if "hostname" in params:
+        sys_mgr.set_hostname(params["hostname"], user=request.client_addr)
+    return Response(status=200)
+
 
 @get_view(route_name='cpu_list')
 def system_cpu_list_get(request):
