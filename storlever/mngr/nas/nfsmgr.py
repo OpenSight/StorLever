@@ -85,6 +85,9 @@ EXPORT_CLIENT_CONF_SCHEMA = Schema({
 
 
 EXPORT_POINT_CONF_SCHEMA = Schema({
+    # export point name
+    "name": Use(str),
+
     # absolute path
     "path": Use(str),
 
@@ -95,7 +98,10 @@ EXPORT_POINT_CONF_SCHEMA = Schema({
 
 })
 
-NFS_CONF_SCHEMA = Schema([EXPORT_POINT_CONF_SCHEMA])
+NFS_CONF_SCHEMA = Schema({
+    Optional("export_point_list"): Default([EXPORT_POINT_CONF_SCHEMA], default=[]),
+    DoNotCare(str): object  # for all those key we don't care
+})
 
 class NfsManager(object):
     """contains all methods to manage ethernet interface in linux system"""
@@ -109,7 +115,7 @@ class NfsManager(object):
         self.nfs_conf_schema = NFS_CONF_SCHEMA
 
     def _load_conf(self):
-        nfs_conf = []
+        nfs_conf = {}
         cfg_mgr().check_conf_dir()
         if os.path.exists(self.conf_file):
             nfs_conf = \
@@ -162,7 +168,7 @@ class NfsManager(object):
         with open(nfs_sys_file, "w") as f:
             f.writelines(before_storlever)
             f.write("# begin storlever\n")
-            for export_point in nfs_conf:
+            for export_point in nfs_conf["export_point_list"]:
                 f.write(self._export_point_to_file_line(export_point))
             f.write("# end storlever\n")
             f.writelines(after_storlever)
@@ -187,28 +193,31 @@ class NfsManager(object):
         os.remove(self.conf_file)
 
         with self.lock:
-            smb_conf = self._load_conf()
-            self._sync_to_system_conf(smb_conf)
+            nfs_conf = self._load_conf()
+            self._sync_to_system_conf(nfs_conf)
 
     def get_export_list(self):
         with self.lock:
             nfs_conf = self._load_conf()
-        return nfs_conf
+        return nfs_conf["export_point_list"]
 
-    def get_export_conf(self, index):
+    def get_export_conf(self, name):
         with self.lock:
             nfs_conf = self._load_conf()
-        if index >= len(nfs_conf):
-            raise StorLeverError("index(%d) not found" % (index), 404)
+        for export_point in nfs_conf["export_point_list"]:
+            if export_point["name"] == name:
+                return export_point
+        else:
+            raise StorLeverError("export(%s) not found" % (name), 404)
 
-        return nfs_conf[index]
 
-    def append_export_conf(self, path="/", clients=[], operator="unkown"):
+    def append_export_conf(self, name, path="/", clients=[], operator="unkown"):
 
         if path != "" and not os.path.exists(path):
              raise StorLeverError("path(%s) does not exists" % (path), 400)
 
         new_export_point = {
+            "name": name,
             "path": path,
             "clients": clients,
         }
@@ -217,138 +226,69 @@ class NfsManager(object):
         with self.lock:
             nfs_conf = self._load_conf()
 
-            for point in nfs_conf:
+            # check duplication
+            for point in nfs_conf["export_point_list"]:
                 if path == point["path"]:
-                     raise StorLeverError("export points with path(%s) already in nfs export table" % (path), 400)
+                    raise StorLeverError("export with path(%s) already in nfs export table" % (path), 400)
+                if name == point["name"]:
+                    raise StorLeverError("export with name(%s) already in nfs export table" % (name), 400)
 
-            nfs_conf.append(new_export_point)
+            nfs_conf["export_point_list"].append(new_export_point)
 
             # save new conf
             self._save_conf(nfs_conf)
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS export point with path(%s) config is added by operator(%s)" %
+                   "NFS export with path(%s) config is added by operator(%s)" %
                    (path, operator))
 
-        return len(nfs_conf) - 1
-
-    def del_export_conf(self, index, operator="unkown"):
+    def del_export_conf(self, name, operator="unkown"):
         with self.lock:
             nfs_conf = self._load_conf()
-            if index >= len(nfs_conf):
-                raise StorLeverError("index(%d) not found" % (index), 404)
-            export_point = nfs_conf[index]
-            del nfs_conf[index]
+            for point in nfs_conf["export_point_list"]:
+                if name == point["name"]:
+                    break
+            else:
+                raise StorLeverError("export(%s) not found" % (name), 404)
+
+            nfs_conf["export_point_list"].remove(point)
 
             # save new conf
             self._save_conf(nfs_conf)
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS export point (path:%s) is deleted by operator(%s)" %
-                   (export_point["path"], operator))
+                   "NFS export (%s) is deleted by operator(%s)" %
+                   (point["path"], operator))
 
-    def set_export_conf(self, index, path=None, clients=None, operator="unkown"):
+    def set_export_conf(self, name, path=None, clients=None, operator="unkown"):
 
         if path is not None and path != "" and not os.path.exists(path):
              raise StorLeverError("path(%s) does not exists" % (path), 400)
 
         with self.lock:
             nfs_conf = self._load_conf()
-            if index >= len(nfs_conf):
-                raise StorLeverError("index(%d) not found" % (index), 404)
-            export_point = nfs_conf[index]
+            for index, point in enumerate(nfs_conf["export_point_list"]):
+                if name == point["name"]:
+                    break
+            else:
+                raise StorLeverError("export(%s) not found" % (name), 404)
 
             if path is not None:
-                export_point["path"] = path
+                point["path"] = path
             if clients is not None:
-                export_point["clients"] = clients
+                point["clients"] = clients
 
-            nfs_conf[index] = self.export_point_conf_schema.validate(export_point)
-
-            # save new conf
-            self._save_conf(nfs_conf)
-            self._sync_to_system_conf(nfs_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS export point (index:%s) config is updated by operator(%s)" %
-                   (index, operator))
-
-    def add_client(self, export_index, host, options="", operator="unkown"):
-
-        new_client = {
-            "host":host,
-            "options":options
-        }
-        new_client = self.client_conf_schema.validate(new_client)
-
-        with self.lock:
-            nfs_conf = self._load_conf()
-            if export_index >= len(nfs_conf):
-                raise StorLeverError("export_index (%d) not found" % (export_index), 404)
-            export_point = nfs_conf[export_index]
-
-            client_list = export_point["clients"]
-            client_list.append(new_client)
+            nfs_conf["export_point_list"][index] = self.export_point_conf_schema.validate(point)
 
             # save new conf
             self._save_conf(nfs_conf)
             self._sync_to_system_conf(nfs_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS Client (%s) for export point (%s)is added by operator(%s)" %
-                   (host, export_point["path"], operator))
-
-        return len(client_list) - 1
-
-    def del_client(self, export_index, client_index, operator="unkown"):
-        with self.lock:
-            nfs_conf = self._load_conf()
-            if export_index >= len(nfs_conf):
-                raise StorLeverError("export_index (%d) not found" % (export_index), 404)
-            export_point = nfs_conf[export_index]
-
-            client_list = export_point["clients"]
-            if client_index >= len(client_list):
-                raise StorLeverError("client_index (%d) not found" % (client_index), 404)
-            client = client_list[client_index]
-            del client_list[client_index]
-
-            # save new conf
-            self._save_conf(nfs_conf)
-            self._sync_to_system_conf(nfs_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS Client (%s) for export point (%s) is deleted by operator(%s)" %
-                   (client["host"], export_point["path"], operator))
-
-    def update_client(self, export_index, client_index, host=None, options=None, operator="unkown"):
-        with self.lock:
-            nfs_conf = self._load_conf()
-            if export_index >= len(nfs_conf):
-                raise StorLeverError("export_index (%d) not found" % (export_index), 404)
-            export_point = nfs_conf[export_index]
-
-            client_list = export_point["clients"]
-            if client_index >= len(client_list):
-                raise StorLeverError("client_index (%d) not found" % (client_index), 404)
-            client = client_list[client_index]
-
-            if host is not None:
-                client["host"] = host
-            if options is not None:
-                client["options"] = options
-
-            client_list[client_index] = self.client_conf_schema.validate(client)
-
-            # save new conf
-            self._save_conf(nfs_conf)
-            self._sync_to_system_conf(nfs_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NFS Client (%s) for export point (%s) is updated by operator(%s)" %
-                   (client_list[client_index]["host"], export_point["path"], operator))
+                   "NFS export (name:%s) config is updated by operator(%s)" %
+                   (name, operator))
 
 
 NfsManager = NfsManager()
