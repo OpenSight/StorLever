@@ -284,194 +284,38 @@ class NtpManager(object):
             ntp_conf = self._load_conf()
         return ntp_conf["server_list"]
 
-    def get_server_conf(self, index):
+    def set_server_conf_list(self, server_conf_list=[], operator="unknown"):
+        server_conf_list = Schema([self.ntp_server_conf_schema]).validate(server_conf_list)
         with self.lock:
             ntp_conf = self._load_conf()
-            server_list = ntp_conf["server_list"]
-        if index >= len(server_list):
-            raise StorLeverError("index(%d) of server config not found" % (index), 404)
-        return server_list[index]
-
-    def append_server_conf(self, server_addr, ipv6=False, prefer=False,
-                           mode=0, stratum=0, flag1=0, flag2=0, flag3=0, flag4=0,
-                           operator="unkown"):
-        new_server_conf = {
-            "server_addr": server_addr,
-            "ipv6": ipv6,
-            "prefer": prefer,
-            "mode": mode,
-            "stratum": stratum,
-            "flag1": flag1,
-            "flag2": flag2,
-            "flag3": flag3,
-            "flag4": flag4,
-        }
-        new_server_conf = self.ntp_server_conf_schema.validate(new_server_conf)
-
-        with self.lock:
-            ntp_conf = self._load_conf()
-            server_list = ntp_conf["server_list"]
-            server_list.append(new_server_conf)
+            ntp_conf["server_list"] = server_conf_list
 
             # save new conf
             self._save_conf(ntp_conf)
             self._sync_to_system_conf(ntp_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP Server (%s) config is added by operator(%s)" %
-                   (server_addr, operator))
-        return len(server_list) - 1
+                   "NTP Server config list is updated by operator(%s)" %  operator)
 
-    def del_server_conf(self, index, operator="unkown"):
-        with self.lock:
-            ntp_conf = self._load_conf()
-            server_list = ntp_conf["server_list"]
-            if index >= len(server_list):
-                raise StorLeverError("index(%d) of server config not found" % (index), 404)
-            server_conf = server_list[index]
-            del server_list[index]
-
-            # save new conf
-            self._save_conf(ntp_conf)
-            self._sync_to_system_conf(ntp_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP Server (%s) config is deleted by operator(%s)" %
-                   (server_conf["server_addr"], operator))
-
-    def set_server_conf(self, index, server_addr=None, ipv6=None, prefer=None,
-                        mode=None, stratum=None,
-                        flag1=None, flag2=None, flag3=None, flag4=None, operator="unkown"):
-        with self.lock:
-            ntp_conf = self._load_conf()
-            server_list = ntp_conf["server_list"]
-            if index >= len(server_list):
-                raise StorLeverError("index(%d) of server config not found" % (index), 404)
-            server_conf = server_list[index]
-            if server_addr is not None:
-                server_conf["server_addr"] = server_addr
-            if ipv6 is not None:
-                server_conf["ipv6"] = ipv6
-            if prefer is not None:
-                server_conf["prefer"] = prefer
-            if mode is not None:
-                server_conf["mode"] = mode
-            if stratum is not None:
-                server_conf["stratum"] = stratum
-            if flag1 is not None:
-                server_conf["flag1"] = flag1
-            if flag2 is not None:
-                server_conf["flag2"] = flag2
-            if flag3 is not None:
-                server_conf["flag3"] = flag3
-            if flag4 is not None:
-                server_conf["flag4"] = flag4
-
-            server_list[index] = self.ntp_server_conf_schema.validate(server_conf)
-
-            # save new conf
-            self._save_conf(ntp_conf)
-            self._sync_to_system_conf(ntp_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP Server (%s) config is updated by operator(%s)" %
-                   (server_list[index]["server_addr"], operator))
 
     def get_restrict_list(self):
         with self.lock:
             ntp_conf = self._load_conf()
         return ntp_conf["restrict_list"]
 
-    def get_restrict(self, index):
+    def set_restrict_list(self, restrict_list=[], operator="unknown"):
+        restrict_list = Schema([self.ntp_restrict_conf_schema]).validate(restrict_list)
         with self.lock:
             ntp_conf = self._load_conf()
-            restrict_list = ntp_conf["restrict_list"]
-        if index >= len(restrict_list):
-            raise StorLeverError("index(%d) of restrict not found" % (index), 404)
-        return restrict_list[index]
-
-    def append_restrict(self, restrict_addr, ipv6=False, mask="",
-                        ignore=False, nomodify=False, noquery=False,
-                        noserve=False, notrap=False, operator="unkown"):
-
-        new_restrict_conf = {
-            "restrict_addr": restrict_addr,
-            "ipv6": ipv6,
-            "mask": mask,
-            "ignore": ignore,
-            "nomodify": nomodify,
-            "noquery": noquery,
-            "noserve": noserve,
-            "notrap": notrap,
-        }
-        new_restrict_conf = self.ntp_restrict_conf_schema.validate(new_restrict_conf)
-
-        with self.lock:
-            ntp_conf = self._load_conf()
-            restrict_list = ntp_conf["restrict_list"]
-            restrict_list.append(new_restrict_conf)
+            ntp_conf["restrict_list"] = restrict_list
 
             # save new conf
             self._save_conf(ntp_conf)
             self._sync_to_system_conf(ntp_conf)
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP Restrict (%s) config is added by operator(%s)" %
-                   (restrict_addr, operator))
-        return len(restrict_list) - 1
+                   "NTP Restrict config list is updated by operator(%s)" %  operator)
 
-    def del_restrict(self, index, operator="unkown"):
-        with self.lock:
-            ntp_conf = self._load_conf()
-            restrict_list = ntp_conf["restrict_list"]
-            if index >= len(restrict_list):
-                raise StorLeverError("index(%d) of restrict config not found" % (index), 404)
-            restrict_conf = restrict_list[index]
-            del restrict_list[index]
-
-            # save new conf
-            self._save_conf(ntp_conf)
-            self._sync_to_system_conf(ntp_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP Restrict (%s) config is deleted by operator(%s)" %
-                   (restrict_conf["restrict_addr"], operator))
-
-    def set_restrict(self, index, restrict_addr=None, ipv6=None, mask=None,
-                        ignore=None, nomodify=None, noquery=None,
-                        noserve=None, notrap=None, operator="unkown"):
-        with self.lock:
-            ntp_conf = self._load_conf()
-            restrict_list = ntp_conf["restrict_list"]
-            if index >= len(restrict_list):
-                raise StorLeverError("index(%d) of restrict config not found" % (index), 404)
-            restrcit_conf = restrict_list[index]
-            if restrict_addr is not None:
-                restrcit_conf["restrict_addr"] = restrict_addr
-            if ipv6 is not None:
-                restrcit_conf["ipv6"] = ipv6
-            if mask is not None:
-                restrcit_conf["mask"] = mask
-            if ignore is not None:
-                restrcit_conf["ignore"] = ignore
-            if nomodify is not None:
-                restrcit_conf["nomodify"] = nomodify
-            if noquery is not None:
-                restrcit_conf["noquery"] = noquery
-            if noserve is not None:
-                restrcit_conf["noserve"] = noserve
-            if notrap is not None:
-                restrcit_conf["notrap"] = notrap
-
-            restrict_list[index] = self.ntp_restrict_conf_schema.validate(restrcit_conf)
-
-            # save new conf
-            self._save_conf(ntp_conf)
-            self._sync_to_system_conf(ntp_conf)
-
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "NTP restrict (%s) config is updated by operator(%s)" %
-                   (restrict_list[index]["restrict_addr"], operator))
 
     def get_peer_list(self):
 

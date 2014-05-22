@@ -13,72 +13,72 @@ class TestNtpMgr(unittest.TestCase):
 
     def test_server(self):
         mgr = ntp_mgr()
-        server_list = mgr.get_server_conf_list()
-        for server_conf in server_list:
-            if server_conf["server_addr"] == "0.asia.pool.ntp.org":
-                index = server_list.index(server_conf)
-                mgr.del_server_conf(index)
+        old_server_list = mgr.get_server_conf_list()
+        try:
 
-        index = mgr.append_server_conf("0.asia.pool.ntp.org", prefer=True)
-        server_list = mgr.get_server_conf_list()
-        found = False
-        for server_conf in server_list:
-            if server_conf["server_addr"] == "0.asia.pool.ntp.org":
-                found = True
-                self.assertTrue(server_conf["prefer"])
-        self.assertTrue(found)
+            new_server_list = [
+                {
+                    "server_addr": "0.asia.pool.ntp.org",
+                    "prefer": True
+                }
+            ]
+            mgr.set_server_conf_list(new_server_list)
+            server_list = mgr.get_server_conf_list()
+            self.assertEquals(len(server_list), 1)
+            server_conf = server_list[0]
+            self.assertEquals(server_conf["server_addr"], "0.asia.pool.ntp.org")
+            self.assertTrue(server_conf["prefer"])
 
-        server_conf = mgr.get_server_conf(index)
-        self.assertEquals(server_conf["server_addr"], "0.asia.pool.ntp.org")
-        self.assertEquals(server_conf["prefer"], True)
+            new_server_list = [
+                {
+                    "server_addr": "1.asia.pool.ntp.org",
+                    "prefer": False
+                }
+            ]
+            mgr.set_server_conf_list(new_server_list)
+            server_list = mgr.get_server_conf_list()
+            self.assertEquals(len(server_list), 1)
+            server_conf = server_list[0]
+            self.assertEquals(server_conf["server_addr"], "1.asia.pool.ntp.org")
+            self.assertFalse(server_conf["prefer"])
 
-        mgr.set_server_conf(index, server_addr="1.asia.pool.ntp.org")
-        server_conf = mgr.get_server_conf(index)
-        self.assertEquals(server_conf["server_addr"], "1.asia.pool.ntp.org")
+        finally:
+            mgr.set_server_conf_list(old_server_list)
 
-        mgr.del_server_conf(index)
-
-        server_list = mgr.get_server_conf_list()
-        found = False
-        for server_conf in server_list:
-            if server_conf["server_addr"] == "0.asia.pool.ntp.org":
-                found = True
-        self.assertFalse(found)
 
     def test_restrict(self):
-
         mgr = ntp_mgr()
-        restrict_list = mgr.get_restrict_list()
-        for restrict_conf in restrict_list:
-            if restrict_conf["restrict_addr"] == "192.168.222.1":
-                index = restrict_list.index(restrict_conf)
-                mgr.del_restrict(index)
+        old_restrict_list = mgr.get_restrict_list()
+        try:
+            new_restrict_list = [
+                {
+                    "restrict_addr": "192.168.222.1",
+                    "mask": "255.255.255.0"
+                }
+            ]
+            mgr.set_restrict_list(new_restrict_list)
+            restrict_list = mgr.get_restrict_list()
+            self.assertEquals(len(restrict_list), 1)
+            restrict_conf = restrict_list[0]
+            self.assertEquals(restrict_conf["restrict_addr"], "192.168.222.1")
+            self.assertEquals(restrict_conf["mask"], "255.255.255.0")
 
-        index = mgr.append_restrict("192.168.222.1", mask="255.255.255.0")
-        restrict_list = mgr.get_restrict_list()
-        found = False
-        for restrict_conf in restrict_list:
-            if restrict_conf["restrict_addr"] == "192.168.222.1":
-                found = True
-                self.assertEquals(restrict_conf["mask"], "255.255.255.0")
-        self.assertTrue(found)
+            new_restrict_list = [
+                {
+                    "restrict_addr": "192.168.223.1",
+                    "mask": "255.255.0.0"
+                }
+            ]
+            mgr.set_restrict_list(new_restrict_list)
+            restrict_list = mgr.get_restrict_list()
+            self.assertEquals(len(restrict_list), 1)
+            restrict_conf = restrict_list[0]
+            self.assertEquals(restrict_conf["restrict_addr"], "192.168.223.1")
+            self.assertEquals(restrict_conf["mask"], "255.255.0.0")
 
-        restrict_conf = mgr.get_restrict(index)
-        self.assertEquals(restrict_conf["restrict_addr"], "192.168.222.1")
-        self.assertEquals(restrict_conf["mask"], "255.255.255.0")
+        finally:
+            mgr.set_restrict_list(old_restrict_list)
 
-        mgr.set_restrict(index, restrict_addr="192.168.223.1")
-        restrict_conf = mgr.get_restrict(index)
-        self.assertEquals(restrict_conf["restrict_addr"], "192.168.223.1")
-
-        mgr.del_restrict(index)
-
-        restrict_list = mgr.get_restrict_list()
-        found = False
-        for restrict_conf in restrict_list:
-            if restrict_conf["restrict_addr"] == "192.168.223.1":
-                found = True
-        self.assertFalse(found)
 
 
 
