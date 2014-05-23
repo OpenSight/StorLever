@@ -20,6 +20,8 @@ class TestLVM(unittest.TestCase):
         lvm = lvm_mgr()
         # create VG
         device = get_block_dev()
+        if device == "":
+            return  # no test
         lvm.new_vg('test_vg', [device])
         vg = lvm.get_vg('test_vg')
         self.assertIn(device, vg.pvs)
@@ -38,16 +40,17 @@ class TestLVM(unittest.TestCase):
         self.assertNotIn('test_lv1', vg.lvs)
         # grow VG
         device_extra = get_extra_block_dev()
-        vg.grow(device_extra)
-        vg = lvm.get_vg('test_vg')
-        self.assertEqual(len(vg.pvs), 2)
-        self.assertIn(device, vg.pvs)
-        self.assertIn(device_extra, vg.pvs)
-        # shrink VG
-        vg.shrink(device)
-        vg = lvm.get_vg('test_vg')
-        self.assertIn(device_extra, vg.pvs)
-        self.assertNotIn(device, vg.pvs)
+        if device_extra != "":
+            vg.grow(device_extra)
+            vg = lvm.get_vg('test_vg')
+            self.assertEqual(len(vg.pvs), 2)
+            self.assertIn(device, vg.pvs)
+            self.assertIn(device_extra, vg.pvs)
+            # shrink VG
+            vg.shrink(device)
+            vg = lvm.get_vg('test_vg')
+            self.assertIn(device_extra, vg.pvs)
+            self.assertNotIn(device, vg.pvs)
         # delete VG
         vg.delete()
         self.assertRaises(StorLeverError, lvm.get_vg, 'test_vg')
