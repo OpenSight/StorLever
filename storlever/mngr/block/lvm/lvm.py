@@ -22,7 +22,7 @@ import logging
 
 MODULE_INFO = {
     "module_name": "lvm",
-    "rpms": [],
+    "rpms": ['lvm2', 'lvm2-libs'],
     "comment": "Provides the management functions for lvm subsystem(lvm2)"
 }
 
