@@ -142,7 +142,7 @@ class FileSystemManager(object):
             before_storlever = lines[0:lines.index("# begin storlever\n")]
         else:
             before_storlever = lines[0:]
-            if not before_storlever[-1].endswith("\n"):
+            if before_storlever and (not before_storlever[-1].endswith("\n")):
                 before_storlever[-1] += "\n"
 
         if "# end storlever\n" in lines:

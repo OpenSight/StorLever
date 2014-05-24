@@ -66,8 +66,8 @@ class DnsManager(object):
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]
         else:
-            before_storlever = lines[0:-1]
-            if not before_storlever[-1].endswith("\n"):
+            before_storlever = lines[0:]
+            if before_storlever and (not before_storlever[-1].endswith("\n")):
                 before_storlever[-1] += "\n"
 
         if "# end storlever\n" in lines:

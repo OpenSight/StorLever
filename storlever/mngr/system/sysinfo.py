@@ -112,7 +112,6 @@ class SysManager(object):
                    "hostname is changed to %s by user(%s)" %
                    (hostname, user))
 
-
     def get_host_list(self):
         # add ip for this hostname
         with open("/etc/hosts", "r") as f:
@@ -152,7 +151,7 @@ class SysManager(object):
             before_storlever = lines[0:lines.index("# begin storlever\n")]
         else:
             before_storlever = lines[0:]
-            if not before_storlever[-1].endswith("\n"):
+            if before_storlever and (not before_storlever[-1].endswith("\n")):
                 before_storlever[-1] += "\n"
 
         if "# end storlever\n" in lines:

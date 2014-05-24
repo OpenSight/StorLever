@@ -251,11 +251,15 @@ class ListVal(object):
     def __init__(self, element_type, sep=",", error=None):
         self._error = error
         self._schema = Schema([element_type])
+        self.sep = sep
 
     def validate(self, data):
         if not isinstance(data, list):
             try:
-                data = data.split(self.sep)
+                if data == "":
+                    data = []
+                else:
+                    data = data.split(self.sep)
             except Exception:
                 raise SchemaError('%s is not valid string or list' % data, self._error)
 
