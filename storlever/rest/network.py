@@ -227,7 +227,10 @@ def delete_bond_group(request):
 def get_dns(request):
     dns_manager = dnsmgr.dns_mgr()
     servers = dns_manager.get_name_servers()
-    return servers
+    dns_info = {
+        "servers": servers
+    }
+    return dns_info
 
 
 dns_mod_schema = Schema({

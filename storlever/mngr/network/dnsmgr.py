@@ -41,16 +41,12 @@ class DnsManager(object):
             with open(RESOLVE_FILE, "r") as config_file:
                 lines = config_file.readlines();
 
-        storlever_begin = False
         for line in lines:
-            if "# begin storlever\n" in line:
-                storlever_begin = True
-            elif "# end storlever\n" in line:
-                storlever_begin = False
-            elif storlever_begin:
-                line_part = line.split()
-                if line_part[0] == "nameserver":
-                    servers.append(line_part[1])
+            line_part = line.split()
+            if len(line_part) < 2:
+                continue
+            if line_part[0] == "nameserver":
+                servers.append(line_part[1])
 
         return servers
 
@@ -62,6 +58,9 @@ class DnsManager(object):
         with self.lock:
             with open(RESOLVE_FILE, "r") as f:
                 lines = f.readlines()
+
+        lines = [line for line in lines
+                 if (not line.strip().startswith("nameserver"))]
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]
