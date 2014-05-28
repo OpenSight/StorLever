@@ -22,7 +22,8 @@ from storlever.mngr.network import netif
 from pyramid.response import Response
 from storlever.mngr.network import bond
 from storlever.mngr.network import dnsmgr
-
+from storlever.mngr.network import route
+from storlever.mngr.system import sysinfo
 
 def includeme(config):
     # network interface resource
@@ -37,7 +38,9 @@ def includeme(config):
     config.add_route('bond_list', '/network/bond/bond_list')
     config.add_route('bond_port', '/network/bond/bond_list/{port_name}')
     config.add_route('dns', '/network/dns')
-
+    config.add_route('host_list', '/network/host_list')
+    config.add_route('route_tab', '/network/route_tab')
+    config.add_route('route_tab6', '/network/route_tab6')
 
 def get_port_info(netif_info):
     ip_info = netif_info.get_ip_config()
@@ -246,3 +249,42 @@ def modify_dns(request):
     dns_manager = dnsmgr.dns_mgr()
     dns_manager.set_name_servers(params["servers"], request.client_addr)
     return Response(status=200)
+
+
+@get_view(route_name='host_list')
+def get_host_list(request):
+    sys_mgr = sysinfo.sys_mgr()
+    host_list = sys_mgr.get_host_list()
+    return host_list
+
+host_list_schema = Schema([{
+
+    "addr": StrRe(r"^(\S)+$"),  # non-empty string
+
+    "hostname": StrRe(r"^(\S)+$"),
+
+    Optional("alias"): Default(Use(str), default=""),
+
+    DoNotCare(str): object  # for all those key we don't care
+}])
+
+@put_view(route_name='host_list')
+def put_host_list(request):
+    params = get_params_from_request(request, host_list_schema)
+    sys_mgr = sysinfo.sys_mgr()
+    sys_mgr.set_host_list(params, request.client_addr)
+    return Response(status=200)
+
+
+@get_view(route_name='route_tab')
+def get_route_tab(request):
+    route_mgr = route.route_mgr()
+    route_list = route_mgr.get_ipv4_route_list()
+    return route_list
+
+@get_view(route_name='route_tab6')
+def get_route_tab6(request):
+    route_mgr = route.route_mgr()
+    route_list = route_mgr.get_ipv6_route_list()
+    return route_list
+
