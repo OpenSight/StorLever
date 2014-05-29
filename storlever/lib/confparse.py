@@ -320,16 +320,17 @@ $)""", re.VERBOSE)
         if isinstance(filenames, basestring):
             self._read( file(filenames), filenames)
             self.template=filenames
-            
-        for filename in filenames:
-            try:
-                fp = open(filename)
-            except IOError:
-                continue
-            self._read(fp, filename)
-            fp.close()
 
-            self.template=filename
+        elif isinstance(filenames, list):
+            for filename in filenames:
+                try:
+                    fp = open(filename)
+                except IOError:
+                    continue
+                self._read(fp, filename)
+                fp.close()
+
+                self.template=filename
             
         return self.proxy
 
@@ -357,7 +358,7 @@ $)""", re.VERBOSE)
 
         if isinstance( destination, basestring):
             self.template = destination
-            fd, tmp = mkstemp()
+            fd, tmp = mkstemp("_storlever")
             os.close(fd)
             f = file(tmp,'w')
 
@@ -366,7 +367,7 @@ $)""", re.VERBOSE)
 
         elif self.template:
             destination = self.template
-            fd, tmp = mkstemp()
+            fd, tmp = mkstemp("_storlever")
             os.close(fd)
             f = file(tmp,'w')
         
@@ -380,7 +381,10 @@ $)""", re.VERBOSE)
             try:
                 os.rename(tmp,destination)
             except:
-                open(destination,'w').write(open(tmp).read())
+                with open(tmp, "r") as f:
+                    tmp_content = f.read()
+                with open(destination, "w") as f:
+                    f.write(tmp_content)
                 os.unlink(tmp)
 
     apply_to = write
@@ -553,6 +557,7 @@ $)''', re.VERBOSE)
 
         if isinstance(filenames, basestring):
             filenames = [filenames]
+
         read_ok = []
         for filename in filenames:
             try:
@@ -592,7 +597,7 @@ $)''', re.VERBOSE)
 
         if isinstance( destination, basestring):
             self.template = destination
-            fd, tmp = mkstemp()
+            fd, tmp = mkstemp("_storlever")
             os.close(fd)
             f = file(tmp,'w')
 
@@ -601,7 +606,7 @@ $)''', re.VERBOSE)
 
         elif self.template:
             destination = self.template
-            fd, tmp = mkstemp()
+            fd, tmp = mkstemp("_storlever")
             os.close(fd)
             f = file(tmp,'w')
         
