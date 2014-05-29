@@ -117,14 +117,9 @@ class BondManager(object):
     def _del_bond_from_conf(self, name):
         with open(MODPROBE_CONF, 'r+') as conf_file:
             lines = conf_file.readlines()
-            for line in lines:
-                if name in line:
-                    lines.remove(line)
+            lines = [line for line in lines if (name not in line)]
             conf_file.truncate(0)
             conf_file.writelines(lines)
-
-    def _unload_bonding_module(self):
-        check_output(["/sbin/rmmod", "bonding"])
 
     def get_group_by_name(self, name):
         list = self.group_name_list()
@@ -173,7 +168,7 @@ class BondManager(object):
 
             # create ifcfg-bond*
             conf = properties(DEVICE=bond_name,
-                              IPADDR=ip,
+                              IPADDR="",
                               NETMASK=netmask,
                               GATEWAY=gateway,
                               BOOTPROTO="none",
@@ -197,10 +192,21 @@ class BondManager(object):
                 slave_object.save_conf()
 
         # remove the if's ip avoid ip conflict
-        for slave_if in ifs:
-            ifconfig.Interface(slave_if).ip = "0.0.0.0"
+        # for slave_if in ifs:
+            # check_output([IFDOWN, slave_if])
+            # ifconfig.Interface(slave_if).set_ip("0.0.0.0")
+            # check_output([IFUP, slave_if])
+
         # restart network
         check_output([IFUP, bond_name])
+
+        # set real ip
+        if ip != "":
+            with self.lock:
+                conf = properties(IPADDR=ip)
+                conf.apply_to(os.path.join(IF_CONF_PATH, ifcfg_name))
+            check_output([IFDOWN, bond_name])
+            check_output([IFUP, bond_name])
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "New bond group %s (mode:%d, miimon:%d, slaves:[%s]) "
@@ -221,6 +227,12 @@ class BondManager(object):
                     (group_name_list[0] != bond_name):
                 raise StorLeverError("Other bonding group must be "
                                "deleted before bond0 can be deleted", 404)
+
+        bond_group = BondGroup(bond_name)
+        bond_slaves = bond_group.slaves
+
+        # check_output([IFDOWN, bond_name])
+
         # get mutex
         with self.lock:
             # change bond.conf
@@ -228,9 +240,7 @@ class BondManager(object):
 
             # modify the slaves conf, especial for the first one,
             # copy the bond ip config to it
-            bond_group = BondGroup(bond_name)
             is_first = True
-            bond_slaves = bond_group.slaves
             for slave in bond_slaves:
                 slave_object = EthInterface(slave)
                 if is_first:
@@ -256,7 +266,8 @@ class BondManager(object):
                 os.remove(ifcfg_name)
 
         # restart network
-        self._unload_bonding_module()
+        if os.path.exists(BONDING_MASTERS):
+            write_file_entry(BONDING_MASTERS, "-%s\n" % bond_name)
         if_mgr()._restart_network()
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
