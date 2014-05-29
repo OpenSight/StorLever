@@ -169,8 +169,8 @@ class BondManager(object):
             # create ifcfg-bond*
             conf = properties(DEVICE=bond_name,
                               IPADDR="",
-                              NETMASK=netmask,
-                              GATEWAY=gateway,
+                              NETMASK="",
+                              GATEWAY="",
                               BOOTPROTO="none",
                               NM_CONTROLLED="no",
                               ONBOOT="yes",
@@ -201,9 +201,11 @@ class BondManager(object):
         check_output([IFUP, bond_name])
 
         # set real ip
-        if ip != "":
+        if ip != "" or netmask != "" or gateway != "":
             with self.lock:
-                conf = properties(IPADDR=ip)
+                conf = properties(IPADDR=ip,
+                                  NETMASK=netmask,
+                                  GATEWAY=gateway)
                 conf.apply_to(os.path.join(IF_CONF_PATH, ifcfg_name))
             check_output([IFDOWN, bond_name])
             check_output([IFUP, bond_name])
@@ -231,8 +233,6 @@ class BondManager(object):
         bond_group = BondGroup(bond_name)
         bond_slaves = bond_group.slaves
 
-        # check_output([IFDOWN, bond_name])
-
         # get mutex
         with self.lock:
             # change bond.conf
@@ -259,6 +259,7 @@ class BondManager(object):
                 slave_object.conf.delete("MASTER")
                 slave_object.conf.delete("SLAVE")
                 slave_object.save_conf()
+
 
             # delete ifcfg-bond*
             ifcfg_name = os.path.join(IF_CONF_PATH, "ifcfg-%s" % bond_name)

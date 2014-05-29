@@ -121,7 +121,7 @@ class properties(dict):
         self.proxy=proxy(self)
         self.sep = False
 
-        if isinstance( _fileordict, str ) or isinstance( _fileordict, list):
+        if isinstance( _fileordict, basestring ) or isinstance( _fileordict, list):
             self.template=_fileordict
             self.read( _fileordict )
 
@@ -403,7 +403,7 @@ class ini(dict):
         self.proxy=proxy(self)
         self.sep = False
 
-        if type(_fileordict)==str:
+        if isinstance(_fileordict, basestring):
             self.template=_fileordict
             self.read(_fileordict)
 
