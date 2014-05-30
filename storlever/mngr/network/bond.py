@@ -71,10 +71,16 @@ class BondGroup(EthInterface):
         path = os.path.join(SYSFS_NET_DEV, self.name, "bonding/slaves")
         return read_file_entry(path).split()
 
-    def set_bond_config(self, miimon, mode, user="unknown"):
+    def set_bond_config(self, miimon=None, mode=None, user="unknown"):
 
         if mode not in modeMap:
             StorLeverError("mdoe(%d) is not supported" % mode, 400)
+
+        if miimon is None:
+            miimon = self.miimon
+
+        if mode is None:
+            mode = self.mode
 
         self.conf["BONDING_OPTS"] = \
             '"miimon=%d mode=%d"' % (miimon, mode)
@@ -111,14 +117,25 @@ class BondManager(object):
         return max
 
     def _add_bond_to_conf(self, name):
-        with open(MODPROBE_CONF, 'a+') as conf_file:
-            conf_file.write('alias %s bonding\n' % name)
+
+        with open(MODPROBE_CONF, 'r') as conf_file:
+            lines = conf_file.readlines()
+
+        for line in lines:
+            if name in line:
+                break
+        else:
+            lines.append('alias %s bonding\n' % name)
+
+        with open(MODPROBE_CONF, 'w') as conf_file:
+            conf_file.writelines(lines)
+
 
     def _del_bond_from_conf(self, name):
-        with open(MODPROBE_CONF, 'r+') as conf_file:
+        with open(MODPROBE_CONF, 'r') as conf_file:
             lines = conf_file.readlines()
-            lines = [line for line in lines if (name not in line)]
-            conf_file.truncate(0)
+        lines = [line for line in lines if (name not in line)]
+        with open(MODPROBE_CONF, 'w') as conf_file:
             conf_file.writelines(lines)
 
     def get_group_by_name(self, name):
@@ -224,14 +241,17 @@ class BondManager(object):
             raise StorLeverError("%s not found" % bond_name, 404)
         if bond_name == "bond0":
             # if want to delete bond0, there must be no other
-            # group
+            # group, because bonding driver would auto create bond0 interface
+            # if there is another bond interface beyond bond0
             if (len(group_name_list) > 1) or \
                     (group_name_list[0] != bond_name):
                 raise StorLeverError("Other bonding group must be "
-                               "deleted before bond0 can be deleted", 404)
+                               "deleted before bond0 can be deleted", 400)
 
         bond_group = BondGroup(bond_name)
         bond_slaves = bond_group.slaves
+
+        check_output([IFDOWN, bond_name])
 
         # get mutex
         with self.lock:
@@ -269,7 +289,10 @@ class BondManager(object):
         # restart network
         if os.path.exists(BONDING_MASTERS):
             write_file_entry(BONDING_MASTERS, "-%s\n" % bond_name)
-        if_mgr()._restart_network()
+        for slave_if in bond_slaves:
+            check_output([IFUP, slave_if])
+
+        # if_mgr()._restart_network()
 
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "bond group %s (slaves:[%s]) "

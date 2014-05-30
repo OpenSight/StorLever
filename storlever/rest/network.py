@@ -95,9 +95,9 @@ def get_port_stat(request):
     return stat_info
 
 port_mod_schema = Schema({
-    Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # ip addr
-    Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # netmask addr
-    Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # gateway addr
+    Optional("ip"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"),  # ip addr
+    Optional("netmask"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"),  # netmask addr
+    Optional("gateway"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), # gateway addr
     DoNotCare(str): object  # for all those key we don't care
 })
 
@@ -108,9 +108,9 @@ def modify_single_port(request):
     port_name = request.matchdict['port_name']
     eth_face = ifmgr.if_mgr()
     eth = eth_face.get_interface_by_name(port_name)
-    eth.set_ip_config(ip=port_info["ip"],
-                      netmask=port_info["netmask"],
-                      gateway=port_info["gateway"],
+    eth.set_ip_config(ip=port_info.get("ip", None),
+                      netmask=port_info.get("netmask", None),
+                      gateway=port_info.get("gateway", None),
                       user=request.client_addr)
     return Response(status=200)
 

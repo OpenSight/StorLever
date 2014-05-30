@@ -64,7 +64,15 @@ class EthInterface(object):
         gateway = self.conf.get("GATEWAY", "")
         return ip, netmask, gateway
 
-    def set_ip_config(self, ip="", netmask="", gateway="", user="unknown"):
+    def set_ip_config(self, ip=None, netmask=None, gateway=None, user="unknown"):
+
+        if ip is None:
+            ip = self.conf.get("IPADDR", "")
+        if netmask is None:
+            netmask = self.conf.get("NETMASK", "")
+        if gateway is None:
+            gateway = self.conf.get("GATEWAY", "")
+
         self.conf["IPADDR"] = ip
         self.conf["NETMASK"] = netmask
         self.conf["GATEWAY"] = gateway
