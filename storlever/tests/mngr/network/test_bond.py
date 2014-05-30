@@ -32,6 +32,7 @@ class TestBondMgr(unittest.TestCase):
         bond_ifs = bond_manager.get_group_by_name(bond_name)
         self.assertEqual(bond_ifs.miimon, 80)
         self.assertEqual(bond_ifs.mode, 1)
+        self.assertTrue(test_ifs_name in bond_ifs.slaves)
         self.assertEqual((ip, mask, gateway), bond_ifs.get_ip_config())
 
         bond_manager.del_group(bond_name)
