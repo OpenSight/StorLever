@@ -24,9 +24,9 @@ class TestLVM(unittest.TestCase):
             return  # no test
         lvm.new_vg('test_vg', [device])
         vg = lvm.get_vg('test_vg')
-        self.assertIn(device, vg.pvs)
+        self.assertIn(os.path.basename(device), vg.pvs)
         pv = vg.get_pv(device)
-        self.assertEqual(pv.name, device)
+        self.assertEqual(pv.dev_file, device)
         # create LV
         vg.create_lv('test_lv1', 64*1024*1024*10)
         self.assertIn('test_lv1', vg.lvs)
@@ -44,13 +44,13 @@ class TestLVM(unittest.TestCase):
             vg.grow(device_extra)
             vg = lvm.get_vg('test_vg')
             self.assertEqual(len(vg.pvs), 2)
-            self.assertIn(device, vg.pvs)
-            self.assertIn(device_extra, vg.pvs)
+            self.assertIn(os.path.basename(device), vg.pvs)
+            self.assertIn(os.path.basename(device_extra), vg.pvs)
             # shrink VG
             vg.shrink(device)
             vg = lvm.get_vg('test_vg')
-            self.assertIn(device_extra, vg.pvs)
-            self.assertNotIn(device, vg.pvs)
+            self.assertIn(os.path.basename(device_extra), vg.pvs)
+            self.assertNotIn(os.path.basename(device), vg.pvs)
         # delete VG
         vg.delete()
         self.assertRaises(StorLeverError, lvm.get_vg, 'test_vg')

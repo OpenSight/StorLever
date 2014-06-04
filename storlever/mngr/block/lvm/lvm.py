@@ -456,7 +456,8 @@ class VG(object):
         with _LVM() as _lvm:
             with _VG(_lvm, self.name) as _vg:
                 for _pv in _vg.iter_pv():
-                    pvs[_pv.name] = PV(self, _pv.name, _pv.uuid, _pv.size)
+                    pv = PV(self, _pv.name, _pv.uuid, _pv.size, _pv.free)
+                    pvs[pv.name] = pv
         return pvs
 
     @DeferAndCache
@@ -529,15 +530,16 @@ class VG(object):
             with _LVM() as _lvm:
                 with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.add_pv(device)
-                    pv = _vg.get_pv_by_name(device)
-            self.pvs[device] = pv
+                    _pv = _vg.get_pv_by_name(device)
+            pv = PV(self, _pv.name, _pv.uuid, _pv.size, _pv.free)
+            self.pvs[pv.name] = PV(self, _pv.name, _pv.uuid, _pv.size, _pv.free)
 
     def shrink(self, device):
         with self.lock:
             with _LVM() as _lvm:
                 with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.remove_pv(device)
-            pv = self.pvs.pop(device, None)
+            pv = self.pvs.pop(os.path.basename(device), None)
             if pv:
                 pv.delete()
 
@@ -554,19 +556,23 @@ class VG(object):
         with _LVM() as _lvm:
             with _VG(_lvm, self.name) as _vg:
                 _pv = _vg.get_pv_by_name(pv_name)
-                return PV(self, _pv.name, _pv.uuid, _pv.size)
+                return PV(self, _pv.name, _pv.uuid, _pv.size, _pv.free)
 
 
 class PV(object):
-    def __init__(self, vg, name, uuid, size):
+    def __init__(self, vg, name, uuid, size, free):
         self.vg = vg
-        self.name = name
+        self.name = os.path.basename(name)
+        self.dev_file = name
         self.uuid = uuid
         self.size = size
+        self.free = free
 
     def delete(self):
+        # wipe the metadata recorded on the PV block device
+        # in case to remove PV from VG, use VG.shrink instead
         with _LVM() as _lvm:
-            _lvm.remove_pv(self.name)
+            _lvm.remove_pv(self.dev_file)
 
 
 class LV(object):
