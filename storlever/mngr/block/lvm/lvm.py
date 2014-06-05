@@ -364,6 +364,15 @@ class _LV(object):
     def get_size(self):
         return lvm_lv_get_size(self._hdlr)
 
+    def activate(self):
+        return lvm_lv_activate(self._hdlr)
+
+    def deactivate(self):
+        return lvm_lv_deactivate(self._hdlr)
+
+    def is_activate(self):
+        return True if lvm_lv_is_active(self._hdlr) == 1 else False
+
     def resize(self, size):
         if lvm_lv_resize(self._hdlr, size) != 0:
             self._vg.raise_from_error('Failed to resize LV {0}'.format(self.name))
@@ -466,7 +475,7 @@ class VG(object):
         with _LVM() as _lvm:
             with _VG(_lvm, self.name) as _vg:
                 for _lv in _vg.iter_lv():
-                    lvs[_lv.name] = LV(self, _lv.name, _lv.uuid, _lv.size)
+                    lvs[_lv.name] = LV(self, _lv=_lv)
         return lvs
 
     def _get_detail(self):
@@ -521,7 +530,7 @@ class VG(object):
             with _LVM() as _lvm:
                 with _VG(_lvm, self.name, mode=_VG.MODE_WRITE) as _vg:
                     _lv = _vg.create_lv(lv_name, size)
-                    lv = LV(self, _lv.name, _lv.uuid, _lv.size)
+                    lv = LV(self, _lv=_lv)
             self.lvs[lv_name] = lv
             return lv
 
@@ -547,10 +556,7 @@ class VG(object):
         pass
 
     def get_lv(self, lv_name):
-        with _LVM() as _lvm:
-            with _VG(_lvm, self.name) as _vg:
-                _lv = _vg.get_lv_by_name(lv_name)
-                return LV(self, _lv.name, _lv.uuid, _lv.size)
+        return LV(self, name=lv_name)
 
     def get_pv(self, pv_name):
         with _LVM() as _lvm:
@@ -576,13 +582,25 @@ class PV(object):
 
 
 class LV(object):
-    def __init__(self, vg, name, uuid, size):
+    def __init__(self, vg, name=None, _lv=None):
         self.lock = vg.lock
         self.vg = vg
-        self.name = name
-        self.uuid = uuid
-        self.size = size
-        pass
+        if name:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name) as _vg:
+                    _lv = _vg.get_lv_by_name(self.name)
+                    self.name = _lv.name
+                    self.uuid = _lv.uuid
+                    self.size = _lv.size
+                    self.is_activate = _lv.is_activate()
+
+        elif _lv:
+            self.name = _lv.name
+            self.uuid = _lv.uuid
+            self.size = _lv.size
+            self.is_activate = _lv.is_activate()
+        else:
+            raise StorLeverError('No LV name given')
 
     def resize(self, size):
         with self.lock:
@@ -598,6 +616,21 @@ class LV(object):
                 with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.get_lv_by_name(self.name).delete()
             self.vg.lvs.pop(self.name, None)
+
+    def activate(self):
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
+                    _vg.get_lv_by_name(self.name).activate()
+
+    def deactivate(self):
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
+                    _vg.get_lv_by_name(self.name).deactivate()
+
+    def snapshot(self):
+        pass
 
 
 LVMManager = LVMManager()
