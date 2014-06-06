@@ -51,7 +51,7 @@ LUN_CONF_SCHEMA = Schema({
     # lun number
     "lun": IntVal(1, 255),
 
-    # iqn of this target
+    # path to a regular file, or block device, or a sg char device
     "path": Use(str),
 
     # the type of device . Possible device-types are:
@@ -70,7 +70,7 @@ LUN_CONF_SCHEMA = Schema({
     #  ssc     : Special backend type for tape emulation
     Optional("bs_type"): Default(Use(str), default="rdwr"),
 
-    # if a direct mapped logical unit (LUN) with the same properties as the
+    # if true, a direct mapped logical unit (LUN) with the same properties as the
     # physical device (such as VENDOR_ID, SERIAL_NUM, etc.)
     Optional("direct_map"): Default(BoolVal(), default=False),
 

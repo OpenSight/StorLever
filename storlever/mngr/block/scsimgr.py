@@ -12,6 +12,7 @@ This module implements scsi device manager
 import os
 import os.path
 import re
+from stat import *
 
 from storlever.lib.command import check_output, write_file_entry, read_file_entry
 from storlever.lib.exception import StorLeverError
@@ -34,13 +35,16 @@ class ScsiManager(object):
 
     """contains all methods to manage scsi device in linux system"""
 
-    def get_scsi_dev_list(self):
+    def get_scsi_dev_list(self, scsi_id=""):
         dev_list = []
-        lines = check_output([LSSCSI_CMD]).splitlines()
+        if scsi_id == "":
+            lines = check_output([LSSCSI_CMD, "-g"]).splitlines()
+        else:
+            lines = check_output([LSSCSI_CMD, "-g", scsi_id]).splitlines()
         for line in lines:
             line_list = line.split()
-            scsi_id  = line_list[0].strip(" []")
-            type = line_list[1]
+            scsi_id = line_list[0].strip(" []")
+            scsi_type = line_list[1]
             vendor = read_file_entry(os.path.join("/sys/class/scsi_device/", scsi_id, "device/vendor"),
                                      "unkown").strip()
             model = read_file_entry(os.path.join("/sys/class/scsi_device/", scsi_id, "device/model"),
@@ -50,18 +54,27 @@ class ScsiManager(object):
             state = read_file_entry(os.path.join("/sys/class/scsi_device/", scsi_id, "device/state"),
                                      "running").strip()
             dev_file = ""
+            sg_file = ""
+            block_name = ""
             for entry in line_list:
-                if entry.startswith("/dev/"):
+                if entry.startswith("/dev/sg"):
+                    sg_file = entry
+                elif entry.startswith("/dev/"):
                     dev_file = entry
+                    mode = os.stat(dev_file)[ST_MODE]
+                    if S_ISBLK(mode):
+                        block_name = os.path.basename(dev_file)
+
             dev_list.append({
                 "scsi_id": scsi_id,
-                "type": type,
+                "type": scsi_type,
                 "vendor":vendor,
                 "model": model,
                 "state": state,
                 "rev": rev,
+                "sg_file": sg_file,
                 "dev_file": dev_file,
-                "block_name":os.path.basename(dev_file)
+                "block_name": block_name
             })
         return dev_list
 

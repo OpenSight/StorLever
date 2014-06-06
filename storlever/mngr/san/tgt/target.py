@@ -12,6 +12,7 @@ This module implements tgt target class.
 
 import os
 import os.path
+from stat import *
 
 from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
@@ -208,6 +209,23 @@ class Target(object):
             "scsi_sn": scsi_sn
         }
         lun_conf = self.mgr.lun_conf_schema.validate(lun_conf)
+        # check conflict
+        if device_type == "pt":
+            if bs_type != "sg":
+                raise StorLeverError("pt device's bs_type must be sg", 400)
+            if not path.startswith("/dev/sg"):
+                raise StorLeverError("pt device's path must be /dev/sg*", 400)
+        elif device_type in ("tape", "ssc"):
+            if bs_type != "ssc":
+                raise StorLeverError("ssc device 's bs_type must be ssc", 400)
+        else:
+            if bs_type in ("sg", "ssc"):
+                raise StorLeverError("bs_type cannot be ssc/sg", 400)
+
+        if direct_map:
+            mode = os.stat(path)[ST_MODE]
+            if not (S_ISBLK(mode) or S_ISCHR(mode)):
+                raise StorLeverError("path must be a device file if direct_map is true", 400)
 
         with self.mgr.lock:
             conf = self.mgr._get_target_conf(self.iqn)
@@ -268,6 +286,26 @@ class Target(object):
                 found["scsi_id"] = scsi_id
             if scsi_sn is not None:
                 found["scsi_sn"] = scsi_sn
+
+            # check conflict
+            if found["device_type"] == "pt":
+                if found["bs_type"] != "sg":
+                    raise StorLeverError("pt device 's bs_type must be sg", 400)
+                if not found["path"].startswith("/dev/sg"):
+                    raise StorLeverError("pt device 's path must be /dev/sg*", 400)
+            elif found["device_type"] in ("tape", "ssc"):
+                if found["bs_type"] != "ssc":
+                    raise StorLeverError("ssc device 's bs_type must be ssc", 400)
+            else:
+                if found["bs_type"] in ("sg", "ssc"):
+                    raise StorLeverError("bs_type cannot be ssc/sg", 400)
+
+            if found["direct_map"]:
+                mode = os.stat(found["path"])[ST_MODE]
+                if not (S_ISBLK(mode) or S_ISCHR(mode)):
+                    raise StorLeverError("path must be a device file if direct_map is true", 400)
+
+            conf = self.mgr.target_conf_schema.validate(conf)
 
             self.mgr._set_target_conf(self.iqn, conf)
             self.conf = conf # update the cache target conf
