@@ -24,12 +24,14 @@ MODULE_INFO = {
     "rpms": [
         "lsscsi",
         "sg3_utils"
+        "smartmontools"
     ],
     "comment": "Provides the management functions for scsi device"
 }
 
 LSSCSI_CMD = "/usr/bin/lsscsi"
 SCSI_RESCAN_CMD = "/usr/bin/rescan-scsi-bus.sh"
+SMARTCTL_CMD = "/usr/sbin/smartctl"
 
 class ScsiManager(object):
 
@@ -156,6 +158,70 @@ class ScsiManager(object):
             cmd_list.append("--luns=" + (",".join(luns)))
 
         out = check_output(cmd_list)
+
+    def get_smart_info(self, scsi_id):
+        scsi_dev_list = self.get_scsi_dev_list(scsi_id)
+        if not scsi_dev_list:
+            raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+        dev_file = scsi_dev_list[0]["dev_file"]
+        if dev_file == "":
+            raise StorLeverError("scsi_id (%s) has not be recognized" % scsi_id, 400)
+        output = check_output([SMARTCTL_CMD, "-i", "-T", "verypermissive", dev_file])
+        smart_enabled = False
+        offline_auto_enabled = False
+        if "SMART support is: Enabled" in output:
+            smart_enabled = True
+            output = check_output([SMARTCTL_CMD, "-a", "-T", "verypermissive", dev_file])
+
+            if "Auto Offline Data Collection: Enabled" in output:
+                offline_auto_enabled = True
+
+        # filter the copyright
+        lines = output.splitlines()
+        for index, line in enumerate(lines):
+            if line == "":
+                break
+        else:
+            index = 0
+        info = "\n".join(lines[index + 1:])
+
+        return smart_enabled, offline_auto_enabled, info
+
+    def set_smart_config(self, scsi_id, smart_enabled=None, offline_auto=None):
+        scsi_dev_list = self.get_scsi_dev_list(scsi_id)
+        if not scsi_dev_list:
+            raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+        dev_file = scsi_dev_list[0]["dev_file"]
+        if dev_file == "":
+            raise StorLeverError("scsi_id (%s) has not be recognized" % scsi_id, 400)
+
+        if smart_enabled is not None:
+            if smart_enabled:
+                param = "on"
+            else:
+                param = "off"
+            out = check_output([SMARTCTL_CMD, "-s", param, "-T", "verypermissive", dev_file])
+
+        if offline_auto is not None:
+            if offline_auto:
+                param = "on"
+            else:
+                param = "off"
+            out = check_output([SMARTCTL_CMD, "-o", param, "-T", "verypermissive", dev_file])
+
+    def smart_test(self, scsi_id, test_type):
+        if test_type not in ("offline", "short", "long", "conveyance"):
+            raise StorLeverError("test_type (%s) Not Support" % test_type, 400)
+
+        scsi_dev_list = self.get_scsi_dev_list(scsi_id)
+        if not scsi_dev_list:
+            raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
+        dev_file = scsi_dev_list[0]["dev_file"]
+        if dev_file == "":
+            raise StorLeverError("scsi_id (%s) has not be recognized" % scsi_id, 400)
+
+        out = check_output([SMARTCTL_CMD, "-t", test_type, "-T", "verypermissive", dev_file])
+
 
 ScsiManager = ScsiManager()
 ModuleManager.register_module(**MODULE_INFO)
