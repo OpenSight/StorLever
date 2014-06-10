@@ -42,8 +42,10 @@ class TestScsiMgr(unittest.TestCase):
         self.assertTrue(test_scsi_dev is not None)
         self.assertEquals(test_scsi_dev.state, "running")
 
-        smart_info = test_scsi_dev.get_smart_info()
+        test_scsi_id = test_scsi_dev.scsi_id
+        test_scsi_dev = mgr.get_scsi_dev_by_id(test_scsi_id)
 
+        smart_info = test_scsi_dev.get_smart_info()
         test_scsi_dev.rescan_dev()
         test_scsi_dev.safe_delete()
 

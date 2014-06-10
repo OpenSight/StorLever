@@ -175,7 +175,20 @@ class ScsiManager(object):
         lines = check_output([LSSCSI_CMD, "-g", scsi_id]).splitlines()
         if not lines:
             raise StorLeverError("scsi_id (%s) Not Found" % scsi_id, 404)
-        return lines[0]
+
+        line_list = lines[0].split()
+        scsi_id = line_list[0].strip(" []")
+        scsi_type = line_list[1]
+
+        dev_file = ""
+        sg_file = ""
+        for entry in line_list:
+            if entry.startswith("/dev/sg"):
+                sg_file = entry
+            elif entry.startswith("/dev/"):
+                dev_file = entry
+
+        return ScsiDev(scsi_id, scsi_type, dev_file, sg_file)
 
     def get_scsi_host_list(self):
         host_list = []
