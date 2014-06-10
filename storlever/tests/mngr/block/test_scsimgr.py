@@ -9,6 +9,8 @@ else:
 from storlever.mngr.block.scsimgr import scsi_mgr
 
 
+test_block = None
+
 def get_block_dev():
     global test_block
     if test_block is None:
@@ -32,17 +34,23 @@ class TestScsiMgr(unittest.TestCase):
         if test_dev_file == "":
             return
         dev_list = mgr.get_scsi_dev_list()
-        test_scsi_id = None
-        for dev_entry in dev_list:
-            if dev_entry["dev_file"] == test_dev_file:
-                test_scsi_id = dev_entry["scsi_id"]
-        self.assertTrue(test_scsi_id is not None)
-        mgr.safe_delete_dev(test_scsi_id)
+        test_scsi_dev = None
+        for scsi_dev in dev_list:
+            if scsi_dev.dev_file == test_dev_file:
+                test_scsi_dev = scsi_dev
+                break;
+        self.assertTrue(test_scsi_dev is not None)
+        self.assertEquals(test_scsi_dev.state, "running")
+
+        smart_info = test_scsi_dev.get_smart_info()
+
+        test_scsi_dev.rescan_dev()
+        test_scsi_dev.safe_delete()
 
         dev_list = mgr.get_scsi_dev_list()
         found = False
-        for dev_entry in dev_list:
-            if dev_entry["scsi_id"] == test_scsi_id:
+        for scsi_dev in dev_list:
+            if scsi_dev.dev_file == test_dev_file:
                 found = True
         self.assertFalse(found)
 
@@ -50,8 +58,8 @@ class TestScsiMgr(unittest.TestCase):
 
         dev_list = mgr.get_scsi_dev_list()
         found = False
-        for dev_entry in dev_list:
-            if dev_entry["scsi_id"] == test_scsi_id:
+        for scsi_dev in dev_list:
+            if scsi_dev.dev_file == test_dev_file:
                 found = True
         self.assertTrue(found)
 
