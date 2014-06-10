@@ -209,13 +209,17 @@ class FileSystemManager(object):
 
         return cls(fs_name, fs_conf)
 
-    def fs_name_list(self):
-        """list all the fs name in the storlever
+    def get_fs_list(self):
+        """get the fs object list in the storlever
         """
         with self.lock:
             fs_dict = self._load_conf()
-            names = fs_dict.keys()
-        return names
+        fs_list = []
+        for fs_name, fs_conf in fs_dict.items():
+            cls = self._get_fs_type_cls(fs_conf["type"])
+            fs_list.append(cls(fs_name, fs_conf))
+
+        return fs_list
 
     def fs_type_list(self):
         """list all fs type supported in the storlever"""

@@ -289,7 +289,7 @@ class FileSystem(object):
                 continue
             usage_list.append({
                 "bytes": int(elements[0]),
-                "path": elements[1]
+                "abspath": elements[1]
             })
         return usage_list
 

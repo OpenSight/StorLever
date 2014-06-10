@@ -34,7 +34,12 @@ class TestFsMgr(unittest.TestCase):
             return
         mgr.mkfs_on_dev("ext4", dev_file)
         mgr.add_fs("test_ext4", "ext4", dev_file, comment="test")
-        self.assertTrue("test_ext4" in mgr.fs_name_list())
+        for fs in mgr.get_fs_list():
+            if fs.name == "test_ext4":
+                break;
+        else:
+            raise Exception("there is no file system name test_ext4")
+
         f = mgr.get_fs_by_name("test_ext4")
         self.assertEquals(f.fs_conf["dev_file"], dev_file)
         self.assertEquals(f.fs_conf["comment"], "test")
