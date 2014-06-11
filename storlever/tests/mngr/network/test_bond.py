@@ -23,11 +23,10 @@ class TestBondMgr(unittest.TestCase):
         bond_manager = bond_mgr()
         bond_name = bond_manager.add_group(80, 1, [test_ifs_name],
                                            ip, mask, gateway)
-        bond_list = bond_manager.group_name_list()
-
+        bond_list = bond_manager.get_group_list()
         self.assertTrue(True, isinstance(bond_list, list))
         self.assertGreater(len(bond_list), 0)
-        self.assertEqual(bond_name, bond_list[0])
+
 
         bond_ifs = bond_manager.get_group_by_name(bond_name)
         self.assertEqual(bond_ifs.miimon, 80)

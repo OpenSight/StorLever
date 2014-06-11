@@ -13,7 +13,7 @@ class TestEthInterfaceMgr(unittest.TestCase):
 
     def test_interface_list(self):
         manager = if_mgr()
-        ifs_list = manager.interface_name_list()
+        ifs_list = manager.get_interface_list()
         self.assertTrue(isinstance(ifs_list, list))
         self.assertGreater(len(ifs_list), 0)
 

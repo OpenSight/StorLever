@@ -70,6 +70,26 @@ class EthInterfaceManager(object):
 
         return EthInterface(dev.name)
 
+    def get_interface_list(self):
+
+        interfaces_name = []
+        for dev in ifconfig.iterifs(False):
+            if dev.name == "lo":    # loopback interface is not handled
+                continue
+
+            if self._get_if_encap(dev.name) != 1:
+                # only support Ethernet
+                continue
+
+            interfaces_name.append(dev.name)
+        interfaces_name.sort()
+
+        interfaces = []
+        for name in interfaces_name:
+            interfaces.append(EthInterface(name))
+
+        return interfaces
+
     def interface_name_list(self):
         interfaces = []
         for dev in ifconfig.iterifs(False):

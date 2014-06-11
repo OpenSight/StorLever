@@ -144,6 +144,13 @@ class BondManager(object):
             raise StorLeverError("Bond Group(%s) does not exist" % name, 404)
         return BondGroup(name)
 
+    def get_group_list(self):
+        group_list = []
+        name_list = read_file_entry(BONDING_MASTERS, "").split()
+        for group_name in name_list:
+            group_list.append(BondGroup(group_name))
+        return group_list
+
     def group_name_list(self):
         return read_file_entry(BONDING_MASTERS, "").split()
 
