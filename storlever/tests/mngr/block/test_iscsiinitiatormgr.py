@@ -47,7 +47,7 @@ class TestIscsiInitiatorMgr(unittest.TestCase):
     def test_iface(self):
         mgr = iscsi_initiator_mgr()
         try:
-            mgr.get_iface_conf("test_tcp")
+            mgr.get_iface_by_name("test_tcp")
             mgr.del_iface("test_tcp")
         except Exception:
             pass
@@ -56,40 +56,43 @@ class TestIscsiInitiatorMgr(unittest.TestCase):
         iface_list = mgr.get_iface_list()
         found = False
         for iface_entry in iface_list:
-            if iface_entry["iface_name"] == "test_tcp":
+            if iface_entry.iscsi_ifacename == "test_tcp":
                 found = True
-                self.assertEquals(iface_entry["net_ifacename"], "")
-                self.assertEquals(iface_entry["transport_name"], "tcp")
+                self.assertEquals(iface_entry.net_ifacename, "")
+                self.assertEquals(iface_entry.transport_name, "tcp")
         self.assertTrue(found)
 
-        iface_conf = mgr.get_iface_conf("test_tcp")
+        iface_obj = mgr.get_iface_by_name("test_tcp")
+        iface_conf = iface_obj.get_conf()
         self.assertEquals(iface_conf["iface.transport_name"], "tcp")
         self.assertEquals(iface_conf["iface.net_ifacename"], "")
         self.assertEquals(iface_conf["iface.iscsi_ifacename"], "test_tcp")
 
-        mgr.update_iface_conf("test_tcp", "iface.net_ifacename", "eth0")
-        iface_conf = mgr.get_iface_conf("test_tcp")
+        iface_obj.set_conf("iface.net_ifacename", "eth0")
+
+        iface_conf = iface_obj.get_conf()
         self.assertEquals(iface_conf["iface.net_ifacename"], "eth0")
+
         iface_list = mgr.get_iface_list()
         found = False
         for iface_entry in iface_list:
-            if iface_entry["iface_name"] == "test_tcp":
+            if iface_entry.iscsi_ifacename == "test_tcp":
                 found = True
-                self.assertEquals(iface_entry["net_ifacename"], "eth0")
+                self.assertEquals(iface_entry.net_ifacename, "eth0")
         self.assertTrue(found)
 
         mgr.del_iface("test_tcp")
         iface_list = mgr.get_iface_list()
         found = False
         for iface_entry in iface_list:
-            if iface_entry["iface_name"] == "test_tcp":
+            if iface_entry.iscsi_ifacename == "test_tcp":
                 found = True
         self.assertFalse(found)
 
     def test_node(self):
         mgr = iscsi_initiator_mgr()
         try:
-            mgr.get_node_conf("iqn.2014-01.cn.com.opensight:test_node", "192.168.1.10:3260")
+            mgr.get_node("iqn.2014-01.cn.com.opensight:test_node", "192.168.1.10:3260")
             mgr.delete_node("iqn.2014-01.cn.com.opensight:test_node", "192.168.1.10:3260")
         except Exception:
             pass
@@ -98,39 +101,31 @@ class TestIscsiInitiatorMgr(unittest.TestCase):
         node_list = mgr.get_node_list()
         found = False
         for node_entry in node_list:
-            if node_entry["target"] == "iqn.2014-01.cn.com.opensight:test_node" \
-                and node_entry["portal"] == "192.168.1.10:3260":
+            if node_entry.target == "iqn.2014-01.cn.com.opensight:test_node" \
+                and node_entry.portal == "192.168.1.10:3260":
                 found = True
         self.assertTrue(found)
 
-        node_conf = mgr.get_node_conf("iqn.2014-01.cn.com.opensight:test_node",
-                                      "192.168.1.10:3260")
+        node_obj = mgr.get_node("iqn.2014-01.cn.com.opensight:test_node", "192.168.1.10:3260")
+        node_conf = node_obj.get_conf()
         self.assertEquals(node_conf["node.name"], "iqn.2014-01.cn.com.opensight:test_node")
         self.assertEquals(node_conf["node.conn[0].address"], "192.168.1.10")
         self.assertEquals(node_conf["node.conn[0].port"], "3260")
 
-
-        mgr.update_node_conf("iqn.2014-01.cn.com.opensight:test_node",
-                              "192.168.1.10:3260",
-                              "node.startup", "automatic")
-        node_conf = mgr.get_node_conf("iqn.2014-01.cn.com.opensight:test_node",
-                                      "192.168.1.10:3260")
+        node_obj.set_conf("node.startup", "automatic")
+        node_conf = node_obj.get_conf()
         self.assertEquals(node_conf["node.startup"], "automatic")
-        mgr.update_node_conf("iqn.2014-01.cn.com.opensight:test_node",
-                              "192.168.1.10:3260",
-                              "node.startup", "manual")
-        node_conf = mgr.get_node_conf("iqn.2014-01.cn.com.opensight:test_node",
-                                      "192.168.1.10:3260")
+        node_obj.set_conf("node.startup", "manual")
+        node_conf = node_obj.get_conf()
         self.assertEquals(node_conf["node.startup"], "manual")
-
 
         mgr.delete_node("iqn.2014-01.cn.com.opensight:test_node",
                         "192.168.1.10:3260")
         found = False
         node_list = mgr.get_node_list()
         for node_entry in node_list:
-            if node_entry["target"] == "iqn.2014-01.cn.com.opensight:test_node" \
-                and node_entry["portal"] == "192.168.1.10:3260":
+            if node_entry.target == "iqn.2014-01.cn.com.opensight:test_node" \
+                and node_entry.portal == "192.168.1.10:3260":
                 found = True
         self.assertFalse(found)
 
@@ -151,13 +146,13 @@ class TestIscsiInitiatorMgr(unittest.TestCase):
         node_list = mgr.get_node_list()
         found = False
         for node_entry in node_list:
-            if node_entry["target"] == test_target \
-                and node_entry["portal"] == test_portal:
+            if node_entry.target == test_target \
+                and node_entry.portal == test_portal:
                 found = True
-                self.assertFalse(node_entry["login"])
         self.assertTrue(found)
 
-        mgr.login_node(test_target, test_portal)
+        node_obj = mgr.get_node(test_target, test_portal)
+        node_obj.login()
         session_list = mgr.get_session_list()
         found = False
         for session_entry in session_list:
@@ -170,7 +165,7 @@ class TestIscsiInitiatorMgr(unittest.TestCase):
         session_conf = mgr.get_session_conf(session_id)
         self.assertEquals(session_conf["node.name"], test_target)
 
-        mgr.logout_node(test_target, test_portal)
+        node_obj.logout()
         session_list = mgr.get_session_list()
         found = False
         for session_entry in session_list:

@@ -9,6 +9,7 @@ This module implements iscsi initiator manager
 
 """
 
+
 import os
 import os.path
 import shutil
@@ -24,6 +25,8 @@ import logging
 
 import subprocess
 from storlever.mngr.system.modulemgr import ModuleManager
+from iface import Iface
+from node import Node
 
 MODULE_INFO = {
     "module_name": "iscsi_initiator",
@@ -40,13 +43,16 @@ ISCSI_INITIATOR_ETC_GLOBAL_FILE = "iscsid.conf"
 ISCSI_INITIATOR_ETC_NAME_FILE = "initiatorname.iscsi"
 ISCSI_INITIATOR_DB_PATH = "/var/lib/iscsi"
 
+
+
 class IscsiInitiatorManager(object):
 
     """contains all methods to manage iscsi initiator in linux system"""
     def __init__(self):
         self.lock = lock()
 
-    def _lines_to_property_dict(self, lines):
+    @staticmethod
+    def lines_to_property_dict(lines):
         property_dict = {}
         for line in lines:
             if line.strip().startswith("#"):
@@ -58,6 +64,7 @@ class IscsiInitiatorManager(object):
                 value = ""
             property_dict[key] = value
         return property_dict
+
 
     # global property
     def get_initiator_iqn(self):
@@ -152,25 +159,44 @@ class IscsiInitiatorManager(object):
                 if value == "<empty>":
                     params[index] = ""
 
-            iface_list.append({
-                "iface_name": iface_name,
-                "transport_name": params[0],
-                "hwaddress": params[1],
-                "ipaddress": params[2],
-                "net_ifacename": params[3],
-                "initiatorname": params[4],
-            })
+            iface_obj = Iface(
+                self, iface_name,
+                params[0], params[1], params[2], params[3], params[4]
+            )
+            iface_list.append(iface_obj)
+
         return iface_list
 
-    def get_iface_conf(self, iface_name):
-        outlines = check_output([ISCSIADM_CMD, "-m", "iface", "-I", iface_name],
-                                input_ret=[2, 6, 7, 21, 22]).splitlines()
-        return self._lines_to_property_dict(outlines)
+    def get_iface_by_name(self, iface_name):
+        try:
+           outlines = check_output([ISCSIADM_CMD, "-m", "iface"], input_ret=[2, 7, 22]).splitlines()
+        except StorLeverCmdError as e:
+            if e.return_code == 21:
+                outlines = []
+            else:
+                raise
+        for line in outlines:
+            entry_iface_name, sep, params = line.partition(" ")
+            params = params.strip().split(",")
+            if len(params) < 5:
+                continue # we don't recognize this output format
+
+            if entry_iface_name == iface_name:
+                for index, value in enumerate(params):
+                    if value == "<empty>":
+                        params[index] = ""
+                iface_obj = Iface(
+                    self, entry_iface_name,
+                    params[0], params[1], params[2], params[3], params[4]
+                )
+                return iface_obj
+        else:
+            raise StorLeverError("iface (%s) Not Found" % iface_name, 404)
 
     def create_iface(self, iface_name, operator="unkown"):
         iface_list = self.get_iface_list()
         for iface in iface_list:
-            if iface["iface_name"] == iface_name:
+            if iface.iscsi_ifacename == iface_name:
                 raise StorLeverError("iface (%s) already exists" % iface_name, 400)
         check_output([ISCSIADM_CMD, "-m", "iface", "-I", iface_name, "-o", "new"],
                                 input_ret=[2, 6, 7, 21, 22])
@@ -179,20 +205,12 @@ class IscsiInitiatorManager(object):
                    "iscsi initiator iface (%s) is created by operator(%s)" %
                    (iface_name, operator))
 
-    def update_iface_conf(self, iface_name, name, value, operator="unkown"):
-        check_output([ISCSIADM_CMD, "-m", "iface", "-I", iface_name, "-o", "update",
-                      "-n", str(name), "-v", str(value)], input_ret=[2, 6, 7, 21, 22])
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "iscsi initiator iface (%s) conf (%s:%s) is updated by operator(%s)" %
-                   (iface_name, name, value, operator))
-
-
     def del_iface(self, iface_name, operator="unkown"):
         if iface_name in ("default", "iser"):
             raise StorLeverError("iface (default, iser) cannot be deleted", 400)
         iface_list = self.get_iface_list()
         for iface in iface_list:
-            if iface["iface_name"] == iface_name:
+            if iface.iscsi_ifacename == iface_name:
                 break;
         else:
             raise StorLeverError("iface (%s) Not Found" % iface_name, 404)
@@ -207,7 +225,6 @@ class IscsiInitiatorManager(object):
     # node property
     def get_node_list(self):
         node_list = []
-        session_list = self.get_session_list()
         try:
            outlines = check_output([ISCSIADM_CMD, "-m", "node"], input_ret=[2, 7, 22]).splitlines()
         except StorLeverCmdError as e:
@@ -222,20 +239,40 @@ class IscsiInitiatorManager(object):
             target = params[1]
             portal, sep, tag = params[0].partition(",")
 
-            login = False
-            for session in session_list:
-                if session["target"] == target \
-                    and session["portal"] == portal:
-                    login = True
-            node_list.append({
-                "target": target,
-                "portal": portal,
-                "login": login,
-            })
+            node_list.append(Node(self, target, portal))
 
         return node_list
 
+    def get_node(self, target, portal):
+        #check exist
+        node_list = []
+        try:
+           outlines = check_output([ISCSIADM_CMD, "-m", "node"], input_ret=[2, 7, 22]).splitlines()
+        except StorLeverCmdError as e:
+            if e.return_code == 21:
+                outlines = []
+            else:
+                raise
+        for line in outlines:
+            params = line.split()
+            if len(params) < 2:
+                continue # we don't recognize this output format
+            entry_target = params[1]
+            entry_portal, sep, tag = params[0].partition(",")
+            if entry_portal == portal and entry_target == target:
+                break;
+        else:
+            raise StorLeverError("Node (%s, %s) Not Found" % (target, portal), 404)
+
+        return Node(self, target, portal)
+
     def create_node(self, target, portal, iface=None, operator="unkown"):
+
+        node_list = self.get_node_list()
+        for node in node_list:
+            if node.target == target and node.portal == portal:
+                raise StorLeverError("Node (%s, %s) already exists" % (target, portal), 400)
+
         cmd = [ISCSIADM_CMD, "-m", "node", "-o", "new", "-T", target, "-p", portal]
         if iface is not None:
             cmd.append("-I")
@@ -250,57 +287,22 @@ class IscsiInitiatorManager(object):
     def delete_node(self, target, portal, operator="unkown"):
         node_list = self.get_node_list()
 
-        login = False
         for node in node_list:
-            if node["target"] == target and node["portal"] == portal:
-                login = node["login"]
+            if node.target == target and node.portal == portal:
                 break
         else:
             raise StorLeverError("Node (%s, %s) Not Found" % (target, portal), 404)
 
-        if login:
-            self.logout_node(target, portal, operator)
+        session_list = self.get_session_list()
+        for session in session_list:
+            if session["portal"] == portal and session["target"] == target:
+                node.logout(operator)
 
         check_output([ISCSIADM_CMD, "-m", "node","-o", "delete",
                       "-T", target, "-p", portal], input_ret=[2, 6, 7, 21, 22])
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
                    "iscsi initiator node (%s, %s) is deleted by operator(%s)" %
                    (target, portal, operator))
-
-    def get_node_conf(self, target, portal):
-        outlines = check_output([ISCSIADM_CMD, "-m", "node",
-                                 "-T", target, "-p", portal],
-                                input_ret=[2, 6, 7, 21, 22]).splitlines()
-        return self._lines_to_property_dict(outlines)
-
-    def update_node_conf(self, target, portal, name, value, operator="unkown"):
-        check_output([ISCSIADM_CMD, "-m", "node", "-T", target, "-p", portal,
-                      "-o", "update", "-n", str(name), "-v", str(value)], input_ret=[2, 6, 7, 21, 22])
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "iscsi initiator node (%s, %s) conf (%s:%s) is updated by operator(%s)" %
-                   (target, portal, name, value, operator))
-
-    def login_node(self, target, portal=None, operator="unkown"):
-        cmd = [ISCSIADM_CMD, "-m", "node","--login", "-T", target]
-        if portal is not None:
-            cmd.append("-p")
-            cmd.append(portal)
-
-        outlines = check_output(cmd, input_ret=[2, 6, 7, 21, 22]).splitlines()
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "iscsi initiator node (%s) is login by operator(%s)" %
-                   (target, operator))
-
-    def logout_node(self, target, portal=None, operator="unkown"):
-        cmd = [ISCSIADM_CMD, "-m", "node","--logout", "-T", target]
-        if portal is not None:
-            cmd.append("-p")
-            cmd.append(portal)
-
-        outlines = check_output(cmd, input_ret=[2, 6, 7, 21, 22]).splitlines()
-        logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "iscsi initiator node (%s) is logout by operator(%s)" %
-                   (target, operator))
 
     # session property
     def get_session_list(self):
@@ -332,7 +334,7 @@ class IscsiInitiatorManager(object):
 
         outlines = check_output([ISCSIADM_CMD, "-m", "session", "-r", str(session_id)],
                                 input_ret=[2, 6, 7, 21, 22]).splitlines()
-        return self._lines_to_property_dict(outlines)
+        return self.lines_to_property_dict(outlines)
 
     def get_session_stat(self, session_id):
         stat = {}
