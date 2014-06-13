@@ -364,6 +364,18 @@ class _LV(object):
     def get_size(self):
         return lvm_lv_get_size(self._hdlr)
 
+    def get_origin(self):
+        return lvm_lv_get_origin(self._hdlr)
+
+    def get_attr(self):
+        return lvm_lv_get_attr(self._hdlr)
+
+    def snapshot(self, name, size):
+        snapshot_hdlr = lvm_lv_snapshot(self._hdlr, name, size)
+        if not bool(snapshot_hdlr):
+            self._vg.raise_from_error('Failed to create snapshot {0} of size {1} on LV {2}'.format(name, size, self.name))
+        return _LV(self._vg, hdlr=snapshot_hdlr)
+
     def activate(self):
         return lvm_lv_activate(self._hdlr)
 
@@ -588,17 +600,20 @@ class LV(object):
         if name:
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name) as _vg:
-                    _lv = _vg.get_lv_by_name(self.name)
+                    _lv = _vg.get_lv_by_name(name)
                     self.name = _lv.name
                     self.uuid = _lv.uuid
                     self.size = _lv.size
                     self.is_activate = _lv.is_activate()
-
+                    self.origin = _lv.get_origin()
+                    self.attr = _lv.get_attr()
         elif _lv:
             self.name = _lv.name
             self.uuid = _lv.uuid
             self.size = _lv.size
             self.is_activate = _lv.is_activate()
+            self.origin = _lv.get_origin()
+            self.attr = _lv.get_attr()
         else:
             raise StorLeverError('No LV name given')
 
@@ -622,15 +637,24 @@ class LV(object):
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.get_lv_by_name(self.name).activate()
+        self.is_activate = True
 
     def deactivate(self):
         with self.lock:
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.get_lv_by_name(self.name).deactivate()
+        self.is_activate = False
 
-    def snapshot(self):
-        pass
+    def snapshot(self, name, size):
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
+                    _lv = _vg.get_lv_by_name(self.name).snapshot(name, size)
+                    lv = LV(self.vg, _lv=_lv)
+        self.vg.lvs[name] = lv
+        self.origin = name
+
 
 
 LVMManager = LVMManager()
