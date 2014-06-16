@@ -28,7 +28,7 @@ from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.modulemgr import ModuleManager
 
 MODULE_INFO = {
-    "module_name": "mailx",
+    "module_name": "mail",
     "rpms": [
         "mailx"
     ],
@@ -45,13 +45,13 @@ MAIL_CMD = "/bin/mail"
 MAIL_CONF_SCHEMA = Schema({
 
     # the email address of user's account, it would also be place in the FROM header of the email
-    Optional("smtp_user_addr"):  Default(Use(str), default=""),
+    Optional("email_addr"):  Default(Use(str), default=""),
 
     # smtp server address to send the mail
     Optional("smtp_server"):  Default(Use(str), default=""),
 
     # password for the account
-    Optional("smtp_password"):  Default(Use(str), default=""),
+    Optional("password"):  Default(Use(str), default=""),
 
 
     DoNotCare(str): object  # for all those key we don't care
@@ -86,7 +86,7 @@ class MailManager(object):
     def _sync_to_system_conf(self, mail_conf):
 
         # get username from user address
-        username, sep, host = mail_conf["smtp_user_addr"].partition("@")
+        username, sep, host = mail_conf["email_addr"].partition("@")
 
         if not os.path.exists(MAIL_ETC_CONF_DIR):
             os.makedirs(MAIL_ETC_CONF_DIR)
@@ -110,15 +110,15 @@ class MailManager(object):
         with open(file_name, "w") as f:
             f.writelines(before_storlever)
             f.write("# begin storlever\n")
-            if mail_conf["smtp_user_addr"] != "":
-                f.write("set from=%s\n" % mail_conf["smtp_user_addr"])
+            if mail_conf["email_addr"] != "":
+                f.write("set from=%s\n" % mail_conf["email_addr"])
 
             if mail_conf["smtp_server"] != "":
                 f.write("set smtp=%s\n" % mail_conf["smtp_server"])
                 if username != "":
                     f.write("set smtp-auth-user=%s\n" % username)
-                if mail_conf["smtp_password"] != "":
-                    f.write("set smtp-auth-password=%s\n" % mail_conf["smtp_password"])
+                if mail_conf["password"] != "":
+                    f.write("set smtp-auth-password=%s\n" % mail_conf["password"])
 
             f.write("# end storlever\n")
             f.writelines(after_storlever)
@@ -163,10 +163,10 @@ class MailManager(object):
             # check config conflict
             mail_conf = self.mail_conf_schema.validate(mail_conf)
             if mail_conf["smtp_server"] != "":
-                if mail_conf["smtp_user_addr"] == "":
-                    raise StorLeverError("smtp_user_addr cannot be empty if smtp_server exists", 400)
-                if mail_conf["smtp_password"] == "":
-                    raise StorLeverError("smtp_password cannot be empty if smtp_server exists", 400)
+                if mail_conf["email_addr"] == "":
+                    raise StorLeverError("email_addr cannot be empty if smtp_server exists", 400)
+                if mail_conf["password"] == "":
+                    raise StorLeverError("password cannot be empty if smtp_server exists", 400)
 
             # save new conf
             self._save_conf(mail_conf)
