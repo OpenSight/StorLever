@@ -1,6 +1,8 @@
 from storlever.rest.common import (get_view, post_view, 
                                    put_view, delete_view)
 from storlever.lib.exception import StorLeverError
+from storlever.mngr.fs.fsmgr import FileSystemManager
+from pyramid.response import Response
 
 
 def includeme(config):
@@ -48,13 +50,10 @@ def includeme(config):
     # DELETE: delete FTP export
     config.add_route('ftp', '/ftp_list/{ftp}')
 
-
+#http://192.168.2.10:6543/storlever/api/v1/fs_list
 @get_view(route_name='fs_list')
-def network_get(request):
-    return {'eth0': {'ip': '192.168.1.22', 'gateway': '192.168.1.1'}}
-
-
-@post_view(route_name='fs')
-def network_post(request):
-    raise StorLeverError('it failing')
-    return "post successfully"
+def get_fs_list(request):
+    fs_mrg = FileSystemManager
+    file_list = fs_mrg.get_fs_list()
+    print file_list
+    return file_list
