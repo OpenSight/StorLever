@@ -15,6 +15,7 @@ from lvm2app import *
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.system.modulemgr import ModuleManager
 from storlever.lib.lock import lock
+from storlever.lib.command import check_output
 
 from storlever.lib import logger
 import logging
@@ -604,8 +605,15 @@ class PV(object):
                     self.size = _pv.get_size()
                     self.free = _pv.get_free_size()
 
-    def move(self, device):
-        pass
+    def move(self, src_device, dst_device=None, lv_name=None):
+        cmd = ['pvmove', '-b']
+        if lv_name:
+            cmd.append('-n')
+            cmd.append(lv_name)
+        cmd.append(src_device)
+        if dst_device:
+            cmd.append(dst_device)
+        check_output(cmd)
 
 
 class LV(object):
