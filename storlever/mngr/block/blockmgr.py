@@ -112,10 +112,18 @@ class BlockManager(object):
 
     def get_block_dev_list(self):
         block_list = []
+        block_name_list = []
         lines = check_output([LSBLK_CMD, "-ribn", "-o",
                               "NAME,MAJ:MIN,TYPE,SIZE,RO,FSTYPE,MOUNTPOINT"]).splitlines()
         for line in lines:
             line_list = line.split(" ")
+
+            # remove duplication
+            if line_list[0] in block_name_list:
+                continue # this block device already in the list
+            else:
+                block_name_list.append(line_list[0])
+
             maj_num, sep, min_num = line_list[1].partition(":")
             if int(line_list[4]) == 0:
                 ro = False

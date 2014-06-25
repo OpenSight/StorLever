@@ -364,6 +364,18 @@ class _LV(object):
     def get_size(self):
         return lvm_lv_get_size(self._hdlr)
 
+    def get_origin(self):
+        return lvm_lv_get_origin(self._hdlr)
+
+    def get_attr(self):
+        return lvm_lv_get_attr(self._hdlr)
+
+    def snapshot(self, name, size):
+        snapshot_hdlr = lvm_lv_snapshot(self._hdlr, name, size)
+        if not bool(snapshot_hdlr):
+            self._vg.raise_from_error('Failed to create snapshot {0} of size {1} on LV {2}'.format(name, size, self.name))
+        return _LV(self._vg, hdlr=snapshot_hdlr)
+
     def activate(self):
         return lvm_lv_activate(self._hdlr)
 
@@ -421,6 +433,10 @@ class _PV(object):
 
     def delete(self):
         self._vg.remove_pv(self.name)
+
+    def resize(self, size):
+        if lvm_pv_resize(self._hdlr, size) != 0:
+            self._vg.raise_from_error('Failed to resize PV {0} to size {}'.format(self.name, size))
 
 
 class LVMManager(object):
@@ -580,27 +596,72 @@ class PV(object):
         with _LVM() as _lvm:
             _lvm.remove_pv(self.dev_file)
 
+    def resize(self, size):
+        with _LVM() as _lvm:
+            with _VG(_lvm, self.vg.name) as _vg:
+                with _PV(_vg, name=self.dev_file) as _pv:
+                    _pv.resize(size)
+                    self.size = _pv.get_size()
+                    self.free = _pv.get_free_size()
+
+    def move(self, device):
+        pass
+
 
 class LV(object):
+
+    TYPE_ABBR = {
+        'm': 'mirrored',
+        'M': 'mirrored without initial sync',
+        'o': 'origin',
+        'O': 'origin with merging snapshot',
+        'r': 'raid',
+        'R': 'raid without initial sync',
+        's': 'snapshot',
+        'S': 'merging snapshot',
+        'p': 'pvmove',
+        'v': 'virtual',
+        'i': 'mirror or raid image',
+        'I': 'mirror or raid image out-of-sync',
+        'l': 'mirror log device',
+        'c': 'under conversion',
+        'V': 'thin volume',
+        't': 'thin pool',
+        'T': 'thin pool data',
+        'e': 'raid or thin pool metadata',
+    }
+
+    PERMISSION_ABBR = {
+        'w': 'writable',
+        'r': 'read-only',
+        'R': 'read-only activation of non-read-only volume'
+    }
+
     def __init__(self, vg, name=None, _lv=None):
         self.lock = vg.lock
         self.vg = vg
         if name:
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name) as _vg:
-                    _lv = _vg.get_lv_by_name(self.name)
+                    _lv = _vg.get_lv_by_name(name)
                     self.name = _lv.name
                     self.uuid = _lv.uuid
                     self.size = _lv.size
                     self.is_activate = _lv.is_activate()
-
+                    self.origin = _lv.get_origin()
+                    self.attr = _lv.get_attr()
         elif _lv:
             self.name = _lv.name
             self.uuid = _lv.uuid
             self.size = _lv.size
             self.is_activate = _lv.is_activate()
+            self.origin = _lv.get_origin()
+            self.attr = _lv.get_attr()
         else:
             raise StorLeverError('No LV name given')
+        self.type = self.TYPE_ABBR.get(self.attr[0], 'unknown')
+        self.permission = self.PERMISSION_ABBR.get(self.attr[1], 'unknown')
+        self.partial = True if self.attr[8] == 'p' else False
 
     def resize(self, size):
         with self.lock:
@@ -622,15 +683,24 @@ class LV(object):
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.get_lv_by_name(self.name).activate()
+        self.is_activate = True
 
     def deactivate(self):
         with self.lock:
             with _LVM() as _lvm:
                 with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
                     _vg.get_lv_by_name(self.name).deactivate()
+        self.is_activate = False
 
-    def snapshot(self):
-        pass
+    def snapshot(self, name, size):
+        with self.lock:
+            with _LVM() as _lvm:
+                with _VG(_lvm, self.vg.name, mode=_VG.MODE_WRITE) as _vg:
+                    _lv = _vg.get_lv_by_name(self.name).snapshot(name, size)
+                    lv = LV(self.vg, _lv=_lv)
+        self.vg.lvs[name] = lv
+        self.origin = name
+
 
 
 LVMManager = LVMManager()

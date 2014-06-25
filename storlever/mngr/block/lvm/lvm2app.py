@@ -209,6 +209,8 @@ lvm_pv_from_name.argtypes = [vg_t, c_char_p]
 lvm_pv_from_name.restype = pv_t
 lvm_pv_remove = lvmlib.lvm_pv_remove
 lvm_pv_remove.argtypes = [lvm_t, c_char_p]
+lvm_pv_resize = lvmlib.lvm_pv_resize
+lvm_pv_resize.argtypes = [pv_t, c_uint64]
 
 # LV Functions
 lvm_lv_get_name = lvmlib.lvm_lv_get_name
@@ -220,6 +222,15 @@ lvm_lv_get_uuid.restype = c_char_p
 lvm_lv_get_size = lvmlib.lvm_lv_get_size
 lvm_lv_get_size.argtypes = [lv_t]
 lvm_lv_get_size.restype = c_ulonglong
+lvm_lv_get_attr = lvmlib.lvm_lv_get_attr
+lvm_lv_get_attr.argtypes = [lv_t]
+lvm_lv_get_attr.restype = c_char_p
+lvm_lv_get_origin = lvmlib.lvm_lv_get_origin
+lvm_lv_get_origin.argtypes = [lv_t]
+lvm_lv_get_origin.restype = c_char_p
+lvm_lv_snapshot = lvmlib.lvm_lv_snapshot
+lvm_lv_snapshot.argtypes = [lv_t, c_char_p, c_ulonglong]
+lvm_lv_snapshot.restype = lv_t
 lvm_lv_is_active = lvmlib.lvm_lv_is_active
 lvm_lv_is_active.argtypes = [lv_t]
 lvm_lv_is_active.restype = c_ulonglong
