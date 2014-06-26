@@ -209,6 +209,8 @@ lvm_pv_from_name.argtypes = [vg_t, c_char_p]
 lvm_pv_from_name.restype = pv_t
 lvm_pv_remove = lvmlib.lvm_pv_remove
 lvm_pv_remove.argtypes = [lvm_t, c_char_p]
+lvm_pv_resize = lvmlib.lvm_pv_resize
+lvm_pv_resize.argtypes = [pv_t, c_uint64]
 
 # LV Functions
 lvm_lv_get_name = lvmlib.lvm_lv_get_name

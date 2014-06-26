@@ -31,7 +31,7 @@ def includeme(config):
     # POST:   start/stop interface
     # PUT:    modify interface parameter
     # DELETE: delete bound interface
-    config.add_route('port_list', '/network/eth_list')
+    config.add_route('eth_list', '/network/eth_list')
     config.add_route('single_port', '/network/eth_list/{port_name}')
     config.add_route('port_stat', '/network/eth_list/{port_name}/stat')
     config.add_route('port_op', '/network/eth_list/{port_name}/op')
@@ -62,8 +62,8 @@ def get_port_info(netif_info):
     return port_info
 
 
-#/network/port_list
-@get_view(route_name='port_list')
+#http://192.168.1.123:6543/storlever/api/v1/network/eth_listnetwork/eth_list
+@get_view(route_name='eth_list')
 def network_get(request):
     eth_face = ifmgr.if_mgr()
     eth_list = eth_face.interface_name_list()
@@ -75,7 +75,7 @@ def network_get(request):
     return eth_list_dict
 
 
-#/network/single_list/{port_name}
+#/network/eth_list/{port_name}
 @get_view(route_name='single_port')
 def get_single_port(request):
     port_name = request.matchdict['port_name']
@@ -102,6 +102,7 @@ port_mod_schema = Schema({
 })
 
 
+#curl -v -X PUT  -d ip=192.168.0.222 -d gateway=192.168.1.1 -d netmask=255.255.0.0  http://192.168.1.123:6543/storlever/api/v1/network/eth_list/eth0
 @put_view(route_name='single_port')
 def modify_single_port(request):
     port_info = get_params_from_request(request, port_mod_schema)
@@ -120,7 +121,8 @@ port_op_schema = Schema({
     DoNotCare(str): object  # for all those key we don't care
 })
 
-
+#curl -v -X POST -d opcode=disable  http://192.168.1.123:6543/storlever/api/v1/network/eth_list/eth0/op
+#enable eth* or disable eth*
 @post_view(route_name='port_op')
 def post_port_op(request):
     op_info = get_params_from_request(request, port_op_schema)
@@ -133,7 +135,7 @@ def post_port_op(request):
         eth.down(user=request.client_addr)
     return Response(status=200)
 
-# /network/bond/bond_list
+#curl -v -X GET  http://192.168.1.123:6543/storlever/api/v1/network/bond/bond_list
 @get_view(route_name='bond_list')
 def get_bond_list(request):
     bond_manager = bond.bond_mgr()
@@ -161,7 +163,7 @@ bond_add_schema = Schema({
     DoNotCare(str): object  # for all those key we don't care
 })
 
-# /network/bond/bond_list
+#curl -v -X POST -d ifs=eth0,eth1 -d ip=192.168.1.123 -d netmask=255.255.255.0 -d mode=1 -d miimon=1000 -d gateway=192.168.1.1 http://192.168.1.123:6543/storlever/api/v1/network/bond/bond_list
 @post_view(route_name='bond_list')
 def add_bond_group(request):
     params = get_params_from_request(request, bond_add_schema)
@@ -198,8 +200,7 @@ bond_mod_schema = Schema({
 })
 
 
-#curl -v -X put -d ip=192.168.1.122  -d miimon=100 -d netmask=255.255.255.0 -d gateway=192.168.1.11 -d mode=1  'http://192.168.1.123:6543/storlever/api/v1/network/bond_list/bond0'
-# /network/bond/bond_list/{port_name}
+#curl -v -X PUT -d mode=1  'http://192.168.1.123:6543/storlever/api/v1/network/bond_list/bond0'
 @put_view(route_name='bond_port')
 def modify_bond_group(request):
     bond_name = request.matchdict['port_name']
@@ -216,7 +217,7 @@ def modify_bond_group(request):
     return Response(status=200)
 
 
-# /network/bond/bond_list/{port_name}
+#curl -v -X delete  http://192.168.1.123:6543/storlever/api/v1/network/bond/bond_list/bond0
 @delete_view(route_name='bond_port')
 def delete_bond_group(request):
     bond_name = request.matchdict['port_name']
@@ -242,7 +243,7 @@ dns_mod_schema = Schema({
 })
 
 
-# curl -v -X put -d ip=192.168.1.123 -d servers=8.8.8.8,202.101.172.47  'http://192.168.1.123:6543/storlever/api/v1/network/dns'
+# curl -v -X put -d -d servers=8.8.8.8,202.101.172.47  'http://192.168.1.123:6543/storlever/api/v1/network/dns'
 @put_view(route_name='dns')
 def modify_dns(request):
     params = get_params_from_request(request, dns_mod_schema)
