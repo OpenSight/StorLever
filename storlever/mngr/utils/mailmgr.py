@@ -182,9 +182,16 @@ class MailManager(object):
 
         return mail_conf
 
-    def send_email(self, to, subject, content):
+    def send_email(self, to, subject, content, debug=False):
         """send email, return the debug info """
-        p = subprocess.Popen([MAIL_CMD, '-v', '-s', str(subject), str(to)],
+        cmds = [MAIL_CMD]
+        if debug:
+            cmds.append('-v')
+        cmds.append('-s')
+        cmds.append(str(subject))
+        cmds.append(str(to))
+
+        p = subprocess.Popen(cmds,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
@@ -192,6 +199,7 @@ class MailManager(object):
         if p.returncode != 0:
             raise StorLeverCmdError(p.returncode, err, 400)
         return err
+
 
 
 MailManager = MailManager()

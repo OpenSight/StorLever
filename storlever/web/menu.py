@@ -190,10 +190,6 @@ class WebMenuManager(object):
                     parent_node.del_sub_node(node)
 
 
-
-
-
-
 WebMenuManager = WebMenuManager()
 
 def web_menu_mgr():
