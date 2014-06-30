@@ -183,7 +183,7 @@ def system_memory_get(request):
 
 @put_view(route_name='flush_page_cache')
 @post_view(route_name='flush_page_cache')
-def system_memory_get(request):
+def flush_page_cache_post(request):
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
     sys_mgr.flush_page_cache()
     return Response(status=200)

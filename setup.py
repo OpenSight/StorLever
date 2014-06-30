@@ -20,7 +20,8 @@ if sys.version_info < (2,7):
     requires.append('unittest2')
 
 
-
+# chmod some file
+os.chmod("initscripts/storlever", 0755)
 
 setup(name='storlever',
       version='0.1.0',
@@ -43,6 +44,10 @@ setup(name='storlever',
       install_requires=requires,
       tests_require=requires,
       test_suite="storlever.tests",
+      data_files=[
+          ('/etc/', ['storlever.ini']),
+          ('/etc/init.d', ['initscripts/storlever']),
+      ],	  
       entry_points="""\
       [paste.app_factory]
       main = storlever.app:main
