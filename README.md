@@ -1,16 +1,16 @@
 Introduction
 ===========
 
-StorLever is a management, configuration, monitor system for storage & network resource in Linux, 
-which provides a set of well-designed REST-styled web API as well as a web panel. 
+StorLever is a management, configuration, monitor system for storage & network resource of Linux, 
+which provides a set of well-designed RESTful-styled web API as well as a web panel. 
 
 The primary goal of StorLever is to ease the management of storage resources on Linux server. 
 Built on top of existing Linux management tools, StorLever provides a user-friendly web panel 
-for Linux system administrators, which can reduce the learning curve and enhance the user experience for them. 
+for system administrators, which can reduce the learning curve and enhance the user experience for them. 
 
 Besides web panel, StorLever offers a set of RESTful-style(HTTP+JSON) APIs to manage the Linux system remotely, 
 which is another powerful feature. Based on it, the third-party management software on another host
-(such as central manage system) can easily take over the remote Linux system no matter what language and platform 
+(such as central manage system) can easily manage the remote Linux system no matter what language and platform 
 it is built on. Human can pleasently understand the REST API's output as well as the computer program can interpret it easily.
 Any program language has its mature library to handle HTTP protocol and interpret JSON string. SDK for StorLever 
 can easily develop on any language and platform.
@@ -18,8 +18,8 @@ can easily develop on any language and platform.
 StorLever focus on the management of storage resource of Linux system, which is the most diverse and difficult part 
 of Linux, including block device, LVM, MD, FileSystem, NAS, IP-SAN  and etc. They are usually the nightmare for system 
 administrators, and often take a week or more time of them to configure these functions but not sure they are working in
-the best state. StorLever is the Saviour of them. 
-Through accumulating many storage management experience and export a clear, simple interface, StorLever can solve these 
+the best state. StorLever is the saviour of this situation.
+Through accumulating rich storage management experience and exporting a clear, simple interface, StorLever can solve these 
 problem in minutes. 
 
 StorLever is not just a frozen software, but also a extensible framework. Anyone who want to manage another object by StorLever, 
@@ -33,8 +33,8 @@ Highlights:
 ----------------
 
 * Integrates various storage technologies of Linux, LVM, Raid, NAS/SAN, etc.
-* Provides various form of interface for remote control, RESTful API, Web Page, CLI(in sub-project), SDK(in sub-project)
-* Extensible, easy to add a extension for it
+* Provides various interface, RESTful API, Web UI, CLI(in sub-project), SDK(in sub-project)
+* Extensible, easy to add a extension(plug-in) 
 * Simple, pure python
 
 
@@ -65,11 +65,12 @@ system administrator, typical CLI and GUI. They used to be the most popular appr
 Linux system. As the network, especially Internet becomes universal,  Linux system usually locates
 on the remote machine(especially VPS, Virtual Private Sever). Local interface does not make sense 
 any more, administrator like to use SSH to login the remote system to manage them. Management with 
-SSH is flexible, but difficult, not friendly. Some Web Control Panel project is developed to assist 
-the administrators to manage the remote system. 
-With the popularity of cloud computing, many VPS must be managed by the administrators, so that they 
-need the assist of a central management platform to perform the management task, which need the APIs
-of the remote system. 
+SSH is flexible, but difficult, painful, time-consuming. Some Web Control Panel project is developed 
+to assist the administrators to fulfill this task. 
+With the popularity of cloud computing, more and more VPS must be managed by the administrators, 
+so that they need the assist of a central management platform to perform the management task, 
+which need the simple management APIs of the remote system. 
+ 
 StorLever is the answer of these problem.
 
 Why Web API
