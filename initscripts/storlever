@@ -43,6 +43,7 @@ NAME=storlever
 DAEMON=/usr/bin/pserve
 PIDFILE=/var/run/storlever.pid
 CFGFILE=/etc/storlever.ini
+LOGFILE=/dev/null
 
 case "$1" in
     start)
@@ -53,7 +54,7 @@ case "$1" in
             log_failure "already running"
             exit 1
         fi
-        if $DAEMON --daemon --pid-file=$PIDFILE $CFGFILE; then
+        if $DAEMON --daemon --log-file=$LOGFILE --pid-file=$PIDFILE $CFGFILE; then
             log_success "started"
             RETVAL=0
         else
