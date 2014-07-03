@@ -60,6 +60,7 @@ For the complete list of software packages involved, check out the dependency do
 
 Why StorLever
 -------------------
+
 Traditionally, Linux distribution would provides two kinds of local operation interface for 
 system administrator, typical CLI and GUI. They used to be the most popular approach to manage
 Linux system. As the network, especially Internet becomes universal,  Linux system usually locates
@@ -109,16 +110,136 @@ Linux, but not focus on the storage management, and also does not provides softw
 OpenLMI is a very similar project to StorLever, and it has been included in the RHEL 7, which also provides APIs for 
 administrators to remotely manage, configure, monitor Linux system. But we don't think it's on the right way, 
 OpenLMI is based on the technology so called "WBEM" to implement its scalability (extensibility). 
-WBEM is a very complex technology architecture initiated by some big company like Microsoft、Compaq, Cisco at 1990s 
+WBEM is a very complex technology architecture initiated by some big enterprise like Microsoft、Compaq, Cisco at 1990s 
 to support enterprise distributed computing environment. 
 It is consist of many components and many protocol, flexible and considerate, but difficult to understand, 
 difficult to deploy, difficult to develop. The network datagram is also difficult to read by human. 
 We don't think we need such a complex architecture to implement remote management of Linux system. 
 StorLever is simple framework to implement scalability, provides simple API, friendly web page. As to OpenLMI, 
-StorLever is an alternative lightweight solution to implement the same function. 
+StorLever is an alternative lightweight solution to fulfill the same mission. 
 
 
 
-Usage
+Install
 ====================
+
+StorLever is web service designed to ease the management of various
+storage resource on your CentOS/RHEL 6 server. It is based on the brilliant 
+Python web framework [Pyramid](http://www.pylonsproject.org/) to build its web service, 
+and make use of [PasteDeploy](http://pythonpaste.org/deploy/) system to deploy its WSGI server/application configurations
+
+It requires Python 2.6 or higher, but Python 3k is not supported. 
+
+
+Installing from source code
+-------------------
+
+You can get the StorLever's source package from github at the following url:
+
+    https://github.com/OpenSight/StorLever
+	
+Download and unzip StorLever's source package in your Linux system. StorLever can be run on RHEL/CentOS 6 or above,
+for other Linux distribution(like Fedora, Ubuntu), it's not sure can be run. 
+
+At the StorLever project's root directory, enter the following command to install StorLever into your Linux system 
+
+	$ python setup.py install
+	
+This installation process would check any require project and download them from pypi. 
+
+
+Configure
+---------------------
+
+StorLever would install its paste config file into your system at the following path:
+
+    $ /etc/storlever.ini
+
+This configure file would be read when StorLever startup by default. You should keep the most option values default 
+in this file, except the server port. Server listen port for StorLever is 6543 by default, and you can change it as you want.
+
+
+Startup
+---------------------
+
+After installing StorLever successfully, you can start up StorLever's service in two way: 1) daemon mode; 2) foreground mode.
+
+### Daemon mode:
+
+StorLever would install its init script into your system in the above installing process, 
+you can make use of these init script to start up the StorLever in daemon mode by the following command:
+
+    $ service storlever startup
+
+In this situation, StorLever would read the paste configurations from /etc/storlever.ini. And its stderr/stdout would 
+redirect to /dev/null
+
+
+### Foreground mode:
+
+If you want to debug or test StorLever, you may want to start StorLever's server at foreground mode, 
+so you can read the stdout/stderr from StorLever's Server. Enter the following command would start up StorLever's 
+Server in foreground mode
+
+   $ pserve [StorLever paste config file]
+
+StorLever's paste config file can be chosen the ini file under StorLever project root directory. 
+
+After that, StorLever is running, enjoy!!!!  
+
+
+Startup on boot
+------------------------------
+
+If you want to automatically start up StorLever on system boot, you can make use of chkconfig utility to put 
+StorLever's service into the system rc.d directory:
+
+    $ chkconfig --add storlever 
+
+	
+For Developer
+------------------------
+
+If you are a developer who want to debug/develop StorLever, maybe you don't want to install StorLever in your system 
+but just want to run it. You can enter the following command at the StorLever's project root directory: 
+
+	$ python setup.py develop
+
+This instruction would never install the StorLever in your python's site-packages directory. Instead, it just makes a link 
+in your python's site-packages directory to the StorLever's project root directory. Also, this process would not 
+install the init script and paste configure file into your system /etc/ directory.
+
+Then, you can enter the following command to start up StorLever in foreground mode 
+
+    $ pserve --reload storlever_dev.ini
+	
+this command can automatically reload your code when code change found, and it can printout useful debug information 
+when unexpected exception raised in the code, and some other helpful functionality for code debug.
+
+
+virtualenv
+----------
+
+If you are a new comer of python, you can skip this section. 
+
+It is recommended to use virtualenv for Python library management. Though there might
+be only one Python interpreter install, virtualenv can make your system looks like having 
+multiple Python installations, with each has its own set of libraries independently from others,
+therefor there will never be library version conflicts for different projects.
+
+For more about this topic, check out its official document 
+[virtualenv](http://www.virtualenv.org/en/latest/)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
