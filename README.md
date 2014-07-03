@@ -125,9 +125,8 @@ Install
 
 StorLever is web service designed to ease the management of various
 storage resource on your CentOS/RHEL 6 server. It is based on the brilliant 
-Python web framework [Pyramid](http://www.pylonsproject.org/) to build its web service, and
-make use of [PasteDeploy](http://pythonpaste.org/deploy/) system to deploy its WSGI server/application  
-configurations
+Python web framework [Pyramid](http://www.pylonsproject.org/) to build its web service, 
+and make use of [PasteDeploy](http://pythonpaste.org/deploy/) system to deploy its WSGI server/application configurations
 
 It requires Python 2.6 or higher, but Python 3k is not supported. 
 
@@ -146,7 +145,7 @@ At the StorLever project's root directory, enter the following command to instal
 
 	$ python setup.py install
 	
-This installation process would check any require project and download them from pip. 
+This installation process would check any require project and download them from pypi. 
 
 
 Configure
@@ -157,14 +156,13 @@ StorLever would install its paste config file into your system at the following 
     $ /etc/storlever.ini
 
 This configure file would be read when StorLever startup by default. You should keep the most option values default 
-in this file, except the server port. Server listen port for StorLever is 6543 by default, and you can change it 
-as you want.
+in this file, except the server port. Server listen port for StorLever is 6543 by default, and you can change it as you want.
 
 
 Startup
 ---------------------
 
-After installing StorLever successfully, you can start up StorLever's Web server in two way: 1)daemon mode; 2)foreground mode
+After installing StorLever successfully, you can start up StorLever's service in two way: 1) daemon mode; 2) foreground mode.
 
 ### Daemon mode:
 
