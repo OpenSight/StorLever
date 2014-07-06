@@ -23,7 +23,7 @@ Through accumulating rich storage management experience and exporting a clear, s
 problem in minutes. 
 
 StorLever is not just a frozen software, but also a extensible framework. Anyone who want to manage another object by StorLever, 
-can easily develop an extension(plug-in) for it in a separate project without changing even one line code of it.
+can easily develop an extension(plug-in) in a separate project without the need to change even one line of code in StorLever.
 
 StorLever is built on the pure python so that it's simple, understandable, stable and reliable, easy to develop and deploy, 
 The principle of StorLever's design is Simple, Extensible, Easy to use.
@@ -32,8 +32,8 @@ The principle of StorLever's design is Simple, Extensible, Easy to use.
 Highlights:
 ----------------
 
-* Integrates various storage technologies of Linux, LVM, Raid, NAS/SAN, etc.
-* Provides various interface, RESTful API, Web UI, CLI(in sub-project), SDK(in sub-project)
+* Integrates various storage technologies of Linux,including LVM, Raid, NAS/SAN, etc.
+* Provides various interface, including RESTful API, Web UI, CLI(in sub-project), SDK(in sub-project)
 * Extensible, easy to add a extension(plug-in) 
 * Simple, pure python
 
@@ -126,7 +126,7 @@ Install
 StorLever is web service designed to ease the management of various
 storage resource on your CentOS/RHEL 6 server. It is based on the brilliant 
 Python web framework [Pyramid](http://www.pylonsproject.org/) to build its web service, 
-and make use of [PasteDeploy](http://pythonpaste.org/deploy/) system to deploy its WSGI server/application configurations
+and make use of [PasteDeploy](http://pythonpaste.org/deploy/) system to deploy its WSGI server/app configurations
 
 It requires Python 2.6 or higher, but Python 3k is not supported. 
 
@@ -134,10 +134,6 @@ It requires Python 2.6 or higher, but Python 3k is not supported.
 Installing from source code
 -------------------
 
-You can get the StorLever's source package from github at the following url:
-
-    https://github.com/OpenSight/StorLever
-	
 Download and unzip StorLever's source package in your Linux system. StorLever can be run on RHEL/CentOS 6 or above,
 for other Linux distribution(like Fedora, Ubuntu), it's not sure can be run. 
 
@@ -155,7 +151,7 @@ StorLever would install its paste config file into your system at the following 
 
     $ /etc/storlever.ini
 
-This configure file would be read when StorLever startup by default. You should keep the most option values default 
+This configure file would be read at StorLever startup by default. You should keep the most option values default 
 in this file, except the server port. Server listen port for StorLever is 6543 by default, and you can change it as you want.
 
 
@@ -191,7 +187,7 @@ After that, StorLever is running, enjoy!!!!
 Startup on boot
 ------------------------------
 
-If you want to automatically start up StorLever on system boot, you can make use of chkconfig utility to put 
+If you want to automatically start up StorLever on system boot, you can make use of chkconfig utility to add 
 StorLever's service into the system rc.d directory:
 
     $ chkconfig --add storlever 
