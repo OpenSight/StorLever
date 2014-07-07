@@ -228,12 +228,85 @@ For more about this topic, check out its official document
 
 
 
+Usage
+====================
+
+After you successfully install StorLever and start it up in your system, your can use StorLever service in two way. 
+By default, StorLever listens on TCP port 6543, and you can change it in the paste ini configure file. 
+
+
+Use StorLever with web panel
+-----------------------------------
+
+You can enter the following URL in your browser to get into StorLever's login Page. 
+
+    http://[host_ip]:[port]/
+
+[host_ip] is the IP address of the system running StorLever, [port] is the TCP port StorLever listens on. 
+The login user by default is admin, password is 123456. 
+
+
+Use StorLever with RESTful API
+-----------------------------------
+
+On the other hand, StorLever highlights its RESTful-style API, you can use a http tools or browser to test them.
+All API URI starts with the following string, and does not need authentication by now. 
+
+    http://[host_ip]:[port]/storlever/api/
+
+You can refer to doc/api_ref.rst for more detail about each API's usage. 
 
 
 
+Development
+====================
+
+StorLever make use of Github to host its latest code with the following URL:
+
+    https://github.com/OpenSight/StorLever
+	
+Developers should use the issue system of Github to feedback some bug/requirement to StorLever
+
+If Developers want to participate in StorLever's development and contribute their code, 
+they should use the pull request mechanism against StorLever's master branch. 
+If StorLever adopt your code, we would put your name in Author list. 
+
+Architecture
+----------------------
+
+We provides a architecture picture in doc/ directory to help developer to understand StorLever's structure. 
+
+StorLever includes 3 layer which implements different functions:
+
+* manager layer
+
+This layer contains many manager objects, each one is responsible for a specific sub-system's management, 
+such as LVM, FTP, File System, etc.
+These manager objects are the core of StorLever, which locate at the bottom, 
+and provides object-oriented interfaces to upper layer. 
+
+* REST layer
+
+This layer is responsible to output RESTful-style API to client. It get the RESTful request from clients, 
+check parameters, and communicate with manager layer to get result. 
+This layer make use of manager layer and provides RERTful API to upper layer. 
+
+* Web layer
+This layer is to provides the Web Panel to administrator to manage the system. It call StorLever's RESTful 
+API to show the result to administrator in their browser. 
+This layer make use of REST layer and provide a Web UI to administrator
+We provide a specific document to describe the Web Page's design in doc/ directory.
 
 
+Write an extension
+-----------------------
 
+If you want to develop an extension(plug-in) for StorLever, you should follow some convention of StroLever. 
+And each extension has the same architecture with StorLever, also includes three layers. 
+We would provide a How-to document to detail this topic. 
+
+
+ 
 
 
 
