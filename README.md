@@ -292,6 +292,7 @@ check parameters, and communicate with manager layer to get result.
 This layer make use of manager layer and provides RERTful API to upper layer. 
 
 * Web layer
+
 This layer is to provides the Web Panel to administrator to manage the system. It call StorLever's RESTful 
 API to show the result to administrator in their browser. 
 This layer make use of REST layer and provide a Web UI to administrator
