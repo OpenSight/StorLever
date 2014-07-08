@@ -184,7 +184,7 @@ StorLever's paste config file can be chosen the ini file under StorLever project
 After that, StorLever is running, enjoy!!!!  
 
 
-Startup on boot
+Startup On Boot
 ------------------------------
 
 If you want to automatically start up StorLever on system boot, you can make use of chkconfig utility to add 
@@ -213,7 +213,7 @@ this command can automatically reload your code when code change found, and it c
 when unexpected exception raised in the code, and some other helpful functionality for code debug.
 
 
-virtualenv
+Virtualenv
 ----------
 
 If you are a new comer of python, you can skip this section. 
@@ -268,8 +268,8 @@ StorLever make use of Github to host its latest code with the following URL:
 Developers should use the issue system of Github to feedback some bug/requirement to StorLever
 
 If Developers want to participate in StorLever's development and contribute their code, 
-they should use the pull request mechanism against StorLever's master branch. 
-If StorLever adopt your code, we would put your name in Author list. 
+they should use the Fork + Pull Request mechanism against StorLever's master branch. 
+If StorLever adopt your code, we would put your name in StorLever author list. Thanks for your suppport
 
 Architecture
 ----------------------
