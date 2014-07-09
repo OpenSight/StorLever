@@ -707,8 +707,6 @@ class LV(object):
                     _lv = _vg.get_lv_by_name(self.name).snapshot(name, size)
                     lv = LV(self.vg, _lv=_lv)
         self.vg.lvs[name] = lv
-        self.origin = name
-
 
 
 LVMManager = LVMManager()

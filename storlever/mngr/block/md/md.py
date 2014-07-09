@@ -15,11 +15,20 @@ from storlever.lib.command import check_output
 from storlever.lib.exception import StorLeverError
 
 
+MODULE_INFO = {
+    "module_name": "soft raid",
+    "rpms": [
+        "mdadm"
+    ],
+    "comment": "Provides the management functions of software raid (md) in OS"
+}
+
+
 class MD(object):
 
     def list_raid(self):
         ret = {}
-        for line in check_output('mdadm --detail --scan', shell=True):
+        for line in check_output('/sbin/mdadm --detail --scan', shell=True):
             if ' ' not in line:
                 continue
             comps = line.split()
@@ -48,7 +57,7 @@ class MD(object):
         if not os.path.exists(device):
             raise StorLeverError('Device {0} does not exist'.format(device))
 
-        cmd = 'mdadm --detail {0}'.format(device)
+        cmd = '/sbin/mdadm --detail {0}'.format(device)
         for line in check_output(cmd, shell=True).splitlines():
             if line.startswith(device):
                 continue
@@ -91,8 +100,8 @@ class MD(object):
         except StorLeverError:
             raise StorLeverError('No such raid {0} exits'.format(device))
 
-        stop_cmd = 'mdadm --stop {0}'.format(device)
-        zero_cmd = 'mdadm --zero-superblock {0}'
+        stop_cmd = '/sbin/mdadm --stop {0}'.format(device)
+        zero_cmd = '/sbin/mdadm --zero-superblock {0}'
 
         try:
             check_output(stop_cmd, shell=True)
@@ -183,7 +192,7 @@ class MD(object):
 
         cmd_args['raw_args'] = opts
 
-        cmd = "mdadm -C {0} -v {1}-l {2} -n {3} {4}".format(cmd_args['name'],
+        cmd = "/sbin/mdadm -C {0} -v {1}-l {2} -n {3} {4}".format(cmd_args['name'],
                                                             cmd_args['raw_args'],
                                                             cmd_args['level'],
                                                             cmd_args['raid-devices'],
