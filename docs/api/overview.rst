@@ -22,18 +22,18 @@ StorLever's API supports the following HTTP standard methods with its original m
 1. GET 
 
     GET method is used to get the information of the specific resource. the response content may be JSON object, 
-	or JSON object list, which describe the configuration and running state of the corresponding resource. 
+    or JSON object list, which describe the configuration and running state of the corresponding resource. 
 	
 2. PUT
     
     PUT method is used to modify the configuration of the resource. The content in the request should be JSON object,
-	or JSON object list, with its properties representing the options to be modified. 
-	If some options does not need to be changed, the JSON object should omit the property of this option. 
+    or JSON object list, with its properties representing the options to be modified. 
+    If some options does not need to be changed, the JSON object should omit the property of this option. 
 
 3. POST
 
     POST method is used to create a new resource in the system.  The content in the request should be JSON object,
-	or JSON object list, with its properties representing the configuration options of the new resource.  
+    or JSON object list, with its properties representing the configuration options of the new resource.  
 	
 4. DELETE
 
@@ -90,10 +90,10 @@ And the content of this response contains a JSON object describing this error, w
     +=================+==========+==================================================================+
     |     info        |  string  |  The text description of the error                               |
     +-----------------+----------+------------------------------------------------------------------+
-	|    exception    |  string  |  The python exception type (for debug)                           |
-	+-----------------+----------+------------------------------------------------------------------+
-	|   traceback     |  list    |  calling stack trace back, each entry is of string type and      |
-	|                 |          |  represent one entry in calling stack. The last entry of list    |
-    |                 |          |  is the latest position which produce the python excepetion      |
+    |    exception    |  string  |  The python exception type (for debug)                           |
+    +-----------------+----------+------------------------------------------------------------------+
+    |   traceback     |  list    |  calling stack trace back, each entry is of string type and      |
+    |                 |          |  represent one entry in calling stack. The last entry of list    |
+    |                 |          |  is the latest position which produce the python exception      |
     +-----------------+----------+------------------------------------------------------------------+ 	
 
