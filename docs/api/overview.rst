@@ -43,8 +43,8 @@ StorLever's API supports the following HTTP standard methods with its original m
 Content Type
 -----------------
 
-StorLever's API make use of **JSON** as its content type, that means the the HTTP request/response would has the following 
-content type header if presents. 
+StorLever's API make use of **JSON** as its content type, and UTF-8 as its encoding, 
+so the the HTTP request/response should contains the following content type header if presents. 
 
     Content-Type: application/json; charset=UTF-8
 
@@ -52,13 +52,13 @@ content type header if presents.
 Parameter Format
 --------------------	
 	
-To create or modify a resource, user should pack the configuration of the resource into a JSON object, 
-then put it into a HTTP request with POST/PUT method to send to the StorLever's Web Server. 
+To create or modify a resource, user should pack its configuration options into a JSON object, 
+then put this JSON object into a HTTP request with POST/PUT method, and send it to the StorLever's Web Server. 
 
-In case of creating a resource, if the corresponding JSON object miss some options of the resource, 
-these options would use the default value. 
+When create a resource, if the corresponding JSON object miss some options of the resource, 
+these options would use the default value defined in API. 
 
-In case of modify a resource, if the corresponding JSON object miss some options of the resource, 
+When modify a resource, if the corresponding JSON object miss some options of the resource, 
 these options would never changed. 
 
 Encoding
@@ -85,15 +85,15 @@ Error Handling
 If a error occurs when StorLever processes a request, StorLever would return a response with error status code at once. 
 And the content of this response contains a JSON object describing this error, with the following definition. 
 
-    +-----------------+----------+------------------------------------------------------------------+
-    |    Fields       |   Type   |                              Meaning                             |
-    +=================+==========+==================================================================+
-    |     info        |  string  |  The text description of the error                               |
-    +-----------------+----------+------------------------------------------------------------------+
-    |    exception    |  string  |  The python exception type (for debug)                           |
-    +-----------------+----------+------------------------------------------------------------------+
-    |   traceback     |  list    |  calling stack trace back, each entry is of string type and      |
-    |                 |          |  represent one entry in calling stack. The last entry of list    |
-    |                 |          |  is the latest position which produce the python exception      |
-    +-----------------+----------+------------------------------------------------------------------+ 	
++-----------------+----------+------------------------------------------------------------------+
+|    Fields       |   Type   |                              Meaning                             |
++=================+==========+==================================================================+
+|     info        |  string  |  The text description of the error                               |
++-----------------+----------+------------------------------------------------------------------+
+|    exception    |  string  |  The python exception type (for debug)                           |
++-----------------+----------+------------------------------------------------------------------+
+|   traceback     |  list    |  calling stack trace back, each entry is of string type and      |
+|                 |          |  represent one entry in calling stack. The last entry of list    |
+|                 |          |  is the latest position which produce the python exception       |
++-----------------+----------+------------------------------------------------------------------+ 	
 
