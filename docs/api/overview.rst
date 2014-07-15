@@ -97,3 +97,21 @@ And the content of this response contains a JSON object describing this error, w
 |                 |          |  is the latest position which produce the python exception       |
 +-----------------+----------+------------------------------------------------------------------+ 	
 
+CORS
+-----------------------
+
+StorLever adopt CORS approach to support AJAX Cross-domain request. 
+CORS is a W3C recommendation and supported by all major browsers. 
+It makes use of HTTP headers to help browser decide if a cross-domain AJAX request is secure. 
+All the HTTP response return by StorLever would contain the following header: 
+
+    Access-Control-Allow-Origin: *
+
+
+Example Format
+------------------------
+
+In the other section of API manual, we give a example shell command to invoke the corresponding API.
+We prefer to use curl utility to perform HTTP communication, because curl is the most popular CLI tool of HTTP client in Linux.
+User may also choose other utility, like some GUI HTTP tools, to perform the same operation.
+
