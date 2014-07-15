@@ -36,7 +36,7 @@ Get General System Info
 4. Status Code
 
     200      -   Successful
-	Others   -   Error	
+    Others   -   Error	
 	
 5. Special Response Headers
 	
@@ -80,7 +80,7 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
 4. Status Code
 
     200      -   Successful
-	Others   -   Error	
+    Others   -   Error	
 	
 5. Special Response Headers
 	
