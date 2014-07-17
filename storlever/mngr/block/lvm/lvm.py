@@ -371,6 +371,15 @@ class _LV(object):
     def get_attr(self):
         return lvm_lv_get_attr(self._hdlr)
 
+    def get_property(self, property_name):
+        property_value = lvm_lv_get_property(self._hdlr, property_name)
+        if not property_value.is_valid:
+            self._vg.raise_from_error('Failed to get property {0} of LV'.format(self.name))
+        if property_value.is_string:
+            return property_value.value.string
+        if property_value.is_integer:
+            return property_value.value.integer
+
     def snapshot(self, name, size):
         snapshot_hdlr = lvm_lv_snapshot(self._hdlr, name, size)
         if not bool(snapshot_hdlr):
@@ -605,12 +614,12 @@ class PV(object):
                     self.size = _pv.get_size()
                     self.free = _pv.get_free_size()
 
-    def move(self, src_device, dst_device=None, lv_name=None):
+    def move(self, dst_device=None, lv_name=None):
         cmd = ['pvmove', '-b']
         if lv_name:
             cmd.append('-n')
             cmd.append(lv_name)
-        cmd.append(src_device)
+        cmd.append(self.dev_file)
         if dst_device:
             cmd.append(dst_device)
         check_output(cmd)
