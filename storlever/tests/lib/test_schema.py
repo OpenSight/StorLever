@@ -6,7 +6,7 @@ else:
     import unittest2 as unittest
 
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
-    Use, IntVal, Default, SchemaError, BoolVal, StrRe
+    Use, IntVal, Default, SchemaError, BoolVal, StrRe, AutoDel
 
 
 class TestSchema(unittest.TestCase):
@@ -97,6 +97,23 @@ class TestSchema(unittest.TestCase):
         self.assertEqual({'key': 'abc', 'op_key': 123}, data)
         with self.assertRaises(SchemaError):
             schema.validate({'key': 'abc', 'op_key': 'bcd'})
+
+    def test_autodel(self):
+        schema = Schema({
+            'key': str,
+            AutoDel(str): object
+        })
+        schema2 = Schema({
+            'key': str
+        })
+        data = schema.validate({'key': 'abc', 'key2': 'bbb', 'key3': [1, 2, 3]})
+        self.assertEqual({'key': 'abc'}, data)
+        with self.assertRaises(SchemaError):
+            schema2.validate({'key': 'abc', 'key2': 'bbb', 'key3': [1, 2, 3]})
+
+        with self.assertRaises(SchemaError):
+            schema.validate({'key2': 'bbb', 1: [1, 2, 3]})
+
 
     def test_default_value(self):
         schema = Schema({
