@@ -266,6 +266,8 @@ class ListVal(object):
         return self._schema.validate(data)
 
 def priority(s):
+    if isinstance(s, AutoDel):
+        return 8
     if isinstance(s, DoNotCare):
         return 7
     if type(s) in (list, tuple, set, frozenset):
@@ -327,7 +329,8 @@ class Schema(object):
                         valid = True
                         break
                 if valid:
-                    new[nkey] = nvalue
+                    if not isinstance(skey, AutoDel):
+                        new[nkey] = nvalue
                 elif skey is not None:
                     if x is not None:
                         raise SchemaError(['key %r is required' % key] +
@@ -339,8 +342,8 @@ class Schema(object):
             if not required.issubset(coverage):
                 raise SchemaError('missed keys %r' % (required - coverage), e)
             # wrong keys
-            if len(new) != len(data):
-                raise SchemaError('wrong keys %r in %r' % (new, data), e)
+#            if len(new) != len(data):
+#                raise SchemaError('wrong keys %r in %r' % (new, data), e)
             # default for optional keys
             for k in set(s) - required - coverage:
                 try:
@@ -389,6 +392,9 @@ class DoNotCare(Optional):
 
     auto_default = True
 
+class AutoDel(Optional):
+
+    auto_default = True
 
 class Default(Schema):
 

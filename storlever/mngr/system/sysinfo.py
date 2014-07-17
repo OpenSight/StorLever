@@ -22,7 +22,7 @@ import logging
 from storlever.lib.confparse import properties
 from modulemgr import ModuleManager
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal
+    Default, DoNotCare, BoolVal, AutoDel
 from cfgmgr import cfg_mgr
 
 MODULE_INFO = {
@@ -58,7 +58,7 @@ HOST_LIST_SCHEMA = Schema([{
 
     Optional("alias"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 }])
 
 class SysManager(object):

@@ -91,7 +91,7 @@ def add_response_header(event):
     """
     response = event.response
     response.headers['X-Powered-By'] = 'OpenSight (www.opensight.cn)'
-
+    response.headers['Access-Control-Allow-Origin'] = '*'
 
 def get_params_from_request(request, schema=None):
     """Get input parameter dict from request

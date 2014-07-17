@@ -118,17 +118,22 @@ def system_cpu_list_get(request):
     return cpu_list_dict
 
 
+cpu_persent_schema = Schema({
+    Optional("interval"): Default(Use(float), default=1),      # name should be string
+    DoNotCare(str): object  # for all those key we don't care
+})
+
 @get_view(route_name='cpu_percent')
 def system_cpu_percent_get(request):
-    interval = float(request.params.get('interval', '1'))
-    cpu_percent = psutil.cpu_percent(interval=interval)
+    params = get_params_from_request(request, cpu_persent_schema)
+    cpu_percent = psutil.cpu_percent(interval=params["interval"])
     return cpu_percent
 
 
 @get_view(route_name='per_cpu_percent')
 def system_per_cpu_percent_get(request):
-    interval = float(request.params.get('interval', '1'))
-    per_cpu_percent_list = psutil.cpu_percent(interval=interval, percpu=True)
+    params = get_params_from_request(request, cpu_persent_schema)
+    per_cpu_percent_list = psutil.cpu_percent(interval=params["interval"], percpu=True)
     return per_cpu_percent_list
 
 

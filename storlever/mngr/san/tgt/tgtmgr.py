@@ -21,7 +21,7 @@ from storlever.lib.utils import filter_dict
 from storlever.lib import logger
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 
 
 TGT_CONF_FILE_NAME = "tgt_conf.yaml"
@@ -89,7 +89,7 @@ LUN_CONF_SCHEMA = Schema({
     # scsi id, if empty, it would automatically be set to a default value
     Optional("scsi_sn"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
@@ -114,7 +114,7 @@ TARGET_CONF_SCHEMA = Schema({
 
     Optional("lun_list"): Default([LUN_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 
 })
 
@@ -132,7 +132,7 @@ TGT_CONF_SCHEMA = Schema({
     # target list
     Optional("target_list"):  Default([TARGET_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 class TgtManager(object):
