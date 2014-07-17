@@ -4,19 +4,13 @@ StorLever System API
 The following section would describe the API for the system section of StorLever. 
 StorLever system API has the following group:
 
-* System Info
+* `System Info <#1-system-info>`_
 * Maintenance
 * Statistic Info
 * User Management 
 * Service Management
 * Module Management
 * Configuration Management
-
-test abc_
-
-
-.. _abc:
-
 
 
 1 System Info
