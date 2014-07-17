@@ -2,9 +2,10 @@ StorLever System API
 ======================
 
 The following section would describe the API for the system section of StorLever. 
-StorLever system API has the following group:
+StorLever system API has the following structure:
 
-* `System Info <#1-system-info>`_
+* `1 System Info <#1-system-info>`_
+    * `1.1 Get General System Info <#1.1-get-general-system-info>`_
 * Maintenance
 * Statistic Info
 * User Management 
@@ -219,3 +220,6 @@ Note: the response would return in your given interval time
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_cpu_percent	
+
+	
+	
