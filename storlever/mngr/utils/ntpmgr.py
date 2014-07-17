@@ -19,7 +19,7 @@ from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
@@ -84,7 +84,7 @@ NTP_SERVER_CONF_SCHEMA = Schema({
     Optional("flag3"): Default(IntVal(min=0, max=1), default=0),
     Optional("flag4"): Default(IntVal(min=0, max=1), default=0),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 NTP_RESTRICT_CONF_SCHEMA = Schema({
@@ -121,7 +121,7 @@ NTP_RESTRICT_CONF_SCHEMA = Schema({
     # by	remote event logging programs
     Optional("notrap"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
@@ -131,7 +131,7 @@ NTP_CONF_SCHEMA = Schema({
 
     Optional("restrict_list"):  Default([NTP_RESTRICT_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 

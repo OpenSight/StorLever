@@ -19,7 +19,7 @@ from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal, ListVal
+    Default, DoNotCare, BoolVal, IntVal, ListVal, AutoDel
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
@@ -67,13 +67,13 @@ MONITOR_CONF_SCHEMA = Schema({
     # if this option is empty, no schedule test at all
     Optional("schedule_regexp"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
 SMARTD_FCONF_SCHEMA = Schema({
     Optional("monitor_list"): Default([MONITOR_CONF_SCHEMA], default=[]),
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 class SmartdManager(object):

@@ -20,7 +20,7 @@ from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 from storlever.lib.confparse import properties
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
@@ -62,7 +62,7 @@ ZABBIX_AGENT_CONF_SCHEMA = Schema({
     Optional("passive_check_server_list"):  Default([Use(str)], default=[]),
 
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 

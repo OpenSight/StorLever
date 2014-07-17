@@ -20,7 +20,7 @@ from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 from storlever.mngr.system.usermgr import user_mgr
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
@@ -49,7 +49,7 @@ FTP_USER_CONF_SCHEMA = Schema({
     # When enabled, the user will be placed into the chroot jail
     Optional("chroot_enable"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 FTP_CONF_SCHEMA = Schema({
@@ -129,7 +129,7 @@ FTP_CONF_SCHEMA = Schema({
     # empty, which means the anon_username user's home directory
     Optional("anon_root"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 class FtpManager(object):

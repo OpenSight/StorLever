@@ -20,7 +20,7 @@ import os
 from storlever.lib.exception import StorLeverCmdError, StorLeverError
 from storlever.lib.command import check_output
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 
 
 
@@ -34,7 +34,7 @@ MODULE_CONF_SCHEMA = Schema({
 
     Optional("comment"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 RPM_CMD = "/bin/rpm"

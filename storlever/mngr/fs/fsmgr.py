@@ -19,7 +19,7 @@ from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal
+    Default, DoNotCare, BoolVal, AutoDel
 
 from storlever.mngr.fs import fs
 
@@ -62,7 +62,7 @@ class FileSystemManager(object):
             "mount_option": Use(str),  # mount option of this fs
             "check_onboot": BoolVal(),  # fsck fs on boot
             Optional("comment"): Default(Use(str), default=""),  # comment,
-            DoNotCare(str): object  # for all those key we don't care
+            AutoDel(str): object  # for all other key we auto delete
         })
         self.fs_dict_schema = Schema({
             DoNotCare(str): self.fs_conf_schema

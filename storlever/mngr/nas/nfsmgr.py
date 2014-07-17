@@ -20,7 +20,7 @@ from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal, StrRe
+    Default, DoNotCare, BoolVal, IntVal, StrRe, AutoDel
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
 from storlever.mngr.system.servicemgr import service_mgr
@@ -80,7 +80,7 @@ EXPORT_CLIENT_CONF_SCHEMA = Schema({
     # The options to be used for host
     Optional("options"): Default(StrRe("^(\S)*$"), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
@@ -94,13 +94,13 @@ EXPORT_POINT_CONF_SCHEMA = Schema({
     # client list for this export point
     "clients": Default([EXPORT_CLIENT_CONF_SCHEMA],default=[]),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 
 })
 
 NFS_CONF_SCHEMA = Schema({
     Optional("export_point_list"): Default([EXPORT_POINT_CONF_SCHEMA], default=[]),
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 class NfsManager(object):

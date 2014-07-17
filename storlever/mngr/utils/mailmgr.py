@@ -20,7 +20,7 @@ from storlever.lib import logger
 
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
@@ -54,7 +54,7 @@ MAIL_CONF_SCHEMA = Schema({
     Optional("password"):  Default(Use(str), default=""),
 
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 

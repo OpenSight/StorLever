@@ -20,7 +20,7 @@ from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
 from storlever.lib.schema import Schema, Use, Optional, \
-    Default, DoNotCare, BoolVal, IntVal
+    Default, DoNotCare, BoolVal, IntVal, AutoDel
 
 from storlever.lib.lock import lock
 from storlever.mngr.system.cfgmgr import STORLEVER_CONF_DIR, cfg_mgr
@@ -45,7 +45,7 @@ SNMP_MONITOR_CONF_SCHEMA = Schema({
     #  see monitor expression of man snmpd.conf for more detail
     "expression":  Use(str),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
@@ -63,7 +63,7 @@ SNMP_SINK_CONF_SCHEMA = Schema({
     # community name used by this sink
     Optional("community"):  Default(Use(str), default="public"),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 SNMP_COMMUNITY_CONF_SCHEMA = Schema({
@@ -91,7 +91,7 @@ SNMP_COMMUNITY_CONF_SCHEMA = Schema({
     # Or, it can set the the oid tree
     Optional("read_only"):  Default(BoolVal(), default=False),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
@@ -141,7 +141,7 @@ SNMP_CONF_SCHEMA = Schema({
 
     Optional("monitor_list"):  Default([SNMP_MONITOR_CONF_SCHEMA], default=[]),
 
-    DoNotCare(str): object  # for all those key we don't care
+    AutoDel(str): object  # for all other key we auto delete
 })
 
 
