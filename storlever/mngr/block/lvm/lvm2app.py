@@ -81,6 +81,25 @@ class lvm_lv_list(Structure):
 
 lvm_lv_list_t = lvm_lv_list
 
+
+class lvm_property_value_union(Union):
+    _field_ = [
+        ('string', c_char_p),
+        ('integer', c_ulonglong),
+    ]
+
+
+class lvm_property_value(Structure):
+    #_field_ = [
+    #    ('is_settable', c_uint),
+        #('is_string', c_uint, 1),
+        #('is_integer', c_uint, 1),
+        #('is_valid', c_uint, 1),
+        #('padding', c_uint, 28),
+        #('value', lvm_property_value_union),
+    #]
+    pass
+
 # Initialize library
 try:
     lvm_init = lvmlib.lvm_init
@@ -449,7 +468,12 @@ try:
     lvm_lv_from_name.restype = lv_t
 except Exception:
     lvm_lv_from_name = raise_not_supported
-
+try:
+    lvm_lv_get_property = lvmlib.lvm_lv_get_property
+    lvm_lv_get_property.argtypes = [lv_t, c_char_p]
+    #lvm_lv_get_property.restype = lvm_property_value
+except Exception:
+    lvm_lv_get_property = raise_not_supported
 
 
 
