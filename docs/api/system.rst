@@ -21,7 +21,7 @@ StorLever system API has the following structure:
     * `2.6 Get system timestamp <#26-get-system-timestamp>`_
     * `2.7 Power off system <#27-power-off-system>`_
     * `2.8 Reboot system <#28-reboot-system>`_
-    * `2.9 Download system log <#29-download-system>`_
+    * `2.9 Download system log <#29-download-system-log>`_
 * Statistic Info
 * User Management 
 * Service Management
