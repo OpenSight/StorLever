@@ -21,7 +21,7 @@ StorLever system API has the following structure:
     * `2.6 Get system timestamp <#26-get-system-timestamp>`_
     * `2.7 Power off system <#27-power-off-system>`_
     * `2.8 Reboot system <#28-reboot-system>`_
-    * `2.9 Download system log <#29-download-system>`_	
+    * `2.9 Download system log <#29-download-system>`_
 * Statistic Info
 * User Management 
 * Service Management
@@ -44,7 +44,7 @@ The following operations are used to Get/Set system general information.
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
@@ -52,12 +52,12 @@ The following operations are used to Get/Set system general information.
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the system general information. 
@@ -65,11 +65,11 @@ The following operations are used to Get/Set system general information.
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/localhost
-	
-	
+
+
 
 1.2 Configure the Host Name 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to set the host name to a special string, 
 and the new name would be add to hosts list with 127.0.0.1 automatically
@@ -81,27 +81,27 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
 2. HTTP Method
     
     PUT
-	
+
 3. Request Content
 
     A JSON object with the following field definition. 
-	
+
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
     |     hostname    |  string  |   Yes    | The host name of the remote system. If absent, the host name   |
     |                 |          |          | would not be changed                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
@@ -113,7 +113,7 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
 
 
 1.3 Get CPU info 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to get the cpu info, like model, frequency, cache, 
 in system
@@ -125,20 +125,20 @@ in system
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the CPU info. 
@@ -146,10 +146,10 @@ in system
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/cpu_list
-	
+
 
 1.4 Measure total CPU usage percent 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to measure the CPU usage percent in the given interval, and return the 
 measure result
@@ -164,26 +164,26 @@ Note: the response would return in your given interval time
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     A JSON object with the following field definition. 
-	
+
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
     |     interval    |  number  |   Yes    | The measure time in seconds. If absent, default to 1 sec       |
     +-----------------+----------+----------+----------------------------------------------------------------+
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON number to indicate the usage percent of total CPU
@@ -194,7 +194,7 @@ Note: the response would return in your given interval time
 
 
 1.5 Measure per CPU usage percent 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to measure the each CPU usage percent in the given interval, and return the 
 measure result
@@ -208,38 +208,38 @@ Note: the response would return in your given interval time
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     A JSON object with the following field definition. 
-	
+
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
     |     interval    |  number  |   Yes    | The measure time in seconds. If absent, default to 1 sec       |
     +-----------------+----------+----------+----------------------------------------------------------------+
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON list to indicate the usage percent of per CPU
 
 7. Example 
 
-    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_cpu_percent	
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_cpu_percent
 
 
 
 1.6 Get Memory info 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to get the memory usage info, the return value is presented in byte unit.
 
@@ -251,20 +251,20 @@ This API is used to get the memory usage info, the return value is presented in 
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the memory usage info, present in bytes
@@ -272,11 +272,11 @@ This API is used to get the memory usage info, the return value is presented in 
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/memory
-	
+
 
 
 1.7 Get process list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This API is used to retrieve the current running process list in system
 
@@ -287,20 +287,20 @@ This API is used to retrieve the current running process list in system
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
-	
+
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON list where its each entry is a JSON object describing one process running info
@@ -308,7 +308,7 @@ This API is used to retrieve the current running process list in system
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/ps
-	
+
 
 2 Maintenance
 ------------------
@@ -327,7 +327,7 @@ This API is used to flush out all the page cache of system. After that, the page
 2. HTTP Method
     
     POST
-	
+
 3. Request Content
 
     NULL
@@ -335,12 +335,12 @@ This API is used to flush out all the page cache of system. After that, the page
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
@@ -348,8 +348,8 @@ This API is used to flush out all the page cache of system. After that, the page
 7. Example 
 
     curl -v -X POST http://192.168.1.15:6543/storlever/api/v1/system/flush_page_cache
-	
-	
+
+
 2.2 Get SELinux state
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -365,7 +365,7 @@ This API is used to retrieve the current SELinux running info including state
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
@@ -373,12 +373,12 @@ This API is used to retrieve the current SELinux running info including state
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the SELinux running info
@@ -387,7 +387,7 @@ This API is used to retrieve the current SELinux running info including state
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/selinux
 
-	
+
 2.3 Set SELinux state
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -401,11 +401,11 @@ administrator must restart the system to make it in effect
 2. HTTP Method
     
     PUT
-	
+
 3. Request Content
 
     A JSON object with the following field definition. 
-	
+
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
@@ -416,21 +416,21 @@ administrator must restart the system to make it in effect
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
 
 7. Example 
 
-    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"state":"disabled"}' http://192.168.1.15:6543/storlever/api/v1/system/selinux	
-	
-	
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"state":"disabled"}' http://192.168.1.15:6543/storlever/api/v1/system/selinux
+
+
 2.4 Get system date time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -443,7 +443,7 @@ This API is used to get the current date and time in the system
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
@@ -451,12 +451,12 @@ This API is used to get the current date and time in the system
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the system date & time in ISO format
@@ -464,7 +464,7 @@ This API is used to get the current date and time in the system
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/datetime
-	
+
 
 2.5 Set system date time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,11 +478,11 @@ This API is used to set the date and time in the system
 2. HTTP Method
     
     PUT
-	
+
 3. Request Content
 
     A JSON object with the following field definition. 
-	
+
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
@@ -492,20 +492,20 @@ This API is used to set the date and time in the system
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
 
 7. Example 
 
-    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"datetime":"2014-07-18T10:55:37+0800"}' http://192.168.1.15:6543/storlever/api/v1/system/datetime	
-	
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"datetime":"2014-07-18T10:55:37+0800"}' http://192.168.1.15:6543/storlever/api/v1/system/datetime
+
 
 2.6 Get system timestamp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -519,7 +519,7 @@ This API is used to retrieve the time from from Epoch, measure in seconds
 2. HTTP Method
     
     GET
-	
+
 3. Request Content
 
     NULL
@@ -527,12 +527,12 @@ This API is used to retrieve the time from from Epoch, measure in seconds
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     A JSON object to describe the timestamp in its timestamp field
@@ -540,8 +540,8 @@ This API is used to retrieve the time from from Epoch, measure in seconds
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/timestamp
-	
-	
+
+
 2.7 Power off system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -555,7 +555,7 @@ the system would start power off procedure
 2. HTTP Method
     
     POST
-	
+
 3. Request Content
 
     NULL
@@ -563,12 +563,12 @@ the system would start power off procedure
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
@@ -576,8 +576,8 @@ the system would start power off procedure
 7. Example 
 
     curl -v -X POST http://192.168.1.15:6543/storlever/api/v1/system/poweroff
-	
-	
+
+
 2.8 Reboot system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -591,7 +591,7 @@ the system would start reboot procedure
 2. HTTP Method
     
     POST
-	
+
 3. Request Content
 
     NULL
@@ -599,12 +599,12 @@ the system would start reboot procedure
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error
+
 5. Special Response Headers
-	
-    No	
-	
+
+    No
+
 6. Response Content
     
     NULL
@@ -612,9 +612,9 @@ the system would start reboot procedure
 7. Example 
 
     curl -v -X POST http://192.168.1.15:6543/storlever/api/v1/system/reboot
-	
-	
-	
+
+
+
 2.9 Download system log
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -626,9 +626,9 @@ then return in response.
     http://[host_ip]:[storlever_port]/storlever/api/v1/system/log_download
 
 2. HTTP Method
-    
+
     GET
-	
+
 3. Request Content
 
     NULL
@@ -636,20 +636,20 @@ then return in response.
 4. Status Code
 
     200      -   Successful
-    Others   -   Error	
-	
+    Others   -   Error 
+
 5. Special Response Headers
-	
+
     The following header would be in response:
-	
-    Content-Type: application/force-download	
-	
-	Content-Type header indicate this response include a file download content
-	
-	Content-Disposition: attachment; filename=%s
-	
-	Content-Disposition header give extra infomation about the response content, like filename.
-	
+ 
+    Content-Type: application/force-download 
+
+    Content-Type header indicate this response include a file download content
+
+    Content-Disposition: attachment; filename=%s
+
+    Content-Disposition header give extra infomation about the response content, like filename.
+
 6. Response Content
     
     The tar.gz file content
@@ -657,4 +657,4 @@ then return in response.
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/log_download
-	
+ 
