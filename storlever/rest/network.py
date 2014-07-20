@@ -243,7 +243,7 @@ dns_mod_schema = Schema({
 })
 
 
-# curl -v -X put -d -d servers=8.8.8.8,202.101.172.47  'http://192.168.1.123:6543/storlever/api/v1/network/dns'
+# curl -v -X put  -d servers=8.8.8.8,202.101.172.47  'http://192.168.1.123:6543/storlever/api/v1/network/dns'
 @put_view(route_name='dns')
 def modify_dns(request):
     params = get_params_from_request(request, dns_mod_schema)
