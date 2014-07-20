@@ -667,6 +667,10 @@ class LV(object):
                     self.is_activate = _lv.is_activate()
                     self.origin = _lv.get_origin()
                     self.attr = _lv.get_attr()
+                    if self.origin:
+                        self.snap_percent = _lv.get_property('snap_percent')/1000000.0
+                    else:
+                        self.snap_percent = None
         elif _lv:
             self.name = _lv.name
             self.uuid = _lv.uuid
@@ -674,6 +678,10 @@ class LV(object):
             self.is_activate = _lv.is_activate()
             self.origin = _lv.get_origin()
             self.attr = _lv.get_attr()
+            if self.origin:
+                self.snap_percent = _lv.get_property('snap_percent')/1000000.0
+            else:
+                self.snap_percent = None
         else:
             raise StorLeverError('No LV name given')
         self.type = self.TYPE_ABBR.get(self.attr[0], 'unknown')
