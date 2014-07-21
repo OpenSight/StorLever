@@ -330,7 +330,7 @@ def get_datetime(request):
     return {'datetime': datetime_str}
 
 
-@post_view(route_name='sys_datetime')
+@put_view(route_name='sys_datetime')
 def set_datetime(request):
     params = get_params_from_request(request)
     sys_mgr = sysinfo.sys_mgr()      # get sys manager
@@ -533,31 +533,21 @@ def download_conf(request):
 
     return response
 
-
-@post_view(route_name='storlever_conf')
+@put_view(route_name='storlever_conf')
 def upload_conf(request):
     """
     upload a config file to storlever
 
-    the html form must be like below:
-
-<form action="..." method="post" accept-charset="utf-8" enctype="multipart/form-data">
-    <label for="conf">conf</label>
-    <input id="conf" name="conf" type="file" value="" />
-    <input type="submit" value="submit" />
-</form>
-
     """
 
-    # the name of file input of HTML form must be "conf"
-    input_file = request.POST['conf'].file
+    # the content body of the request should be the download config file
+    input_file = request.body_file
 
     t = datetime.today().strftime("%Y%m%d_%H%M%S")
     file_path = "/tmp/storlever_conf_%s.tar.gz" % t
 
     with open(file_path, 'wb') as output_file:
         # Finally write the data to a temporary file
-        input_file.seek(0)
         while True:
             data = input_file.read(2 << 16)
             if not data:
@@ -565,12 +555,21 @@ def upload_conf(request):
             output_file.write(data)
 
     cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
-    cfg_mgr.restore_from_file(file_path, user=request.client_addr)   # restore the config
-
-    os.remove(file_path)
+    try:
+        cfg_mgr.restore_from_file(file_path, user=request.client_addr)   # restore the config
+    finally:
+        os.remove(file_path)
 
     return Response(status=200)
 
+
+@delete_view(route_name='storlever_conf')
+def clear_conf(request):
+    cfg_mgr = cfgmgr.cfg_mgr()      # get cfg manager
+
+    cfg_mgr.system_restore(user=request.client_addr)
+
+    return Response(status=200)
 
 @post_view(route_name='backup_conf_to_file')
 def backup_conf_to_file(request):
@@ -602,6 +601,8 @@ def restore_conf_from_file(request):
     cfg_mgr.restore_from_file(params["file"], user=request.client_addr)
 
     return Response(status=200)
+
+
 
 
 @get_view(route_name='selinux_state')
