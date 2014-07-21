@@ -22,13 +22,13 @@ StorLever system API has the following structure:
     * `2.7 Power off system <#27-power-off-system>`_
     * `2.8 Reboot system <#28-reboot-system>`_
     * `2.9 Download system log <#29-download-system-log>`_
-* 3 Statistic Info
-    * `3.1 Get total CPU times <31-get-total-cpu-times>`_
-    * `3.2 Get per CPU times <32-get-per-cpu-times>`_
-    * `3.3 Get total Disk IO Counter <33-get-total-disk-io-counter>`_
-    * `3.4 Get per Disk IO Counter <34-get-per-disk-io-counter>`_
-    * `3.5 Get total Network IO Counter <35-get-total-network-io-counter>`_
-    * `3.6 Get per Network IO Counter <36-get-per-network-io-counter>`_   
+* `3 Statistic Info <#3-statistic-info>`_ 
+    * `3.1 Get total CPU times <#31-get-total-cpu-times>`_
+    * `3.2 Get per CPU times <#32-get-per-cpu-times>`_
+    * `3.3 Get total Disk IO Counter <#33-get-total-disk-io-counter>`_
+    * `3.4 Get per Disk IO Counter <#34-get-per-disk-io-counter>`_
+    * `3.5 Get total Network IO Counter <#35-get-total-network-io-counter>`_
+    * `3.6 Get per Network IO Counter <#36-get-per-network-io-counter>`_   
 * Configuration Management
 * User Management 
 * Service Management
