@@ -22,11 +22,18 @@ StorLever system API has the following structure:
     * `2.7 Power off system <#27-power-off-system>`_
     * `2.8 Reboot system <#28-reboot-system>`_
     * `2.9 Download system log <#29-download-system-log>`_
-* Statistic Info
+* 3 Statistic Info
+    * `3.1 Get total CPU times <31-get-total-cpu-times>`_
+    * `3.2 Get per CPU times <32-get-per-cpu-times>`_
+    * `3.3 Get total Disk IO Counter <33-get-total-disk-io-counter>`_
+    * `3.4 Get per Disk IO Counter <34-get-per-disk-io-counter>`_
+    * `3.5 Get total Network IO Counter <35-get-total-network-io-counter>`_
+    * `3.6 Get per Network IO Counter <36-get-per-network-io-counter>`_   
+* Configuration Management
 * User Management 
 * Service Management
 * Module Management
-* Configuration Management
+
 
 
 1 System Info
@@ -657,4 +664,232 @@ then return in response.
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/log_download
- 
+
+
+3 Statistic Info
+------------------
+
+The following operations are used to retrieve some statistic info from the system
+
+
+3.1 Get total CPU times
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the total CPU time (in seconds) in each working mode. 
+User can make use this API to measure each working mode's 
+occupation percent for a specific period.
+
+This API is more user-friendly than the measuring CPU usage by StorLever. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/cpu_times
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe the total CPU time (in seconds, float type) in each mode
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/cpu_times
+	
+
+3.2 Get per CPU times
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the per CPU time (in seconds) in each working mode. 
+User can make use this API to measure each working mode's 
+occupation percent for a specific period for each CPU.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/per_cpu_times
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list where each entry is JSON object to describe each CPU time (in seconds) in each mode 
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_cpu_times
+
+
+3.3 Get total Disk IO Counter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the disk IO counter for all disk in the system.
+User can make use this API to measure the total disk IO in the specific period. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/disk_io_counters
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe each IO counter for all the disk device
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/disk_io_counters
+	
+
+3.4 Get per Disk IO Counter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the disk IO counter for each disk device in the system.
+User can make use this API to measure the disk IO for each disk device in the specific period. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/per_disk_io_counters
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list with each entry to describe each IO counter for each disk device
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_disk_io_counters	
+	
+
+
+3.5 Get total Network IO Counter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the network IO counter for all interface in the system.
+User can make use this API to measure the total network IO in the specific period. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/net_io_counters
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe each IO counter for all network interface
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/net_io_counters
+	
+
+3.6 Get per Network IO Counter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the network IO counter for each network interface in the system.
+User can make use this API to measure the network IO for each network interface in the specific period. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/per_net_io_counters
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list with each entry to describe each IO counter for each network interface
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_net_io_counters
+	
+	
