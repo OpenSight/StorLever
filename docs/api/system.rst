@@ -29,12 +29,12 @@ StorLever system API has the following structure:
     * `3.4 Get per Disk IO Counter <#34-get-per-disk-io-counter>`_
     * `3.5 Get total Network IO Counter <#35-get-total-network-io-counter>`_
     * `3.6 Get per Network IO Counter <#36-get-per-network-io-counter>`_   
-* `4 Configuration Management <#4-configuration-management>`
-    * `4.1 Download configuration <#41-download-configuration>`
-    * `4.2 Upload configuration <#42-upload-configuration>`
-    * `4.3 Clear configuration <#43-clear-configuration>`
-    * `4.4 Backup configuration <#44-backup-configuration>`
-    * `4.5 Restore configuration <#45-restore-configuration>`
+* `4 Configuration Management <#4-configuration-management>`_
+    * `4.1 Download configuration <#41-download-configuration>`_
+    * `4.2 Upload configuration <#42-upload-configuration>`_
+    * `4.3 Clear configuration <#43-clear-configuration>`_
+    * `4.4 Backup configuration <#44-backup-configuration>`_
+    * `4.5 Restore configuration <#45-restore-configuration>`_
 * User Management 
 * Service Management
 * Module Management
@@ -993,9 +993,9 @@ must be a tar.gz file which is download from StorLever before.
 This API is used to clear the application server configuration of StorLever, 
 which reset them to init state. These configuration to reset restricts to application configuration, exclude:
 
-1) block device configuration
-2) system related configuration
-3) network related configuration
+* block device configuration
+* system related configuration
+* network related configuration
 
 
 1. Resource URI
@@ -1050,7 +1050,7 @@ This API is used to back up the configuration to the specific path in the system
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
     |     file        |  string  |   No     | The file path name to save the configuration, it would be of   |
-	|                 |          |          | form of tar.gz
+    |                 |          |          | form of tar.gz                                                 |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
