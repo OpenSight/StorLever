@@ -29,7 +29,12 @@ StorLever system API has the following structure:
     * `3.4 Get per Disk IO Counter <#34-get-per-disk-io-counter>`_
     * `3.5 Get total Network IO Counter <#35-get-total-network-io-counter>`_
     * `3.6 Get per Network IO Counter <#36-get-per-network-io-counter>`_   
-* Configuration Management
+* `4 Configuration Management <#4-configuration-management>`
+    * `4.1 Download configuration <#41-download-configuration>`
+    * `4.2 Upload configuration <#42-upload-configuration>`
+    * `4.3 Clear configuration <#43-clear-configuration>`
+    * `4.4 Backup configuration <#44-backup-configuration>`
+    * `4.5 Restore configuration <#45-restore-configuration>`
 * User Management 
 * Service Management
 * Module Management
@@ -892,4 +897,227 @@ User can make use this API to measure the network IO for each network interface 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/per_net_io_counters
 	
+
+4 Configuration Management
+------------------
+
+The following operations are used to handle the configuration of StorLever
+
+4.1 Download configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to download the configuration file from StorLever, the configuration file 
+is of the form of tar.gz, which includes all the files and directory structure related to StorLever.
+User can download the configuration to verify or backup for future configuration restore
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/conf_tar
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+	
+    The following response header would be added
+    
+    * Content-Type: application/force-download
+
+    This header is used to tell the browser that the context in response is to download and save as a file, 
+    not for display. 
+
+    * Content-Disposition: attachment; filename=%s
+	
+    This header is to give the filename info about the download file
+
+6. Response Content
+    
+    A tar.gz file which contains all the configuration file about StorLever
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/conf_tar > storlever_conf.tar.gz
+	
+
+4.2 Upload configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to upload the configuration file to StorLever, the configuration file 
+must be a tar.gz file which is download from StorLever before.
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/conf_tar
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A tar.gz file
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+	
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT --data-binary @storlever_conf.tar.gz http://192.168.1.15:6543/storlever/api/v1/system/conf_tar
+
+
+4.3 Clear configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to clear the application server configuration of StorLever, 
+which reset them to init state. These configuration to reset restricts to application configuration, exclude:
+
+1) block device configuration
+2) system related configuration
+3) network related configuration
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/conf_tar
+
+2. HTTP Method
+    
+    DELETE
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+	
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X DELETE http://192.168.1.15:6543/storlever/api/v1/system/conf_tar
+
+
+4.4 Backup configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to back up the configuration to the specific path in the system
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/backup_conf
+
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |     file        |  string  |   No     | The file path name to save the configuration, it would be of   |
+	|                 |          |          | form of tar.gz
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+	
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"file":"/root/storlever.tar.gz"}' http://192.168.1.15:6543/storlever/api/v1/system/backup_conf
+
+
+4.5 Restore configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to restore the configuration with the specific file in the system. 
+This file must exists and should be the back up from StorLever before
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/restore_conf
+
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |     file        |  string  |   No     | The file path to restore from                                  |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
+4. Status Code
+
+    200      -   Successful
+    Others   -   Error
+
+5. Special Response Headers
+	
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"file":"/root/storlever.tar.gz"}' http://192.168.1.15:6543/storlever/api/v1/system/restore_conf
+
+
+
+
+
+
+	
+
 	
