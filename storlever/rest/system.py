@@ -110,9 +110,9 @@ def system_cpu_list_get(request):
     cpus = sys_mgr.get_cpu_list()
     cpu_list_dict = []
     for cpu in cpus:
-        cpu_info = {'processor': cpu["processor"],
+        cpu_info = {'processor': int(cpu["processor"]),
                     'model_name': cpu["model name"],
-                    'cpu_MHz': cpu["cpu MHz"],
+                    'cpu_MHz': float(cpu["cpu MHz"]),
                     'cache_size': cpu["cache size"]}
         cpu_list_dict.append(cpu_info)
     return cpu_list_dict
