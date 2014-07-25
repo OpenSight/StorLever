@@ -73,6 +73,7 @@ The following operations are used to Get/Set system general information.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -117,6 +118,7 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -154,6 +156,7 @@ in system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -199,6 +202,7 @@ Note: the response would return in your given interval time
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -243,6 +247,7 @@ Note: the response would return in your given interval time
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -280,6 +285,7 @@ This API is used to get the memory usage info, the return value is presented in 
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -316,6 +322,7 @@ This API is used to retrieve the current running process list in system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -356,6 +363,7 @@ This API is used to flush out all the page cache of system. After that, the page
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -394,6 +402,7 @@ This API is used to retrieve the current SELinux running info including state
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -437,6 +446,7 @@ administrator must restart the system to make it in effect
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -472,6 +482,7 @@ This API is used to get the current date and time in the system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -513,6 +524,7 @@ This API is used to set the date and time in the system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -548,6 +560,7 @@ This API is used to retrieve the time from from Epoch, measure in seconds
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -584,6 +597,7 @@ the system would start power off procedure
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -620,6 +634,7 @@ the system would start reboot procedure
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -657,6 +672,7 @@ then return in response.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error 
 
 5. Special Response Headers
@@ -710,6 +726,7 @@ This API is more user-friendly than the measuring CPU usage by StorLever.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -747,6 +764,7 @@ occupation percent for a specific period for each CPU.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -783,6 +801,7 @@ User can make use this API to measure the total disk IO in the specific period.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -819,6 +838,7 @@ User can make use this API to measure the disk IO for each disk device in the sp
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -856,6 +876,7 @@ User can make use this API to measure the total network IO in the specific perio
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -892,6 +913,7 @@ User can make use this API to measure the network IO for each network interface 
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -935,6 +957,7 @@ User can download the configuration to verify or backup for future configuration
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -981,6 +1004,7 @@ must be a tar.gz file which is download from StorLever before.
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1022,6 +1046,7 @@ which reset them to init state. These configuration to reset restricts to applic
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1065,6 +1090,7 @@ This API is used to back up the configuration to the specific path in the system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1108,6 +1134,7 @@ This file must exists and should be the back up from StorLever before
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1148,6 +1175,7 @@ This API is used to retrieve the user list of Linux system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1172,7 +1200,7 @@ This API is used to retrieve one user info of Linux system
 
     http://[host_ip]:[storlever_port]/storlever/api/v1/system/user_list/[user_name]
 
-   [user_name] is the name of the user info to retrieve
+    [user_name] is the name of the user info to retrieve
 
 2. HTTP Method
     
@@ -1185,6 +1213,7 @@ This API is used to retrieve one user info of Linux system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1246,6 +1275,7 @@ This API is used to add a new user to the system
 4. Status Code
 
     201      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1308,6 +1338,7 @@ This API is used to modify a user info in the system, the given user must exists
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1332,7 +1363,7 @@ This API is used to delete a user in system
 
     http://[host_ip]:[storlever_port]/storlever/api/v1/system/user_list/[user_name]
 
-   [user_name] is the name of the user info to delete
+    [user_name] is the name of the user info to delete
 
 2. HTTP Method
     
@@ -1345,6 +1376,7 @@ This API is used to delete a user in system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1380,6 +1412,7 @@ This API is used to retrieve the group list of Linux system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1404,7 +1437,7 @@ This API is used to retrieve one group info of Linux system
 
     http://[host_ip]:[storlever_port]/storlever/api/v1/system/group_list/[group_name]
 
-   [group_name] is the name of the group info to retrieve
+    [group_name] is the name of the group info to retrieve
 
 2. HTTP Method
     
@@ -1417,6 +1450,7 @@ This API is used to retrieve one group info of Linux system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1461,6 +1495,7 @@ This API is used to add a new group to the system
 4. Status Code
 
     201      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
@@ -1490,7 +1525,7 @@ This API is used to delete a group in system
 
     http://[host_ip]:[storlever_port]/storlever/api/v1/system/group_list/[group_name]
 
-   [group_name] is the name of the group to delete
+    [group_name] is the name of the group to delete
 
 2. HTTP Method
     
@@ -1503,6 +1538,7 @@ This API is used to delete a group in system
 4. Status Code
 
     200      -   Successful
+    
     Others   -   Error
 
 5. Special Response Headers
