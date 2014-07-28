@@ -45,8 +45,13 @@ StorLever system API has the following structure:
     * `5.7 Get group info <#57-get-group-info>`_
     * `5.8 Add group <#58-add-group>`_
     * `5.9 Delete group <#59-delete-group>`_
-* Service Management
-* Module Management
+* `6 Service Management <#6-service-management>`_
+    * `6.1 Get service list <#61-get-service-list>`_
+    * `6.2 Get service info <#62-get-service-info>`_
+    * `6.3 Control Service <#63-control-service>`_
+* `7 Module Management <#7-module-management>`_
+    * `7.1 Get module list <#71-get-module-list>`_
+    * `7.2 Get service info <#72-get-service-info>`_ 
 
 
 
@@ -1554,7 +1559,220 @@ This API is used to delete a group in system
     curl -v -X DELETE http://192.168.1.15:6543/storlever/api/v1/system/group_list/test_group
 
     
+6 Service Management 
+------------------
 
+The following API are used to manage the service daemon in StorLever. 
 
+Note: The services managed by these set of API are restricted to the service provided in StorLever, 
+not including all the service in Linux service 
+
+6.1 Get service list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the service list in StorLever
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/service_list
+
+2. HTTP Method
     
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list with each entry to describe one service info and state
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/service_list
+    
+    
+6.2 Get service info
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve one service info of StorLever
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/service_list/[service_name]
+
+    [service_name] is the name of the service to retrieve
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+	
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe this specific service info and state
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/service_list/[service_name]
+    
+
+6.3 Control Service
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to control the service, like start/stop/restart/reload
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/service_list/[service_name]
+
+    [service_name] is the name of the service to control
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |     state       |  bool    |   Yes    | If True, start the service. If False, stop the service.        |
+    |                 |          |          | Default is no effect                                           |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     restart     |  bool    |   Yes    | If True, restart the service. If False or absent, no effect    |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     reload      |  bool    |   Yes    | If True, reload the configuration of the service.              |
+    |                 |          |          | If False or absent, no effect                                  |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    auto_start   |  bool    |   Yes    | Set the auto-start state on boot. Default is no change         |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
+    It should be only one field presented for state, restart, reload 
+    
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"state": true, "auto_start": true}' http://[host_ip]:[storlever_port]/storlever/api/v1/system/service_list/[service_name]
+
+
+7 Module Management
+------------------
+
+The following API are used to manage the function module in StorLever, including the standard modules and extension
+
+Note: each module in StorLever implement one individual function. StorLever is consist of many modules. 
+
+7.1 Get module list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the function module name list in StorLever    
+    
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/module_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list including all module name in StorLever
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/module_list
+
+7.2 Get service info
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve one module info of StorLever
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/system/module_list/[module_name]
+
+    [module_name] is the name of the module info to retrieve
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+	
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe this specific module info
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/system/module_list/[module_name]
+
     
