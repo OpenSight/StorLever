@@ -53,7 +53,7 @@ NTP_SERVER_CONF_SCHEMA = Schema({
 
     # Marks the server as preferred.  All other things being equal,
     # this host will be chosen for synchronization among set of correctly operating hosts
-    Optional("prefer"): Default(BoolVal(), default=True),
+    Optional("prefer"): Default(BoolVal(), default=False),
 
     # Specifies a mode number which is interpreted in a device
     # specific fashion.	For instance, it selects a dialing,
@@ -326,6 +326,10 @@ class NtpManager(object):
             if len(s) < 10:
                 raise StorLeverError("ntpq output format cannot be regonized" ,
                                      500)
+            try:
+                when = int(s[4])
+            except Exception:
+                when = 0
 
             connections.append({
                 "state": l[0],
@@ -333,7 +337,7 @@ class NtpManager(object):
                 "refid": s[1],
                 "stratum": int(s[2]),
                 "type": s[3],
-                "when": s[4],
+                "when": when,
                 "poll": int(s[5]),
                 "reach": int(s[6], 8),
                 "delay": float(s[7]),
