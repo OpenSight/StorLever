@@ -192,7 +192,7 @@ class MD(object):
 
         cmd_args['raw_args'] = opts
 
-        cmd = "/sbin/mdadm -C {0} -v {1}-l {2} -n {3} {4}".format(cmd_args['name'],
+        cmd = "/sbin/mdadm -C {0} -v {1} -l {2} -n {3} {4}".format(cmd_args['name'],
                                                             cmd_args['raw_args'],
                                                             cmd_args['level'],
                                                             cmd_args['raid-devices'],
@@ -200,5 +200,19 @@ class MD(object):
 
         check_output(cmd)
 
+    def remove_component(self, md_name, device):
+        fail_cmd = '/sbin/mdadm {0} --fail {1}'.format(md_name, device)
+        remove_cmd = '/sbin/mdadm {0} --remove {1}'.format(md_name, device)
+        check_output(fail_cmd, shell=True)
+        check_output(remove_cmd, shell=True)
+
+    def add_component(self, md_name, device):
+        add_cmd = '/sbin/mdadm {0} --add {1}'.format(md_name, device)
+        check_output(add_cmd, shell=True)
 
 
+MDManager = MD()
+
+
+def md_mgr():
+    return MDManager
