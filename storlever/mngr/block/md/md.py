@@ -28,7 +28,7 @@ class MD(object):
 
     def list_raid(self):
         ret = {}
-        for line in check_output('/sbin/mdadm --detail --scan', shell=True):
+        for line in check_output('/sbin/mdadm --detail --scan', shell=True).splitlines():
             if ' ' not in line:
                 continue
             comps = line.split()
@@ -113,12 +113,10 @@ class MD(object):
         except StorLeverError:
             pass
 
-
-    def create(name,
+    def create(self,
+               name,
                level,
                devices,
-               raid_devices=None,
-               test_mode=False,
                **kwargs):
         '''
         Create a RAID device.
@@ -173,14 +171,7 @@ class MD(object):
 
         For more info, read the ``mdadm(8)`` manpage
         '''
-        cmd_args = {}
-
-        cmd_args['name'] = name
-        cmd_args['level'] = level
-        cmd_args['devices'] = ' '.join(devices)
-
-        if raid_devices is None:
-            cmd_args['raid-devices'] = len(devices)
+        devices_string = ' '.join(devices)
 
         opts = ''
         for key in kwargs:
@@ -190,15 +181,13 @@ class MD(object):
                 else:
                     opts += '--{0}={1} '.format(key, kwargs[key])
 
-        cmd_args['raw_args'] = opts
+        cmd = "yes | /sbin/mdadm -C {0} --force {1} -l {2} -n {3} {4}".format(name,
+                                                                     opts,
+                                                                     level,
+                                                                     len(devices),
+                                                                     devices_string)
 
-        cmd = "/sbin/mdadm -C {0} -v {1} -l {2} -n {3} {4}".format(cmd_args['name'],
-                                                            cmd_args['raw_args'],
-                                                            cmd_args['level'],
-                                                            cmd_args['raid-devices'],
-                                                            cmd_args['devices'])
-
-        check_output(cmd)
+        check_output(cmd, shell=True)
 
     def remove_component(self, md_name, device):
         fail_cmd = '/sbin/mdadm {0} --fail {1}'.format(md_name, device)
