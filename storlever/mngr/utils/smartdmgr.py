@@ -42,7 +42,7 @@ SMARTD_CONF_FILE = "smartd.conf"
 MONITOR_CONF_SCHEMA = Schema({
 
     # the dev's file to monitor
-    Optional("dev"):  Use(str),
+    "dev":  Use(str),
 
     # the (e)mail address to which smartd would send when a error is detected.
     #  To  send email to more than one user, please use the following "comma separated"
@@ -216,6 +216,9 @@ class SmartdManager(object):
                     mode = os.stat(monitor_conf["dev"])[ST_MODE]
                     if not S_ISBLK(mode):
                         raise StorLeverError("Device (%s) not block device" % (monitor_conf["dev"]), 400)
+
+                if monitor_conf["mail_exec"] != "" and not os.paht.exists(monitor_conf["mail_exec"]):
+                    raise StorLeverError("mail_exec (%s) not found" % (monitor_conf["mail_exec"]), 404)
 
             # save new conf
             self._save_conf(smartd_conf)

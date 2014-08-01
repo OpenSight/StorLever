@@ -1,11 +1,26 @@
+"""
+storlever.rest.utils
+~~~~~~~~~~~~~~~~
+
+This module implements the rest API for utils.
+
+:copyright: (c) 2014 by OpenSight (www.opensight.cn).
+:license: AGPLv3, see LICENSE for more details.
+
+"""
+
+
+
 from storlever.rest.common import get_view, post_view, put_view, delete_view
 from pyramid.response import Response
 
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
-    Use, IntVal, Default, SchemaError, BoolVal, StrRe
+    Use, IntVal, Default, SchemaError, BoolVal, StrRe, ListVal
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.utils import ntpmgr
 from storlever.mngr.utils import mailmgr
+from storlever.mngr.utils import smartdmgr
+from storlever.mngr.utils import zabbixagent
 from storlever.rest.common import get_params_from_request
 
 def includeme(config):
@@ -16,6 +31,13 @@ def includeme(config):
 
     config.add_route('mail_conf', '/utils/mail/conf')
     config.add_route('send_mail', '/utils/mail/send_mail')
+
+    config.add_route('smartd_monitor_list', '/utils/smartd/monitor_list')
+
+    config.add_route('zabbix_conf', '/utils/zabbix/conf')
+    config.add_route('zabbix_active_server_list', '/utils/zabbix/active_server_list')
+    config.add_route('zabbix_passive_server_list', '/utils/zabbix/passive_server_list')
+
 
 
 
@@ -188,3 +210,111 @@ def post_send_mail(request):
     info = mail_mgr.send_email(send_mail_conf["to"], send_mail_conf["subject"],
                                send_mail_conf["content"], send_mail_conf["debug"])
     return {"debug_info":info}
+
+
+@get_view(route_name='smartd_monitor_list')
+def get_smartd_monitor_list(request):
+    smartd_mgr = smartdmgr.SmartdManager
+    return smartd_mgr.get_monitor_list()
+
+
+smartd_monitor_list_schema = Schema([{
+
+    # the dev's file to monitor
+    "dev":  StrRe(r"^\S+$"),
+
+    # the (e)mail address to which smartd would send when a error is detected.
+    #  To  send email to more than one user, please use the following "comma separated"
+    # form for the address: user1@add1,user2@add2,...,userN@addN (with no spaces).
+    Optional("mail_to"): Default(StrRe(r"^(|\w+([-+.]\w+)*@\w+([-.]\w+)*(,\w+([-+.]\w+)*@\w+([-.]\w+)*)*)$"), default=""),
+
+    # test the mail. if true, send a single test email immediately upon smartd  startup.
+    # This  allows one to verify that email is delivered correctly
+    Optional("mail_test"): Default(BoolVal(), default=False),
+
+    # run the executable PATH instead of the default mail command.
+    # if this list is empty, smartd would run the default "/bin/mail" utility
+    # to send warning email to user in "mail_to" option. Otherwise, smartd would run
+    # the scripts in this option. See man smartd.conf
+    # for more detail
+    Optional("mail_exec"): Default(StrRe(r"^\S*$"), default=""),
+
+    # Run Self-Tests or Offline Immediate Tests,  at  scheduled  times.   A  Self-  or
+    # Offline Immediate Test will be run at the end of periodic device polling, if all
+    # 12 characters of the string T/MM/DD/d/HH match the extended  regular  expression
+    # REGEXP. See man smartd.conf for detail.
+    # if this option is empty, no schedule test at all
+    Optional("schedule_regexp"): Default(StrRe(r"^\S*$"), default=""),
+
+    DoNotCare(str): object  # for all other key we don't care
+
+}])
+
+@put_view(route_name='smartd_monitor_list')
+def put_smartd_monitor_list(request):
+    smartd_mgr = smartdmgr.SmartdManager
+    new_monitor_list = get_params_from_request(request, smartd_monitor_list_schema)
+    smartd_mgr.set_monitor_list(new_monitor_list, operator=request.client_addr)
+    return Response(status=200)
+
+
+
+
+@get_view(route_name='zabbix_conf')
+def get_zabbix_conf(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    return zabbix_agent.get_agent_conf()
+
+zabbix_conf_schema=Schema({
+
+    # used for active check, this name must match the hostname set in the active server
+    Optional("hostname"):  StrRe(r"^\S+$"),
+
+    # How often list of active checks is refreshed, in seconds.
+    # Note that after failing to refresh active checks the next refresh
+    # will be attempted after 60 seconds.
+    Optional("refresh_active_check"): IntVal(min=60, max=3600),
+
+    DoNotCare(str): object  # for all other key we don't care
+})
+
+@put_view(route_name='zabbix_conf')
+def put_zabbix_conf(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    zabbix_conf = get_params_from_request(request, zabbix_conf_schema)
+    zabbix_agent.set_agent_conf(zabbix_conf, operator=request.client_addr)
+    return Response(status=200)
+
+
+@get_view(route_name='zabbix_active_server_list')
+def get_zabbix_active_server_list(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    return zabbix_agent.get_active_check_server_list()
+
+# only support ipv4 server address now
+zabbix_active_server_list_schema=Schema(ListVal(StrRe(r"\w+([-+.]\w+)*(:\d+)?$")))
+
+@put_view(route_name='zabbix_active_server_list')
+def put_zabbix_active_server_list(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    server_list_conf = get_params_from_request(request, zabbix_active_server_list_schema)
+    zabbix_agent.set_active_check_server_list(server_list_conf, operator=request.client_addr)
+    return Response(status=200)
+
+
+
+@get_view(route_name='zabbix_passive_server_list')
+def get_zabbix_passive_server_list(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    return zabbix_agent.get_passive_check_server_list()
+
+
+# only support ipv4 server address now
+zabbix_passive_server_list_schema=Schema(ListVal(StrRe(r"\w+([-+.]\w+)*$")))
+
+@put_view(route_name='zabbix_passive_server_list')
+def put_zabbix_passive_server_list(request):
+    zabbix_agent = zabbixagent.ZabbixAgentManager
+    server_list_conf = get_params_from_request(request, zabbix_passive_server_list_schema)
+    zabbix_agent.set_passive_check_server_list(server_list_conf, operator=request.client_addr)
+    return Response(status=200)
