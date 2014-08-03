@@ -11,20 +11,21 @@ from storlever.rest.common import get_params_from_request
 def includeme(config):
     # block device list resource
     # GET:    block device list
-    config.add_route('block_list', '/block_list')
-    config.add_route('block', '/block_list/{block}')
-    config.add_route('scsi_list', '/scsi_list')
-    config.add_route('scsi_dev', '/scsi_list/{scsi_id}')
-    config.add_route('scsi_dev_smart', '/scsi_list/{scsi_id}/smart')
+    config.add_route('block_list', '/block/block_list')
+    config.add_route('block', '/block/block_list/{block}')
+    config.add_route('block_opt', '/block/block_list/{block}/opt')
+    config.add_route('scsi_list', '/block/scsi_list')
+    config.add_route('scsi_dev', '/block/scsi_list/{scsi_id}')
+    config.add_route('scsi_dev_smart', '/block/scsi_list/{scsi_id}/smart')
     # adapter list resource (HBA, raid controller etc)
     # GET:    adapter list
-    config.add_route('adapter_list', '/adapter_list')
-    config.add_route('adapter', '/adapter_list/{adapter}')
-    config.add_route('adapter_disk_list', '/adapter_list/{adapter}/disk_list')
-    config.add_route('adapter_vdisk_list', '/adapter_list/{adapter}/vdisk_list')
+    config.add_route('adapter_list', '/block/adapter_list')
+    config.add_route('adapter', '/block/adapter_list/{adapter}')
+    config.add_route('adapter_disk_list', '/block/adapter_list/{adapter}/disk_list')
+    config.add_route('adapter_vdisk_list', '/block/adapter_list/{adapter}/vdisk_list')
 
 
-# http://192.168.1.10:6543/storlever/api/v1/block_list
+# http://192.168.1.10:6543/storlever/api/v1/block/block_list
 @get_view(route_name='block_list')
 def blocks_get(request):
     block_mgr =  blockmgr.block_mgr()
@@ -47,7 +48,7 @@ def blocks_get(request):
         
     return block_info_dict
 
-# http://192.168.1.10:6543/storlever/api/v1/block_list/sdb
+# http://192.168.1.10:6543/storlever/api/v1/block/block_list/sdb
 @get_view(route_name='block')
 def block_get(request):
     block_name = request.matchdict['block']
@@ -67,11 +68,11 @@ def block_get(request):
     return block
 
 block_clean_meta_schema = Schema({
-    Optional("opt"): StrRe(r"^(clean_meta)$"),
+    Optional("opt"): StrRe(r"^(clean_meta|flush_buf)$"),
     DoNotCare(str): object  # for all those key we don't care
 })
 
-# curl -v -X put -d opt=clean_meta  'http://192.168.1.123:6543/storlever/api/v1/block_list/sdb'
+# curl -v -X put -d opt=clean_meta  'http://192.168.1.123:6543/storlever/api/v1/block/block_list/sdb'
 @put_view(route_name='block')
 def block_clean_meta(request):
     block_name = request.matchdict['block']
@@ -80,10 +81,27 @@ def block_clean_meta(request):
         block_mgr =  blockmgr.block_mgr()
         block_dev = block_mgr.get_block_dev_by_name(block_name)
         block_dev.clean_meta()
+    elif params['opt'] == "flush_buf":  
+        block_mgr =  blockmgr.block_mgr()
+        block_dev = block_mgr.get_block_dev_by_name(block_name)
+        block_dev.flush_block_buf()   
     return Response(status=200)
 
+# curl -v -X PUT  -d opt="flush_buf/clean_meta"http://192.168.1.10:6543/storlever/api/v1/block/block_list/sdb/opt
+@put_view(route_name='block_opt')
+def set_block_opt(request):
+    scsi_id = request.matchdict['scsi_id']
+    scsi_mgr =  scsimgr.scsi_mgr()
+    scsi_dev_info = scsi_mgr.get_scsi_dev_by_id(scsi_id)
+    params = get_params_from_request(request, scsi_dev_smart_schema)
+    smart_set = params.get("smart", None),
+    offline_set = params.get("offline_auto", None),
+    scsi_dev_info.set_smart_config(smart_set,offline_set)
+    return Response(status=200)
+
+
     
-# http://192.168.1.10:6543/storlever/api/v1/scsi_list
+# http://192.168.1.10:6543/storlever/api/v1/block/scsi_list
 @get_view(route_name='scsi_list')
 def scsi_list_get(request):
     scsi_mgr =  scsimgr.scsi_mgr()
@@ -107,7 +125,7 @@ def scsi_list_get(request):
     return scsi_list_dict
 
 
-# http://192.168.1.10:6543/storlever/api/v1/scsi_list/{scsi_id}
+# http://192.168.1.10:6543/storlever/api/v1/block/scsi_list/{scsi_id}
 @get_view(route_name='scsi_dev')
 def get_scsi_dev(request):
     scsi_id = request.matchdict['scsi_id']
@@ -128,7 +146,7 @@ def get_scsi_dev(request):
     return scsi_dev
 
 
-# http://192.168.1.10:6543/storlever/api/v1/scsi_list/{scsi_id}/smart
+# http://192.168.1.10:6543/storlever/api/v1/block/scsi_list/{scsi_id}/smart
 @get_view(route_name='scsi_dev_smart')
 def get_scsi_dev_smartinfo(request):
     scsi_id = request.matchdict['scsi_id']
@@ -142,7 +160,7 @@ scsi_dev_smart_schema = Schema({
     Optional("offline_auto"): BoolVal(),
     DoNotCare(str): object  # for all those key we don't care
 })
-# curl -v -X PUT  -d smart="true/false" -d offline_auto="true/false" http://192.168.1.10:6543/storlever/api/v1/scsi_list/2:0:0:0/smart
+# curl -v -X PUT  -d smart="true/false" -d offline_auto="true/false" http://192.168.1.10:6543/storlever/api/v1/block/scsi_list/2:0:0:0/smart
 @put_view(route_name='scsi_dev_smart')
 def set_scsi_dev_smart(request):
     scsi_id = request.matchdict['scsi_id']
@@ -153,7 +171,6 @@ def set_scsi_dev_smart(request):
     offline_set = params.get("offline_auto", None),
     scsi_dev_info.set_smart_config(smart_set,offline_set)
     return Response(status=200)
-
 
 @get_view(route_name='adapter_list')
 def adapters_get(request):

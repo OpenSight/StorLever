@@ -62,7 +62,7 @@ def get_port_info(netif_info):
     return port_info
 
 
-#http://192.168.1.123:6543/storlever/api/v1/network/eth_listnetwork/eth_list
+#http://192.168.1.123:6543/storlever/api/v1/network/eth_list
 @get_view(route_name='eth_list')
 def network_get(request):
     eth_face = ifmgr.if_mgr()
