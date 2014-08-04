@@ -91,7 +91,7 @@ def get_system_localhost(request):
 
 local_host_schema = Schema({
     Optional("hostname"): Use(str),     # name should be string
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -120,7 +120,7 @@ def system_cpu_list_get(request):
 
 cpu_persent_schema = Schema({
     Optional("interval"): Default(Use(float), default=1),      # name should be string
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 @get_view(route_name='cpu_percent')
@@ -360,7 +360,7 @@ user_info_schema = Schema({
     Optional("groups"):Use(unicode),
     Optional("home_dir"): Use(unicode),
     Optional("login"): BoolVal(),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -417,7 +417,7 @@ def get_group_list(request):
 group_info_schema = Schema({
     "name": Use(unicode),     # name should be string
     Optional("gid"): Use(int),  # uid must int
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -476,7 +476,7 @@ service_mod_schema = Schema({
     Optional("restart"): BoolVal(),  # restart must bool
     Optional("auto_start"): BoolVal(),  # auto_start must bool
     Optional("reload"): BoolVal(),  # reload must bool
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -614,7 +614,7 @@ def get_selinux_state(request):
 selinux_mod_schema = Schema({
     "state": Default(StrRe(r"^(enforcing|permissive|disabled)$"),
                      default="permissive"),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 

@@ -98,7 +98,7 @@ port_mod_schema = Schema({
     Optional("ip"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"),  # ip addr
     Optional("netmask"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"),  # netmask addr
     Optional("gateway"): StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), # gateway addr
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -118,7 +118,7 @@ def modify_single_port(request):
 
 port_op_schema = Schema({
     Optional("opcode"): StrRe(r"^(enable|disable)$"),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 #curl -v -X POST -d opcode=disable  http://192.168.1.123:6543/storlever/api/v1/network/eth_list/eth0/op
@@ -160,7 +160,7 @@ bond_add_schema = Schema({
     Optional("ip"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # ip addr
     Optional("netmask"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # netmask addr
     Optional("gateway"): Default(StrRe(r"^(|\d+\.\d+\.\d+\.\d+)$"), default=""),  # gateway addr
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 #curl -v -X POST -d ifs=eth0,eth1 -d ip=192.168.1.123 -d netmask=255.255.255.0 -d mode=1 -d miimon=1000 -d gateway=192.168.1.1 http://192.168.1.123:6543/storlever/api/v1/network/bond/bond_list
@@ -196,7 +196,7 @@ def get_bond_port_info(request):
 bond_mod_schema = Schema({
     Optional("mode"): IntVal(0, 6),
     Optional("miimon"): IntVal(0, 65535),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -239,7 +239,7 @@ def get_dns(request):
 
 dns_mod_schema = Schema({
     Optional("servers"): Default(ListVal(StrRe(r"^(\d+\.\d+\.\d+\.\d+)$")), default=[]),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
 
@@ -266,7 +266,7 @@ host_list_schema = Schema([{
 
     Optional("alias"): Default(Use(str), default=""),
 
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 }])
 
 @put_view(route_name='host_list')

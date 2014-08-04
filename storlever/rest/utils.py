@@ -87,7 +87,7 @@ ntp_server_list_schema = Schema([{
     Optional("flag3"): Default(IntVal(min=0, max=1), default=0),
     Optional("flag4"): Default(IntVal(min=0, max=1), default=0),
 
-    DoNotCare(str): object  # for all other key we don't care
+    DoNotCare(Use(str)): object  # for all other key we don't care
 }])
 
 @put_view(route_name='ntp_server_list')
@@ -138,7 +138,7 @@ ntp_restrict_list_schema = Schema([{
     # by	remote event logging programs
     Optional("notrap"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): object  # for all other key we auto delete
+    DoNotCare(Use(str)): object  # for all other key we auto delete
 
 }])
 
@@ -175,7 +175,7 @@ mail_conf_schema=Schema({
     Optional("password"):  Use(str),
 
 
-    DoNotCare(str): object  # for all other key we auto delete
+    DoNotCare(Use(str)): object  # for all other key we auto delete
 })
 
 @put_view(route_name='mail_conf')
@@ -199,7 +199,7 @@ send_mail_schema=Schema({
 
     Optional("debug"): Default(BoolVal(), default=False),
 
-    DoNotCare(str): object  # for all other key we auto delete
+    DoNotCare(Use(str)): object  # for all other key we auto delete
 })
 
 
@@ -246,7 +246,7 @@ smartd_monitor_list_schema = Schema([{
     # if this option is empty, no schedule test at all
     Optional("schedule_regexp"): Default(StrRe(r"^\S*$"), default=""),
 
-    DoNotCare(str): object  # for all other key we don't care
+    DoNotCare(Use(str)): object  # for all other key we don't care
 
 }])
 
@@ -275,7 +275,7 @@ zabbix_conf_schema=Schema({
     # will be attempted after 60 seconds.
     Optional("refresh_active_check"): IntVal(min=60, max=3600),
 
-    DoNotCare(str): object  # for all other key we don't care
+    DoNotCare(Use(str)): object  # for all other key we don't care
 })
 
 @put_view(route_name='zabbix_conf')
