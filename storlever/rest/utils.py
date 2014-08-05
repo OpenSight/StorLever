@@ -21,6 +21,7 @@ from storlever.mngr.utils import ntpmgr
 from storlever.mngr.utils import mailmgr
 from storlever.mngr.utils import smartdmgr
 from storlever.mngr.utils import zabbixagent
+from storlever.mngr.utils import snmpagent
 from storlever.rest.common import get_params_from_request
 
 def includeme(config):
@@ -35,11 +36,16 @@ def includeme(config):
     config.add_route('smartd_monitor_list', '/utils/smartd/monitor_list')
 
     config.add_route('zabbix_conf', '/utils/zabbix/conf')
-    config.add_route('zabbix_active_server_list', '/utils/zabbix/active_server_list')
-    config.add_route('zabbix_passive_server_list', '/utils/zabbix/passive_server_list')
+    config.add_route('zabbix_active_server_list', '/utils/zabbix_agent/active_server_list')
+    config.add_route('zabbix_passive_server_list', '/utils/zabbix_agent/passive_server_list')
 
 
-
+    config.add_route('snmp_agent_conf', '/utils/snmp_agent/conf')
+    config.add_route('snmp_agent_community_list', '/utils/snmp_agent/community_list')
+    config.add_route('snmp_agent_community_info', '/utils/snmp_agent/community_list/{community_name}')
+    config.add_route('snmp_agent_monitor_list', '/utils/snmp_agent/monitor_list')
+    config.add_route('snmp_agent_monitor_info', '/utils/snmp_agent/monitor_list/{monitor_name}')
+    config.add_route('snmp_agent_trap_sink_list', '/utils/snmp_agent/trap_sink_list')
 
 @get_view(route_name='ntp_server_list')
 def get_ntp_server_list(request):
@@ -169,10 +175,10 @@ mail_conf_schema=Schema({
     Optional("email_addr"):  StrRe(r"^(|\w+([-+.]\w+)*@\w+([-.]\w+)*)$"),
 
     # smtp server address or domain name to send the mail
-    Optional("smtp_server"):  Use(str),
+    Optional("smtp_server"):  StrRe(r"^\S*$"),
 
     # password for the account
-    Optional("password"):  Use(str),
+    Optional("password"):  StrRe(r"^\S*$"),
 
 
     DoNotCare(Use(str)): object  # for all other key we auto delete
@@ -317,4 +323,271 @@ def put_zabbix_passive_server_list(request):
     zabbix_agent = zabbixagent.ZabbixAgentManager
     server_list_conf = get_params_from_request(request, zabbix_passive_server_list_schema)
     zabbix_agent.set_passive_check_server_list(server_list_conf, operator=request.client_addr)
+    return Response(status=200)
+
+
+
+snmp_conf_schema = Schema({
+
+    # set the system location,  system  contact  or  system  name  (sysLocation.0,
+    # sysContact.0  and  sysName.0)  for the agent respectively.  Ordinarily these
+    # objects are writeable via suitably authorized SNMP SET  requests if these object
+    # are empty,  However, specifying one of these directives makes the corresponding object read-only,
+    # and attempts to SET it will result in a notWritable error response.
+    Optional("sys_location"): StrRe(r"^\S*$"),
+    Optional("sys_contact"):  StrRe(r"^\S*$"),
+    Optional("sys_name"):  StrRe(r"^\S*$"),
+
+    # defines  a  list  of  listening addresses(separated by commas), on which to receive incoming SNMP
+    # requests.  See the section LISTENING ADDRESSES in the snmpd(8)  manual  page
+    # for more information about the format of listening addresses.
+    # if it's empty, it would be the default address and port
+    Optional("agent_address"):  StrRe(r"^\S*$"),
+
+    # specifies  the  default  SNMPv3  username,  to  be used when making internal
+    # queries to retrieve any necessary information  (either  for  evaluating  the
+    # monitored  expression,  or building a notification payload).  These internal
+    # queries always use SNMPv3, even if normal querying  of  the  agent  is  done
+    # using SNMPv1 or SNMPv2c.
+    Optional("iquery_sec_name"): StrRe(r"^\S*$"),
+
+    # monitor the interface link up and down
+    Optional("link_up_down_notifications"): BoolVal(),
+
+    # enable the default monitors for system
+    Optional("default_monitors"):BoolVal(),
+
+    # system 1 minutes load max threshold for default load monitor,
+    # if it's 0, this monitor never report error
+    Optional("load_max"): Use(float),
+
+    # swap space min threshold for default memory monitor, in kB
+    Optional("swap_min"): Use(int),
+
+    # disk space min percent for the default disk usage monitor, 0 means never report error
+    Optional("disk_min_percent"): IntVal(0, 99),
+
+    DoNotCare(Use(str)): object  # for all other key we don't care
+})
+
+
+
+@get_view(route_name='snmp_agent_conf')
+def get_snmp_agent_conf(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_basic_conf()
+
+@put_view(route_name='snmp_agent_conf')
+def put_snmp_agent_conf(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    snmp_conf = get_params_from_request(request, snmp_conf_schema)
+    snmp_agent.set_basic_conf(snmp_conf, operator=request.client_addr)
+    return Response(status=200)
+
+
+
+
+
+@get_view(route_name='snmp_agent_community_list')
+def get_snmp_agent_community_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_community_list()
+
+
+
+snmp_community_schema = Schema({
+
+
+    "community_name": StrRe(r"^\S+$"),
+
+    # if set to True, it would be forced to resolve the host name to
+    # ipv6 address in DNS resolution
+    Optional("ipv6"):  BoolVal(),
+
+    # restrict  access from the specified source.
+    #  A restricted source  can either be a specific hostname (or address), or a subnet - repre-
+    # sented  as  IP/MASK  (e.g.  10.10.10.0/255.255.255.0),  or   IP/BITS   (e.g.
+    # 10.10.10.0/24), or the IPv6 equivalents.
+    # if it's empty, it would give access to any system, that means "global" range
+    Optional("source"): StrRe(r"^\S*$"),
+
+    #  this field restricts access for that community to  the
+    # subtree rooted at the given OID.
+    # if it's empty, the whole tree would be access
+    Optional("oid"): StrRe(r"^\S*$"),
+
+    # if set to True, this commnunity can only read the oid tree.
+    # Or, it can set the the oid tree
+    Optional("read_only"):  BoolVal(),
+
+    DoNotCare(Use(str)): object  # for all other key we don't care
+})
+
+
+@post_view(route_name='snmp_agent_community_list')
+def post_snmp_agent_community_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    new_community_conf = get_params_from_request(request, snmp_community_schema)
+    snmp_agent.add_community_conf(new_community_conf["community_name"],
+                                  new_community_conf.get("ipv6", False),
+                                  new_community_conf.get("source", ""),
+                                  new_community_conf.get("oid", ""),
+                                  new_community_conf.get("read_only", False),
+                                  operator=request.client_addr)
+
+    # generate 201 response
+    resp = Response(status=201)
+    resp.location = request.route_url('snmp_agent_community_info',
+                                      community_name=new_community_conf["community_name"])
+    return resp
+
+
+
+
+@get_view(route_name='snmp_agent_community_info')
+def get_snmp_agent_community_info(request):
+    community_name = request.matchdict['community_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_community_conf(community_name)
+
+
+
+
+@put_view(route_name='snmp_agent_community_info')
+def put_snmp_agent_community_info(request):
+    community_name = request.matchdict['community_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    community_info = get_params_from_request(request)
+    community_info["community_name"] = community_name
+    community_info = snmp_community_schema.validate(community_info)
+
+    snmp_agent.update_community_conf(community_name,
+                                     community_info.get("ipv6"),
+                                     community_info.get("source"),
+                                     community_info.get("oid"),
+                                     community_info.get("read_only"),
+                                     operator=request.client_addr)
+    return Response(200)
+
+@delete_view(route_name='snmp_agent_community_info')
+def delete_snmp_agent_community_info(request):
+    community_name = request.matchdict['community_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    snmp_agent.del_community_conf(community_name, operator=request.client_addr)
+    return Response(200)
+
+
+@get_view(route_name='snmp_agent_monitor_list')
+def get_snmp_agent_monitor_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_monitor_list()
+
+
+snmp_monitor_new_schema = Schema({
+
+    # monitor name
+    "monitor_name": StrRe(r"^\w+$"),
+
+    # options to control the monitor's behavior,
+    # see monitor options section of man snmpd.conf for more detail
+    Optional("option"): Default(StrRe(r"^\S*$"), ""),
+
+    # expression to check of this monitor,
+    #  see monitor expression of man snmpd.conf for more detail
+    "expression":  StrRe(r"^\S+$"),
+
+    DoNotCare(Use(str)): object  # for all other key we don't care
+})
+
+@post_view(route_name='snmp_agent_monitor_list')
+def post_snmp_agent_monitor_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    new_monitor_conf = get_params_from_request(request, snmp_monitor_new_schema)
+    snmp_agent.add_monitor_conf(new_monitor_conf["monitor_name"],
+                                new_monitor_conf["expression"],
+                                new_monitor_conf["option"],
+                                operator=request.client_addr)
+
+    # generate 201 response
+    resp = Response(status=201)
+    resp.location = request.route_url('snmp_agent_monitor_list',
+                                      monitor_name=new_monitor_conf["monitor_name"])
+    return resp
+
+
+
+@get_view(route_name='snmp_agent_monitor_info')
+def get_snmp_agent_monitor_info(request):
+    monitor_name = request.matchdict['monitor_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_monitor_conf(monitor_name)
+
+
+snmp_monitor_mod_schema = Schema({
+
+
+    # options to control the monitor's behavior,
+    # see monitor options section of man snmpd.conf for more detail
+    Optional("option"): StrRe(r"^\S*$"),
+
+    # expression to check of this monitor,
+    #  see monitor expression of man snmpd.conf for more detail
+    Optional("expression"):  StrRe(r"^\S+$"),
+
+    DoNotCare(Use(str)): object  # for all other key we don't care
+})
+
+@put_view(route_name='snmp_agent_monitor_info')
+def put_snmp_agent_monitor_info(request):
+    monitor_name = request.matchdict['monitor_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    monitor_info = get_params_from_request(request, snmp_monitor_mod_schema)
+
+    snmp_agent.update_monitor_conf(monitor_name,
+                                   monitor_info.get("expression"),
+                                   monitor_info.get("option"),
+                                   operator=request.client_addr)
+
+    return Response(200)
+
+@delete_view(route_name='snmp_agent_monitor_info')
+def delete_snmp_agent_monitor_info(request):
+    monitor_name = request.matchdict['monitor_name']
+    snmp_agent = snmpagent.SnmpAgentManager
+    snmp_agent.del_monitor_conf(monitor_name, operator=request.client_addr)
+    return Response(200)
+
+
+snmp_trap_sink_list_schema = Schema([{
+
+
+    # address of the host to which send the trap
+    "host": StrRe(r"^\S+$"),
+
+    # trap type, can only be set to trap/trap2/inform,
+    # which would send SNMPv1 TRAPs, SNMPv2c TRAP2s,
+    # or SNMPv2 INFORM notifications respectively
+    Optional("type"): Default(StrRe(r"^trap|trap2|inform$"), default="trap"),
+
+    # community name used by this sink
+    Optional("community"):  Default(StrRe(r"^\S+$"), default="public"),
+
+
+    DoNotCare(Use(str)): object  # for all other key we don't care
+
+
+}])
+
+
+@get_view(route_name='snmp_agent_trap_sink_list')
+def get_snmp_agent_trap_sink_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    return snmp_agent.get_trap_sink_list()
+
+
+@put_view(route_name='snmp_agent_trap_sink_list')
+def put_snmp_agent_trap_sink_list(request):
+    snmp_agent = snmpagent.SnmpAgentManager
+    new_sink_list = get_params_from_request(request, snmp_trap_sink_list_schema)
+    snmp_agent.set_trap_sink_list(new_sink_list, operator=request.client_addr)
     return Response(status=200)
