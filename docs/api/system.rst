@@ -116,7 +116,7 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     hostname    |  string  |   Yes    | The host name of the remote system. If absent, the host name   |
+    |     hostname    |  string  | Optional |   | The host name of the remote system. If absent, the host name   |
     |                 |          |          | would not be changed                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
@@ -201,7 +201,7 @@ Note: the response would return in your given interval time
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     interval    |  number  |   Yes    | The measure time in seconds. If absent, default to 1 sec       |
+    |     interval    |  number  | Optional | The measure time in seconds. If absent, default to 1 sec       |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
@@ -246,7 +246,7 @@ Note: the response would return in your given interval time
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     interval    |  number  |   Yes    | The measure time in seconds. If absent, default to 1 sec       |
+    |     interval    |  number  | Optional | The measure time in seconds. If absent, default to 1 sec       |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
@@ -444,7 +444,7 @@ administrator must restart the system to make it in effect
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     state       |  string  |   Yes    | can only be enforcing|permissive|disabled. If absent,          |
+    |     state       |  string  | Optional | can only be enforcing|permissive|disabled. If absent,          |
     |                 |          |          | the state would not be changed                                 |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
@@ -523,7 +523,7 @@ This API is used to set the date and time in the system
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     datetime    |  string  |   No     | date and time in ISO format, e.g YYYY-MM-DDThh:mm:ss[+HHMM]    |
+    |     datetime    |  string  | Required | date and time in ISO format, e.g YYYY-MM-DDThh:mm:ss[+HHMM]    |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
@@ -1088,7 +1088,7 @@ This API is used to back up the configuration to the specific path in the system
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     file        |  string  |   No     | The file path name to save the configuration, it would be of   |
+    |     file        |  string  | Required | The file path name to save the configuration, it would be of   |
     |                 |          |          | form of tar.gz                                                 |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
@@ -1133,7 +1133,7 @@ This file must exists and should be the back up from StorLever before
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     file        |  string  |   No     | The file path to restore from                                  |
+    |     file        |  string  | Required | The file path to restore from                                  |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
@@ -1254,25 +1254,25 @@ This API is used to add a new user to the system
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     name        |  string  |   No     | new user name                                                  |
+    |     name        |  string  | Required | new user name                                                  |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     uid         |  int     |   Yes    | new user's uid. Default is a system auto-increment value       |
+    |     uid         |  int     | Optional | new user's uid. Default is a system auto-increment value       |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     password    |  string  |   Yes    | new user's password. Default is empty                          |
+    |     password    |  string  | Optional | new user's password. Default is empty                          |
     +-----------------+----------+----------+----------------------------------------------------------------+	
-    |     comment     |  string  |   Yes    | new user's description. Default is empty                       |
+    |     comment     |  string  | Optional | new user's description. Default is empty                       |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |  primary_group  |  string  |   Yes    | new user's primary group name. Default is the same with user   |
+    |  primary_group  |  string  | Optional | new user's primary group name. Default is the same with user   |
     |                 |          |          | name                                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+	
-    |     groups      |  string  |   Yes    | This option contains the names (comma-separated) of the other  |
+    |     groups      |  string  | Optional | This option contains the names (comma-separated) of the other  |
     |                 |          |          | groups which includes the new user. Default is empty,          |
     |                 |          |          | means no other group include that user                         |
     +-----------------+----------+----------+----------------------------------------------------------------+	
-    |     home_dir    |  string  |   Yes    | new user's home directory. Default is system default position  |
+    |     home_dir    |  string  | Optional | new user's home directory. Default is system default position  |
     |                 |          |          | (like /home/[user_name] in most Linux distribution)            |	
     +-----------------+----------+----------+----------------------------------------------------------------+	
-    |     login       |  bool    |   Yes    | The new user can login the system or not. For system user used |
+    |     login       |  bool    | Optional | The new user can login the system or not. For system user used |
     |                 |          |          | by some service daemon, it should be false to prevent them     |
     |                 |          |          | from login. Default is True                                    |
     +-----------------+----------+----------+----------------------------------------------------------------+	
@@ -1322,22 +1322,22 @@ This API is used to modify a user info in the system, the given user must exists
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     name        |  string  |   No     | user name                                                      |
+    |     name        |  string  | Required | user name                                                      |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     uid         |  int     |   Yes    | user's uid. Default is unchanged                               |
+    |     uid         |  int     | Optional | user's uid. Default is unchanged                               |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     password    |  string  |   Yes    | user's password. Default is unchanged                          |
+    |     password    |  string  | Optional | user's password. Default is unchanged                          |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     comment     |  string  |   Yes    | user's description. Default is unchanged                       |
+    |     comment     |  string  | Optional | user's description. Default is unchanged                       |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |  primary_group  |  string  |   Yes    | user's primary group name. Default is unchanged                |
+    |  primary_group  |  string  | Optional | user's primary group name. Default is unchanged                |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     groups      |  string  |   Yes    | This option contains the names (comma-separated) of the other  |
+    |     groups      |  string  | Optional | This option contains the names (comma-separated) of the other  |
     |                 |          |          | groups which includes the user. Default is unchanged           |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     home_dir    |  string  |   Yes    | user's home directory. Default is unchanged                    |
+    |     home_dir    |  string  | Optional | user's home directory. Default is unchanged                    |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     login       |  bool    |   Yes    | The user can login the system or not. Default is unchanged     |
+    |     login       |  bool    | Optional | The user can login the system or not. Default is unchanged     |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 4. Status Code
@@ -1491,9 +1491,9 @@ This API is used to add a new group to the system
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     name        |  string  |   No     | new group name                                                 |
+    |     name        |  string  | Required | new group name                                                 |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     gid         |  int     |   Yes    | new group's gid. Default is a system auto-increment value      |
+    |     gid         |  int     | Optional | new group's gid. Default is a system auto-increment value      |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
 
@@ -1663,15 +1663,15 @@ This API is used to control the service, like start/stop/restart/reload
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     state       |  bool    |   Yes    | If True, start the service. If False, stop the service.        |
+    |     state       |  bool    | Optional | If True, start the service. If False, stop the service.        |
     |                 |          |          | Default is no effect                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     restart     |  bool    |   Yes    | If True, restart the service. If False or absent, no effect    |
+    |     restart     |  bool    | Optional | If True, restart the service. If False or absent, no effect    |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |     reload      |  bool    |   Yes    | If True, reload the configuration of the service.              |
+    |     reload      |  bool    | Optional | If True, reload the configuration of the service.              |
     |                 |          |          | If False or absent, no effect                                  |
     +-----------------+----------+----------+----------------------------------------------------------------+
-    |    auto_start   |  bool    |   Yes    | Set the auto-start state on boot. Default is no change         |
+    |    auto_start   |  bool    | Optional | Set the auto-start state on boot. Default is no change         |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
     It should be only one field presented for state, restart, reload 
