@@ -121,7 +121,7 @@ ntp_restrict_list_schema = Schema([{
     # mask the restrict_addr to indicate the network address.
     # for ipv4, is xxx.xxx.xxx.xxx. for ipv6 is xxxx:xxxx:xxxx::
     # default is empty, which is equal to 255.255.255.255
-    Optional("mask"): Default(Use(str), default=""),
+    Optional("mask"): Default(StrRe(r"^\S*$"), default=""),
 
 
     # Deny packets of all kinds,	including ntpq(8) and ntpdc(8) queries
@@ -467,14 +467,14 @@ def put_snmp_agent_community_info(request):
                                      community_info.get("oid"),
                                      community_info.get("read_only"),
                                      operator=request.client_addr)
-    return Response(200)
+    return Response(status=200)
 
 @delete_view(route_name='snmp_agent_community_info')
 def delete_snmp_agent_community_info(request):
     community_name = request.matchdict['community_name']
     snmp_agent = snmpagent.SnmpAgentManager
     snmp_agent.del_community_conf(community_name, operator=request.client_addr)
-    return Response(200)
+    return Response(status=200)
 
 
 @get_view(route_name='snmp_agent_monitor_list')
@@ -490,11 +490,11 @@ snmp_monitor_new_schema = Schema({
 
     # options to control the monitor's behavior,
     # see monitor options section of man snmpd.conf for more detail
-    Optional("option"): Default(StrRe(r"^\S*$"), ""),
+    Optional("option"): Default(Use(str), default=""),
 
     # expression to check of this monitor,
     #  see monitor expression of man snmpd.conf for more detail
-    "expression":  StrRe(r"^\S+$"),
+    "expression":  Use(str),
 
     DoNotCare(Use(str)): object  # for all other key we don't care
 })
@@ -510,7 +510,7 @@ def post_snmp_agent_monitor_list(request):
 
     # generate 201 response
     resp = Response(status=201)
-    resp.location = request.route_url('snmp_agent_monitor_list',
+    resp.location = request.route_url('snmp_agent_monitor_info',
                                       monitor_name=new_monitor_conf["monitor_name"])
     return resp
 
@@ -528,11 +528,11 @@ snmp_monitor_mod_schema = Schema({
 
     # options to control the monitor's behavior,
     # see monitor options section of man snmpd.conf for more detail
-    Optional("option"): StrRe(r"^\S*$"),
+    Optional("option"): Use(str),
 
     # expression to check of this monitor,
     #  see monitor expression of man snmpd.conf for more detail
-    Optional("expression"):  StrRe(r"^\S+$"),
+    Optional("expression"):  Use(str),
 
     DoNotCare(Use(str)): object  # for all other key we don't care
 })
@@ -548,14 +548,14 @@ def put_snmp_agent_monitor_info(request):
                                    monitor_info.get("option"),
                                    operator=request.client_addr)
 
-    return Response(200)
+    return Response(status=200)
 
 @delete_view(route_name='snmp_agent_monitor_info')
 def delete_snmp_agent_monitor_info(request):
     monitor_name = request.matchdict['monitor_name']
     snmp_agent = snmpagent.SnmpAgentManager
     snmp_agent.del_monitor_conf(monitor_name, operator=request.client_addr)
-    return Response(200)
+    return Response(status=200)
 
 
 snmp_trap_sink_list_schema = Schema([{
