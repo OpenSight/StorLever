@@ -71,31 +71,94 @@ var MenuList = Class.extend({
             sub_nodes: []
         }]
     }],
+    prefix: '.menu-list-',
+    type: ['root', 'intermediate', 'leaf'],
+    activedClass: 'active',
+    content: '#contentContainer',
     init: function(){
         _this = this;
         app.controller('MenuList', function($scope, $http) {
             $http.get("/menu_list").success(function(data, status, headers, config) {
                 _this.data = data;
                 $scope.roots = data;
-                _this.active(0);
+                // scope.roots = data;
+                _this.activeFirstChild(data);
+                _this.scope.intermediates = data[0].sub_nodes;
             });
         });
 
-        app.controller('MenuListInter', function($scope) {
+        app.controller('MenuListInter', function($scope, $http) {
             _this.scope = $scope;
+            _this.http = $http;
         });
 
         this.on();
         return this;
     },
-    on: function(){},
-    active: function(index){
-        this.scope.intermediates = this.data[index].sub_nodes;
+    on: function(){
+        // var selector = this.prefix + this.type.join(',' + this.prefix);
+        $('#menuList').on('click', 'li', this, function(e){
+            e.data.active(this);
+        });
+        $('#menuListIntermediate').on('click', 'li', this, function(e){
+            e.data.active(this);
+            e.stopPropagation();
+        });
         return this;
     },
-    activeIntermediates: function(){},
-    activeLeaf: function(){},
-    activeFirstChild: function(){}
+    active: function(el){
+        var id = $(el).attr('id');
+        var node = this.findNode(id, this.data);
+        if (null === node){
+            return this;
+        }
+        // if ('root' === node.node_type){
+        //     this.scope.intermediates = node.sub_nodes;
+        // }        
+
+        var cls = this.prefix + node.node_type;
+        $(this.prefix + node.node_type).removeClass(this.activedClass);
+        $(el).addClass(this.activedClass);
+
+        this.laod(node).activeFirstChild(node.sub_nodes);
+
+        return this;
+    },
+    activeRoot: function(el){
+
+    },
+    activeFirstChild: function(nodes){
+        if (0 === nodes.length){
+            return this;
+        }
+        _this = this;
+        setTimeout(function() {
+            _this.active('#' + nodes[0].node_id);
+        }, 0);
+        return this;
+    },
+    findNode: function(id, data){
+        var node = null;
+        for (var i = 0, l = data.length; i < l; i++){
+            if (data[i].node_id === id){
+                return data[i];
+            }
+            node = this.findNode(id, data[i].sub_nodes);
+            if (null !== node){
+                return node;
+            }
+        }
+        return node;
+    },
+    laod: function(node){
+        if ('' === node.uri){
+            return this;
+        }
+        this.http.get(node.uri).success(function(data){
+            $('#contentContainer').html(data);
+        });
+        return this;
+    }
 });
 
 new MenuList();

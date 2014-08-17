@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Storlevel</title>
     <link rel="shortcut icon" href="${request.static_url('storlever:static/favicon.ico')}" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/css/index.css')}">
+    <link rel="stylesheet" href="${request.static_url('storlever:static/styles/bootstrap.min.css')}" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="${request.static_url('storlever:static/styles/index.css')}">
 </head>
 <body>
     <!-- Fixed navbar -->
@@ -23,8 +23,10 @@
             <a class="navbar-brand" href="#">Storlever</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" ng-controller="MenuList">
-                    <li ng-repeat="root in roots"><a href="#">{{root.text}}</a></li>
+                <ul class="nav navbar-nav" id="menuList" ng-controller="MenuList">
+                    <li ng-repeat="root in roots" class="menu-list-{{root.node_type}}" id="{{root.node_id}}">
+                        <a href="#">{{root.text}}</a>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a>注销</a></li>
@@ -36,16 +38,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                <ul class="list-group" ng-controller="MenuListInter" id="menu-list-intermediate">
-                    <li class="list-group-item" ng-repeat="intermediate in intermediates">
+                <ul class="list-group" ng-controller="MenuListInter" id="menuListIntermediate">
+                    <li ng-repeat="intermediate in intermediates" class="list-group-item menu-list-{{intermediate.node_type}}" id="{{intermediate.node_id}}">
                         <a href="#"><h4>{{intermediate.text}}</h4></a>
                         <ul class="nav nav-list">
-                            <li ng-repeat="leaf in intermediate.sub_nodes track by $index"><a href="#">{{leaf.text}}</a></li>
+                            <li ng-repeat="leaf in intermediate.sub_nodes track by $index" class="menu-list-{{leaf.node_type}}" id="{{leaf.node_id}}">
+                                <a href="#">{{leaf.text}}</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9" id="contentContainer">
                 <div class="tabbable" id="tabs-64902">
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -68,10 +72,10 @@
         </div>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${request.static_url('storlever:static/js/jquery-2.1.1.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/scripts/jquery-2.1.1.min.js')}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${request.static_url('storlever:static/js/bootstrap.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/index.js')}"></script>
+    <script src="${request.static_url('storlever:static/scripts/bootstrap.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/scripts/angular.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/scripts/index.js')}"></script>
   </body>
 </html>
