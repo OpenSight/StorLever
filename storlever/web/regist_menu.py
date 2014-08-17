@@ -58,4 +58,3 @@ def regist_system(mgr):
     mgr.add_leaf_node("LEAF_NODE_SNMP", "INTER_NODE_Tools", leaf_text, "")
     leaf_text = _("Zabbix")
     mgr.add_leaf_node("LEAF_NODE_Zabbix", "INTER_NODE_Tools", leaf_text, "")
-    
