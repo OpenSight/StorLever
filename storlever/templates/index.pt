@@ -50,7 +50,7 @@
                 </ul>
             </div>
             <div class="col-md-9" id="contentContainer">
-                <div class="tabbable" id="tabs-64902">
+                <!-- <div class="tabbable" id="tabs-64902">
                     <ul class="nav nav-tabs">
                         <li class="active">
                             <a href="#panel-931479" data-toggle="tab">第一部分</a>
@@ -67,7 +67,7 @@
                             <p>第二部分内容.</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
