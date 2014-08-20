@@ -13,7 +13,10 @@ StorLever utils API has the following structure:
     * `1.4 Set NTP restrict list  <#14-set-ntp-restrict-list>`_
     * `1.5 Get NTP peer list  <#15-get-ntp-peer-list>`_
     
-* 2 Mail Management 
+* `2 Mail Management <#2-mail-management>`_
+    * `2.1 Get mail configuration <#21-get-mail-configuration>`_
+    * `2.2 Set mail configuration <#22-set-mail-configruation>`_
+    * `2.3 Send test mail <#23-send-test-mail>`_
 
 * 3 SMARTD Management
 
@@ -290,5 +293,152 @@ This API is used to retrieve all the remote NTP server peer status which the loc
 7. Example 
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/ntp/peer_list
+ 
+ 
+2 Mail Management 
+------------------
+
+The following operations are used to configure the email sending system (mailx) of system
+
+2.1 Get mail configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the configuration of the mail sending agent (mailx). 
+Mail sending agent (mailx) is used to send the mail of the system warning info to administrator for other subsystem of system
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/mail/conf
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe the mail sending agent configuration. 
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/mail/conf
+ 
+ 
+2.2 Set mail configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the configuration of the mail sending agent (mailx). 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/mail/conf
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |  email_addr     |  string  | Optional | The email address, like bob@company.com, from which the mail   |
+    |                 |          |          | is sent. And it also be the username of your SMTP server.      |
+    |                 |          |          | Default is unchange                                            |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  smtp_server    |  string  | Optional | SMTP server address.  AUTH LOGIN auth method is used           |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  password       |  string  | Optional | user's password for SMTP. Default is unchanged                 |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"email_addr":"bob@company.com", "smtp_server":"mail.company.com", "password":"bob"}' http://192.168.1.15:6543/storlever/api/v1/utils/mail/conf
+ 
+
+2.3 Send test mail 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to send a test email to verify whether mail configuration is correct or not
+
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/mail/send_mail
+
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |  to             |  string  | Required | The email address to send the mail                             |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  subject        |  string  | Required | Email subject                                                  |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  content        |  string  | Optional | mail' content. Default is empty                                |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  debug          |  bool    | Optional | Enable debug mode or not. If enabled, the response would       |
+    |                 |          |          | contain the debug message for sending this mail. Default is    |
+    |                 |          |          | false                                                          |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe the debug output message for sending this mail. 
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"to":"bob@company.com", "subject":"test"}' http://192.168.1.15:6543/storlever/api/v1/utils/mail/send_mail
+ 
+
+ 
+ 
+ 
  
  

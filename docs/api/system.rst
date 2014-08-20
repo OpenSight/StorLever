@@ -116,7 +116,7 @@ and the new name would be add to hosts list with 127.0.0.1 automatically
     +-----------------+----------+----------+----------------------------------------------------------------+
     |    Fields       |   Type   | Optional |                            Meaning                             |
     +=================+==========+==========+================================================================+
-    |     hostname    |  string  | Optional |   | The host name of the remote system. If absent, the host name   |
+    |     hostname    |  string  | Optional | The host name of the remote system. If absent, the host name   |
     |                 |          |          | would not be changed                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+
 
