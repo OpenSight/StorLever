@@ -194,7 +194,7 @@ def get_scsi_dev_smartinfo(request):
 scsi_dev_smart_schema = Schema({
     Optional("smart"): BoolVal(),
     Optional("offline_auto"): BoolVal(),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object  # for all those key we don't care
 })
 # curl -v -X PUT  -d smart="true/false" -d offline_auto="true/false" http://192.168.1.10:6543/storlever/api/v1/block/scsi_list/2:0:0:0/smart
 @put_view(route_name='scsi_dev_smart')

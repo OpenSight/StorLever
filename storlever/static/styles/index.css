@@ -1,0 +1,18 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 30px;
+}
+.first-container{
+    /*margin-top: 100px;*/
+}
+
+.menu-list-intermediate.active, 
+.menu-list-intermediate.active:hover, 
+.menu-list-intermediate.active:focus{
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #333;
+}
+.menu-list-leaf.active{
+    background-color: #eee;
+}
