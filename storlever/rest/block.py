@@ -71,7 +71,7 @@ def block_get(request):
 
 block_clean_meta_schema = Schema({
     Optional("opt"): StrRe(r"^(clean_meta|flush_buf)$"),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object   # for all those key we don't care
 })
 
 # curl -v -X put -d opt=clean_meta  'http://192.168.1.123:6543/storlever/api/v1/block/block_list/sdb'
@@ -145,7 +145,7 @@ scan_bus_schema = Schema({
     Optional("remove"): BoolVal(),
     Optional("force_rescan"): BoolVal(),
     Optional("force_remove"): BoolVal(),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object   # for all those key we don't care
 })
 # curl -v -X put -d opt=re_scan  http://192.168.1.10:6543/storlever/api/v1/block/scsi/scan_bus
 @put_view(route_name='scan_bus')
