@@ -28,7 +28,7 @@ def setLevel(lvl):
     logger.setLevel(lvl)
 
 
-def log(lvl, log_type, msg, *args):
+def log(lvl, log_type, msg, *args, **kwargs):
     """emit a log record to storlever's logger
 
     arg:
@@ -39,5 +39,5 @@ def log(lvl, log_type, msg, *args):
 
     """
     log_type_str = "[%s] " % log_type
-    logger.log(lvl, log_type_str + msg, *args)
+    logger.log(lvl, log_type_str + msg, *args, **kwargs)
 
