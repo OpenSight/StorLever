@@ -14,9 +14,11 @@ def includeme(config):
     config.add_route('block_list', '/block/block_list')
     config.add_route('block', '/block/block_list/{block}')
     config.add_route('block_opt', '/block/block_list/{block}/opt')
-    config.add_route('scsi_list', '/block/scsi_list')
-    config.add_route('scsi_dev', '/block/scsi_list/{scsi_id}')
-    config.add_route('scsi_dev_smart', '/block/scsi_list/{scsi_id}/smart')
+    config.add_route('dev_list', '/block/scsi/dev_list')
+    config.add_route('dev_host_list', '/block/scsi/host_list')
+    config.add_route('scan_bus', '/block/scsi/scan_bus')
+    config.add_route('scsi_dev', '/block/scsi/dev_list/{scsi_id}')
+    config.add_route('scsi_dev_smart', '/block/scsi/dev_list/{scsi_id}/smart')
     # adapter list resource (HBA, raid controller etc)
     # GET:    adapter list
     config.add_route('adapter_list', '/block/adapter_list')
@@ -69,7 +71,7 @@ def block_get(request):
 
 block_clean_meta_schema = Schema({
     Optional("opt"): StrRe(r"^(clean_meta|flush_buf)$"),
-    DoNotCare(str): object  # for all those key we don't care
+    DoNotCare(Use(str)): object   # for all those key we don't care
 })
 
 # curl -v -X put -d opt=clean_meta  'http://192.168.1.123:6543/storlever/api/v1/block/block_list/sdb'
@@ -101,8 +103,8 @@ def set_block_opt(request):
 
 
     
-# http://192.168.1.10:6543/storlever/api/v1/block/scsi_list
-@get_view(route_name='scsi_list')
+# http://192.168.1.10:6543/storlever/api/v1/block/scsi/dev_list
+@get_view(route_name='dev_list')
 def scsi_list_get(request):
     scsi_mgr =  scsimgr.scsi_mgr()
     scsi_list = scsi_mgr.get_scsi_dev_list()
@@ -125,7 +127,41 @@ def scsi_list_get(request):
     return scsi_list_dict
 
 
-# http://192.168.1.10:6543/storlever/api/v1/block/scsi_list/{scsi_id}
+# http://192.168.1.10:6543/storlever/api/v1/block/scsi/host_list
+@get_view(route_name='dev_host_list')
+def host_list_get(request):
+    scsi_mgr =  scsimgr.scsi_mgr()
+    scsi_list = scsi_mgr.get_scsi_host_list()
+    return scsi_list
+
+
+
+scan_bus_schema = Schema({                
+    Optional("opt"): StrRe(r"^(re_scan)$"),
+    Optional("host"): Default(ListVal(IntVal(0, 16)), default=[]),
+    Optional("channels"): Default(ListVal(IntVal(0, 1)), default=[]),
+    Optional("targets"): Default(ListVal(IntVal(0, 16)), default=[]),
+    Optional("luns"): Default(ListVal(IntVal(0, 7)), default=[]),
+    Optional("remove"): BoolVal(),
+    Optional("force_rescan"): BoolVal(),
+    Optional("force_remove"): BoolVal(),
+    DoNotCare(Use(str)): object   # for all those key we don't care
+})
+# curl -v -X put -d opt=re_scan  http://192.168.1.10:6543/storlever/api/v1/block/scsi/scan_bus
+@put_view(route_name='scan_bus')
+def scan_bus(request):
+    scsi_mgr =  scsimgr.scsi_mgr()
+    params = get_params_from_request(request, scan_bus_schema)
+    remove = params.get("remove", None),
+    force_rescan = params.get("force_rescan", None),
+    force_remove = params.get("force_remove", None),
+    if params['opt'] == "re_scan":  
+        scsi_mgr.rescan_bus(params['host'], params['channels'], params['targets'],\
+                             params['luns'],remove,force_rescan, force_remove)
+    return Response(status=200)
+
+
+# http://192.168.1.10:6543/storlever/api/v1/block/dev_list/{scsi_id}
 @get_view(route_name='scsi_dev')
 def get_scsi_dev(request):
     scsi_id = request.matchdict['scsi_id']
