@@ -35,7 +35,7 @@ def includeme(config):
 
     config.add_route('smartd_monitor_list', '/utils/smartd/monitor_list')
 
-    config.add_route('zabbix_conf', '/utils/zabbix/conf')
+    config.add_route('zabbix_conf', '/utils/zabbix_agent/conf')
     config.add_route('zabbix_active_server_list', '/utils/zabbix_agent/active_server_list')
     config.add_route('zabbix_passive_server_list', '/utils/zabbix_agent/passive_server_list')
 

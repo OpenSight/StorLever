@@ -15,13 +15,21 @@ StorLever utils API has the following structure:
     
 * `2 Mail Management <#2-mail-management>`_
     * `2.1 Get mail configuration <#21-get-mail-configuration>`_
-    * `2.2 Set mail configuration <#22-set-mail-configruation>`_
+    * `2.2 Set mail configuration <#22-set-mail-configuration>`_
     * `2.3 Send test mail <#23-send-test-mail>`_
 
-* 3 SMARTD Management
+* `3 SMARTD Management <#3-smartd-management>`_
+    * `3.1 Get monitor list <#31-get-monitor-list>`_
+    * `3.2 Set monitor list <#32-set-monitor-list>`_
 
-* 4 Zabbix Agent Management
-
+* `4 Zabbix Agent Management <#4-zabbix-agent-management>`_
+    * `4.1 Get basic configuration <#41-get-basic-configuration>`_
+    * `4.2 Set basic configuration <#42-set-basic-configuration>`_
+    * `4.3 Get active server list <#43-get-active-server-list>`_
+    * `4.4 Set active server list <#44-set-active-server-list>`_
+    * `4.5 Get passive server list <#45-get-passive-server-list>`_
+    * `4.6 Set passive server list <#46-set-passive-server-list>`_    
+    
 * 5 SNMP Agent Management
 
 
@@ -359,7 +367,7 @@ This API is used to set the configuration of the mail sending agent (mailx).
     +=================+==========+==========+================================================================+
     |  email_addr     |  string  | Optional | The email address, like bob@company.com, from which the mail   |
     |                 |          |          | is sent. And it also be the username of your SMTP server.      |
-    |                 |          |          | Default is unchange                                            |
+    |                 |          |          | Default is unchanged                                           |
     +-----------------+----------+----------+----------------------------------------------------------------+
     |  smtp_server    |  string  | Optional | SMTP server address.  AUTH LOGIN auth method is used           |
     +-----------------+----------+----------+----------------------------------------------------------------+
@@ -438,7 +446,359 @@ This API is used to send a test email to verify whether mail configuration is co
  
 
  
+3 SMARTD Management
+----------------------
+
+The following operations are used to configure the SMART (Self-Monitoring, Analysis and Reporting Technology) daemon in system
+
+
+3.1 Get monitor list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve all monitor configuration entries of SMARTD 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/smartd/monitor_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list where its each entry is a JSON object describing one SMARTD monitor configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/smartd/monitor_list
+
+
+3.2 Set monitor list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the monitor configuration list of SMARTD
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/smartd/monitor_list
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON list where each entry is JSON object with the following definition: 
+
+    
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |      dev        |  string  | Required | block device file path which would be SMART-enabled and        |
+    |                 |          |          | monitor. The device must exist in system and support SMART     |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     mail_to     |  string  | Optional | the (e)mail address to which smartd would send when a error is |
+    |                 |          |          | detected. To  send email to more than one user, please use the |
+    |                 |          |          | following "comma separated" form for the address: user1@add1,  |
+    |                 |          |          | user2@add2,...,userN@addN (with no spaces). Default is empty   |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    mail_test    |   bool   | Optional | test the mail. if true, send a single test email immediately   | 
+    |                 |          |          | upon smartd startup. This  allows one to verify that email is  |
+    |                 |          |          | delivered correctly Default is false.                          |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    mail_exec    |  string  | Optional | run the executable PATH instead of the default mail command.   |
+    |                 |          |          | if this list is empty, smartd would run the default            |
+    |                 |          |          | "/bin/mail" utility to send warning email to user in "mail_to" |
+    |                 |          |          | option. Otherwise, smartd would run the scripts in this        |
+    |                 |          |          | option. See man smartd.conf for more detail. Default is empty  |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    | schedule_regexp |  string  | Optional | Run Self-Tests or Offline Immediate Tests, at scheduled times. |
+    |                 |          |          | A Self or Offline Immediate Test will be run at the end of     |
+    |                 |          |          | periodic device polling, if all 12 characters of the string    |
+    |                 |          |          | T/MM/DD/d/HH match the extended regular expression REGEXP. See |
+    |                 |          |          | man smartd.conf for detail. if this option is empty, no        |
+    |                 |          |          | schedule test at all. Default is empty                         |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
  
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '[{"dev":"/dev/sda", "mail_to":"bob@company.com", "mail_test":true}]' http://192.168.1.15:6543/storlever/api/v1/utils/smartd/monitor_list
+ 
+ 
+ 
+ 
+4 Zabbix Agent Management
+----------------------
+
+The following operations are used to configure the Zabbix (www.zabbix.com) agent 
+
+
+4.1 Get basic configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+This API is used to retrieve the basic agent configure options in system
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/conf
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe the Zabbix agent basic configuration options. 
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/conf
+
+ 
+4.2 Set basic configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the basic configuration of the Zabbix agent. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/conf
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +----------------------+----------+----------+----------------------------------------------------------------+
+    |    Fields            |   Type   | Optional |                            Meaning                             |
+    +======================+==========+==========+================================================================+
+    |  hostname            |  string  | Optional | used for active check, this name must match the hostname set   |
+    |                      |          |          | in the active server. Default is unchanged. If it is empty,    |
+    |                      |          |          | system default hostname would be used                          |
+    +----------------------+----------+----------+----------------------------------------------------------------+
+    | refresh_active_check |   int    | Optional | How often list of active checks is refreshed, in seconds. Note |
+    |                      |          |          | that after failing to refresh active checks the next refresh   |
+    |                      |          |          | will be attempted after 60 seconds. Valid range is 60~3600.    |
+    |                      |          |          | Default is unchanged.                                          |
+    +----------------------+----------+----------+----------------------------------------------------------------+
+
+
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"hostname":"test_agent1"}' http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/conf    
+ 
+
+4.3 Get active server list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve active server address list of Zabbix agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/active_server_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list where its each entry is a address string of active server
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/active_server_list
+ 
+ 
+4.4 Set active server list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the active server address list of Zabbix agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/active_server_list
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON list where each entry is a IP address string of one active server. IP address format is IP:PORT, IP is also can be a DNS name.
+
+
+ 
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '["192.168.1.20:7890"]' http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/active_server_list
+ 
+ 
+ 
+
+4.5 Get passive server list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve passive server address list of Zabbix agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/passive_server_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list where its each entry is a address string of active server
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/passive_server_list
+ 
+ 
+4.6 Set passive server list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the passive server address list of Zabbix agent. 
+Passive server address is used to restrict which server can query/control Zabbix agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/zabbix_agent/passive_server_list
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON list where each entry is a IP address string of one pasive server. IP address format is xxx.xxx.xxx.xxx, but also can be a DNS name.
+
+
+ 
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '["192.168.1.20"]' http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/passive_server_list
  
  
  
