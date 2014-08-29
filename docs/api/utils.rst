@@ -30,7 +30,21 @@ StorLever utils API has the following structure:
     * `4.5 Get passive server list <#45-get-passive-server-list>`_
     * `4.6 Set passive server list <#46-set-passive-server-list>`_    
     
-* 5 SNMP Agent Management
+* `5 SNMP Agent Management <#5-snmp-agent-management>`_
+    * `5.1 Get basic configuration <#51-get-basic-configuration>`_
+    * `5.2 Set basic configuration <#52-set-basic-configuration>`_
+    * `5.3 Get community list <#53-get-community-list>`_
+    * `5.4 Get a community configuration <#54-get-a-community-configuration>`_
+    * `5.5 Add community <#55-add-community>`_
+    * `5.6 Modify community <#56-modify-community>`_
+    * `5.7 Delete community <#57-delete-community>`_
+    * `5.8 Get trap sink list <#58-get-trap-sink-list>`_
+    * `5.9 Set trap sink list <#59-set-trap-sink-list>`_
+    * `5.10 Get monitor list <#510-get-monitor-list>`_
+    * `5.11 Get a monitor configuration <#511-get-a-monitor-configuration>`_
+    * `5.12 Add monitor <#512-add-monitor>`_
+    * `5.13 Modify monitor <#513-modify-monitor>`_
+    * `5.14 Delete monitor <#514-delete-monitor>`_
 
 
 
@@ -799,6 +813,675 @@ Passive server address is used to restrict which server can query/control Zabbix
 7. Example 
 
     curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '["192.168.1.20"]' http://192.168.1.15:6543/storlever/api/v1/utils/zabbix_agent/passive_server_list
+
+    
+5 SNMP Agent Management 
+----------------------
+
+The following operations are used to manage the SNMP agent, SNMP agent of StorLever only support SNMP 2/2c, not support SNMP 3
+
+5.1 Get basic configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
+This API is used to retrieve the basic agent configure options for SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/conf
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe the SNMP agent basic configuration options. 
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/conf
+
+
+5.2 Set basic configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the basic configuration of the Zabbix agent. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/conf
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +------------------------------+----------+----------+----------------------------------------------------------------+
+    |    Fields                    |   Type   | Optional |                            Meaning                             |
+    +==============================+==========+==========+================================================================+
+    | sys_location                 |  string  | Optional | set the system location,  system  contact or system name       |
+    |                              |          |          | (sysLocation.0, sysContact.0  and  sysName.0).  for the agent  |
+    |                              |          |          | respectively.  Ordinarily these objects are writeable via      |
+    |                              |          |          | suitably authorized SNMP SET requests if these object are      |
+    |                              |          |          | empty,  However, specifying one of these directives makes the  |
+    |                              |          |          | corresponding object read-only, and attempts to SET it will    |
+    |                              |          |          | result in a notWritable error response. Default is unchanged   |
+    +------------------------------+----------+----------+----------------------------------------------------------------+
+    | sys_contact                  |  string  | Optional | Described above                                                |
+    +------------------------------+----------+----------+----------------------------------------------------------------+
+    | sys_name                     |  string  | Optional | Described above                                                |
+    +------------------------------+----------+----------+----------------------------------------------------------------+
+    | agent_address                |  string  | Optional | defines a list of listening addresses(separated by commas), on |
+    |                              |          |          | which to receive incoming SNMP requests.  See the section      |
+    |                              |          |          | LISTENING ADDRESSES in the snmpd(8)  manual  page for more     |
+    |                              |          |          | information about the format of listening addresses. If it's   |
+    |                              |          |          | empty, it would be the default address and port. Default is    |
+    |                              |          |          | unchanged                                                      |
+    +------------------------------+----------+----------+----------------------------------------------------------------+    
+    | iquery_sec_name              |  string  | Optional | specifies the default SNMPv3 username, to be used when making  |
+    |                              |          |          | internal queries to retrieve any necessary information (either |
+    |                              |          |          | for evaluating the monitored expression, or building a         |
+    |                              |          |          | notification payload). These internal queries always use       |
+    |                              |          |          | SNMPv3, even if normal querying  of  the  agent  is  done      |
+    |                              |          |          | using SNMPv1 or SNMPv2c. This option cannot be empty, default  |
+    |                              |          |          | is unchanged                                                   |
+    +------------------------------+----------+----------+----------------------------------------------------------------+      
+    | link_up_down_notifications   |  bool    | Optional | monitor the interface link up and down. Default is unchanged   |
+    +------------------------------+----------+----------+----------------------------------------------------------------+  
+    | default_monitors             |  bool    | Optional | enable the default monitors for system. Default is unchanged   |
+    +------------------------------+----------+----------+----------------------------------------------------------------+  
+    | load_max                     |  float   | Optional | system one minutes load max threshold for default load         |
+    |                              |          |          | monitor, if it's 0, this monitor never report error. Default   |
+    |                              |          |          | is unchanged                                                   |
+    +------------------------------+----------+----------+----------------------------------------------------------------+      
+    | swap_min                     |  int     | Optional | swap space min threshold for default memory monitor, in kB     |
+    +------------------------------+----------+----------+----------------------------------------------------------------+ 
+    | disk_min_percent             |  int     | Optional | disk space min percent for the default disk usage monitor,     |
+    |                              |          |          | 0 means never report error. Valid range is 0 ~ 99              |
+    +------------------------------+----------+----------+----------------------------------------------------------------+ 
+    
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"sys_name":"test_snmp_agent"}' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/conf  
  
+
+5.3 Get community list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the community configuration list of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list with each entry is a JSON object describing one community configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/community_list
+
+    
+5.4 Get a community configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve one community configuration info of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list/[community_name]
+
+    [community_name] is the name of the community to retrieve
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe this community configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/community_list/abc
+    
+    
+5.5 Add community
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to add a new community to SNMP
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list
+	
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    | community_name  |  string  | Required | new community name, SNMP client, which access this agent, must |
+    |                 |          |          | match community name                                           |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |      ipv6       |  bool    | Optional | if set to True, it would be forced to resolve the host name to |
+    |                 |          |          | ipv6 address in DNS resolution. Default is false               |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     source      |  string  | Optional | restrict access from the specified source.                     |
+    |                 |          |          | A restricted source can either be a specific hostname (or      |
+    |                 |          |          | address), or a subnet-represented as IP/MASK (e.g.             |
+    |                 |          |          | 10.10.10.0/255.255.255.0), or IP/BITS (e.g. 10.10.10.0/24), or |
+    |                 |          |          | the IPv6 equivalents. if it's empty, it would give access to   |
+    |                 |          |          | any system, that means "global" range. Default is empty.       |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+    |     oid         |  string  | Optional | this field restricts access for that community to  the subtree |
+    |                 |          |          | rooted at the given OID. if it's empty, the whole tree would   |
+    |                 |          |          | be access. Default is empty                                    |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  read_only      |  bool    | Optional | if set to true, this commnunity can only read the oid tree.    |
+    |                 |          |          | Or, it can set the the oid tree. Default is false              |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+
+
+4. Status Code
+
+    201      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    The following response header would be added
+
+    Location: [community_url]
+
+    [community_url] is the URL to retrieve the new community info
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"community_name":"abc"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list
+
+    
+    
+5.6 Modify community
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to modify a community configuration of SNMP agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list/[community_name]
+
+    [community_name] is the name of the community to modify
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |      ipv6       |  bool    | Optional | if set to True, it would be forced to resolve the host name to |
+    |                 |          |          | ipv6 address in DNS resolution. Default is unchanged           |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     source      |  string  | Optional | restrict access from the specified source.                     |
+    |                 |          |          | A restricted source can either be a specific hostname (or      |
+    |                 |          |          | address), or a subnet-represented as IP/MASK (e.g.             |
+    |                 |          |          | 10.10.10.0/255.255.255.0), or IP/BITS (e.g. 10.10.10.0/24), or |
+    |                 |          |          | the IPv6 equivalents. if it's empty, it would give access to   |
+    |                 |          |          | any system, that means "global" range. Default is unchanged.   |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+    |     oid         |  string  | Optional | this field restricts access for that community to  the subtree |
+    |                 |          |          | rooted at the given OID. if it's empty, the whole tree would   |
+    |                 |          |          | be access. Default is unchanged                                |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  read_only      |  bool    | Optional | if set to true, this commnunity can only read the oid tree.    |
+    |                 |          |          | Or, it can set the the oid tree. Default is unchanged          |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"read_only": true, "oid":".1.3"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list/abc
+    
+
+5.7 Delete community
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to delete a community of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list/[community_name]
+
+    [community_name] is the name of the community to delete
+
+2. HTTP Method
+    
+    DELETE
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X DELETE http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/community_list/abc
+    
+
+5.8 Get trap sink list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve all the trap sink configuration options of SNMP agent. 
+When a trap is trigger at SNMP agent, a trap notification would be sent to each host on this list
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/trap_sink_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list where its each entry is a JSON object describing one sink configuration    
+    
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/trap_sink_list
+
+
+5.9 Set trap sink list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to set the trap sink list of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/trap_sink_list
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON list where each entry is JSON object with the following definition: 
+
+    
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |     host        |  string  | Required | The host IP address                                            |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |     type        |  string  | Optional | trap type, can only be set to trap/trap2/inform, which would   |
+    |                 |          |          | send SNMPv1 TRAPs, SNMPv2c TRAP2s, or SNMPv2 INFORM            |
+    |                 |          |          | notifications respectively. Default is trap                    |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |   community     |  string  | Optional | community name used by this sink, which must match the         |
+    |                 |          |          | community setting of the remote host. Default is set to        |
+    |                 |          |          | "public"                                                       |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+
  
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '[{"host":"192.168.1.12", "type":"trap2", "community":"test"}]' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/trap_sink_list
+
+
+5.10 Get monitor list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve the monitor list of SNMP agent. Monitor is used to trigger SNMP trap of SNMP agent.
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON list with each entry is a JSON object describing one monitor configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/monitor_list
+
+
+5.11 Get a monitor configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve one monitor info of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list/[monitor_name]
+
+    [monitor_name] is the name of the monitor to retrieve
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe this monitor configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/monitor_list/test_monitor
+    
+    
+5.12 Add monitor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to add a new monitor to SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list
+	
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |  monitor_name   |  string  | Required | new monitor name                                               |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    option       |  string  | Optional | options to control the monitor's behavior, see monitor option  |
+    |                 |          |          | section of man snmpd.conf for more detail. Default is empty    |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  expression     |  string  | Required | expression to check of this monitor, see monitor expression of |
+    |                 |          |          | man snmpd.conf for more detail                                 |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+
+    
+
+4. Status Code
+
+    201      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    The following response header would be added
+
+    Location: [monitor_url]
+
+    [monitor_url] is the URL to retrieve the new monitor info
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"monitor_name":"test_monitor", "expression":".1.3.4"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list
+
+    
+    
+5.13 Modify monitor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to modify a monitor of SNMP agent.
+
+1. Resource URI
+
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list/[monitor_name]
+
+    [monitor_name] is the name of the monitor to retrieve
+
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |    Fields       |   Type   | Optional |                            Meaning                             |
+    +=================+==========+==========+================================================================+
+    |    option       |  string  | Optional | options to control the monitor's behavior, see monitor option  |
+    |                 |          |          | section of man snmpd.conf for more detail. Default is          |
+    |                 |          |          | unchanged.                                                     |
+    +-----------------+----------+----------+----------------------------------------------------------------+
+    |  expression     |  string  | Optional | expression to check of this monitor, see monitor expression of |
+    |                 |          |          | man snmpd.conf for more detail. Default is unchanged           |
+    +-----------------+----------+----------+----------------------------------------------------------------+	
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"expression":".1.3.8"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list/test_monitor
+
+
+5.14 Delete monitor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to delete a monitor of SNMP agent
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list/[monitor_name]
+
+    [monitor_name] is the name of the monitor to delete
+
+2. HTTP Method
+    
+    DELETE
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X DELETE http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/monitor_list/test_monitor
+  
+
+    
+    
+
+    
