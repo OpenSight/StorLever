@@ -349,7 +349,7 @@ snmp_conf_schema = Schema({
     # monitored  expression,  or building a notification payload).  These internal
     # queries always use SNMPv3, even if normal querying  of  the  agent  is  done
     # using SNMPv1 or SNMPv2c.
-    Optional("iquery_sec_name"): StrRe(r"^\S*$"),
+    Optional("iquery_sec_name"): StrRe(r"^\S+$"),
 
     # monitor the interface link up and down
     Optional("link_up_down_notifications"): BoolVal(),
