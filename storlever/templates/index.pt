@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Storlevel</title>
-    <link rel="shortcut icon" href="${request.static_url('storlever:static/favicon.ico')}" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/styles/bootstrap.min.css')}" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/styles/index.css')}">
+    <link rel="shortcut icon" href="${request.static_url('storlever:static/img/favicon.ico')}" />
+    <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="${request.static_url('storlever:static/css/app.css')}">
 </head>
-<body>
+<body ng-controller="MenuList">
     <!-- Fixed navbar -->
     <header  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container first-container">
@@ -23,8 +23,8 @@
             <a class="navbar-brand" href="#">Storlever</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" id="menuList" ng-controller="MenuList">
-                    <li ng-repeat="root in roots" class="menu-list-{{root.node_type}}" id="{{root.node_id}}">
+                <ul class="nav navbar-nav">
+                    <li ng-repeat="root in roots" class="menu-list-root" ng-click="activeNode(root.node_id, $event)" ng-class="{active: root.node_id===activeInfo[0]}">
                         <a href="#">{{root.text}}</a>
                     </li>
                 </ul>
@@ -38,18 +38,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                <ul class="list-group" ng-controller="MenuListInter" id="menuListIntermediate">
-                    <li ng-repeat="intermediate in intermediates" class="list-group-item menu-list-{{intermediate.node_type}}" id="{{intermediate.node_id}}">
-                        <a href="#"><h4>{{intermediate.text}}</h4></a>
+                <ul ng-repeat="root in roots" class="list-group menu-list-trunk" ng-class="{active: root.node_id===activeInfo[0]}">
+                    <li ng-repeat="branch in root.sub_nodes" class="list-group-item menu-list-branch" ng-click="activeNode(branch.node_id, $event)" ng-class="{active: branch.node_id===activeInfo[1]}">
+                        <a href="#"><h4>{{branch.text}}</h4></a>
                         <ul class="nav nav-list">
-                            <li ng-repeat="leaf in intermediate.sub_nodes track by $index" class="menu-list-{{leaf.node_type}}" id="{{leaf.node_id}}">
-                                <a href="#">{{leaf.text}}</a>
+                            <li ng-repeat="leaf in branch.sub_nodes track by $index" class="menu-list-leaf" id="{{leaf.node_id}}" ng-click="activeNode(leaf.node_id, $event)" ng-class="{active: leaf.node_id===activeInfo[2]}">
+                                <a href="#/{{leaf.node_id}}">{{leaf.text}}</a>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9" id="contentContainer">
+            <div class="col-md-9" id="contentContainer" ng-view>
                 <!-- <div class="tabbable" id="tabs-64902">
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -72,10 +72,15 @@
         </div>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${request.static_url('storlever:static/scripts/jquery-2.1.1.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/jquery-2.1.1.min.js')}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${request.static_url('storlever:static/scripts/bootstrap.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/scripts/angular.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/scripts/index.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/bootstrap.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/angular-route.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/app.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/services.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/filters.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/directives.js')}"></script>
   </body>
 </html>

@@ -6,9 +6,15 @@ body {
     /*margin-top: 100px;*/
 }
 
-.menu-list-intermediate.active, 
-.menu-list-intermediate.active:hover, 
-.menu-list-intermediate.active:focus{
+.menu-list-trunk{
+    display: none;
+}
+.menu-list-trunk.active{
+    display: block;
+}
+.menu-list-branch.active, 
+.menu-list-branch.active:hover, 
+.menu-list-branch.active:focus{
     background-color: #fff;
     border: 1px solid #ddd;
     color: #333;

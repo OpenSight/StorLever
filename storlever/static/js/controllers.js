@@ -1,11 +1,23 @@
-'use strict';
+(function() {
+    'use strict';
+    /* Controllers */
+    angular.module('app.controllers', []).controller('MyCtrl', ['$scope',
+        function($scope) {
 
-/* Controllers */
+        }
+    ]).controller('MenuList', ['$scope', 'MenuListFac', 
+        function($scope, MenuListFac) {
+            $scope.roots = MenuListFac.get();
 
-angular.module('myApp.controllers', [])
-  .controller('MyCtrl1', ['$scope', function($scope) {
+            $scope.activeNode = function(id, $event){
+                $scope.activeInfo = MenuListFac.activeNode(id);
+                if (undefined !== $event){
+                    $event.stopPropagation();
+                }
+                return false;
+            };
 
-  }])
-  .controller('MyCtrl2', ['$scope', function($scope) {
-
-  }]);
+            $scope.activeNode($scope.roots[0].node_id);
+        }
+    ]);
+})();
