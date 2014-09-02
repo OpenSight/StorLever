@@ -35,7 +35,7 @@ def includeme(config):
 
     config.add_route('smartd_monitor_list', '/utils/smartd/monitor_list')
 
-    config.add_route('zabbix_conf', '/utils/zabbix/conf')
+    config.add_route('zabbix_conf', '/utils/zabbix_agent/conf')
     config.add_route('zabbix_active_server_list', '/utils/zabbix_agent/active_server_list')
     config.add_route('zabbix_passive_server_list', '/utils/zabbix_agent/passive_server_list')
 
@@ -349,7 +349,7 @@ snmp_conf_schema = Schema({
     # monitored  expression,  or building a notification payload).  These internal
     # queries always use SNMPv3, even if normal querying  of  the  agent  is  done
     # using SNMPv1 or SNMPv2c.
-    Optional("iquery_sec_name"): StrRe(r"^\S*$"),
+    Optional("iquery_sec_name"): StrRe(r"^\S+$"),
 
     # monitor the interface link up and down
     Optional("link_up_down_notifications"): BoolVal(),
