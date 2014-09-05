@@ -205,7 +205,7 @@ send_mail_schema=Schema({
 
     Optional("debug"): Default(BoolVal(), default=False),
 
-    DoNotCare(Use(str)): object  # for all other key we auto delete
+    DoNotCare(Use(str)): object  # for all other key we don't care
 })
 
 

@@ -92,7 +92,7 @@ EXPORT_POINT_CONF_SCHEMA = Schema({
     "path": Use(str),
 
     # client list for this export point
-    "clients": Default([EXPORT_CLIENT_CONF_SCHEMA],default=[]),
+    Optional("clients"): Default([EXPORT_CLIENT_CONF_SCHEMA],default=[]),
 
     AutoDel(str): object  # for all other key we auto delete
 
