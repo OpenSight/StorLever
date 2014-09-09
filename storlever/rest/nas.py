@@ -181,7 +181,7 @@ def put_ftp_user_conf(request):
     ftp_mgr = ftpmgr.FtpManager
     user_conf = get_params_from_request(request)
     user_conf["user_name"] = user_name
-    user_conf = ftp_user_schema.validate(ftp_user_schema)
+    user_conf = ftp_user_schema.validate(user_conf)
 
     ftp_mgr.set_user_conf(user_conf["user_name"],
                           user_conf.get("login_enable"),

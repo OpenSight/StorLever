@@ -7,4 +7,5 @@ def includeme(config):
     config.include(__name__ + '.block')
     config.include(__name__ + '.fs')
     config.include(__name__ + '.utils')
+    config.include(__name__ + '.nas')
     config.scan()             # scan to register view callables, must be last statement
