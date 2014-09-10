@@ -392,12 +392,12 @@ def put_smb_conf(request):
 
 
 
+
+
 @get_view(route_name='smb_share_list')
 def get_smb_share_list(request):
     smb_mgr = smbmgr.SmbManager
     return smb_mgr.get_share_conf_list()
-
-
 
 
 
@@ -557,7 +557,7 @@ def delete_smb_share_conf(request):
 
 
 @get_view(route_name='smb_connection_list')
-def get_smb_share_list(request):
+def get_smb_connection_list(request):
     smb_mgr = smbmgr.SmbManager
     return smb_mgr.get_connection_list()
 
@@ -579,7 +579,7 @@ smb_account_schema = Schema({
 })
 
 @post_view(route_name='smb_account_list')
-def post_smb_share_list(request):
+def post_smb_account_list(request):
     smb_mgr = smbmgr.SmbManager
     new_account_conf = get_params_from_request(request, smb_account_schema)
 
@@ -590,7 +590,7 @@ def post_smb_share_list(request):
     # generate 201 response
     resp = Response(status=201)
     resp.location = request.route_url('smb_account_conf',
-                                      share_name=new_account_conf["account_name"])
+                                      account_name=new_account_conf["account_name"])
     return resp
 
 

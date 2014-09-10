@@ -421,7 +421,9 @@ class SmbManager(object):
                        veto_files="", operator="unkown"):
 
         if path != "" and not os.path.exists(path):
-             raise StorLeverError("path(%s) does not exists" % (path), 400)
+            raise StorLeverError("path(%s) does not exists" % (path), 400)
+        if share_name == "global":
+            raise StorLeverError("share cannot named global",  400)
 
         share_conf ={
             "share_name": share_name,
