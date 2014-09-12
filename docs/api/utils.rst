@@ -51,7 +51,7 @@ StorLever utils API has the following structure:
 1 NTP Management
 ------------------
 
-The following operations are used to management NTP configuration of system. 
+The following operations are used to manage NTP configuration of system. 
 
 1.1 Get NTP server list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
