@@ -1072,7 +1072,7 @@ This API is used to add a new community to SNMP
 
 7. Example 
 
-    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"community_name":"abc"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"community_name":"abc"}' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/community_list
 
     
     
@@ -1132,7 +1132,7 @@ This API is used to modify a community configuration of SNMP agent.
 
 7. Example 
 
-    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"read_only": true, "oid":".1.3"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/community_list/abc
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"read_only": true, "oid":".1.3"}' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/community_list/abc
     
 
 5.7 Delete community
@@ -1388,7 +1388,7 @@ This API is used to add a new monitor to SNMP agent
 
 7. Example 
 
-    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"monitor_name":"test_monitor", "expression":".1.3.4"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"monitor_name":"test_monitor", "expression":".1.3.4"}' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/monitor_list
 
     
     
@@ -1440,7 +1440,7 @@ This API is used to modify a monitor of SNMP agent.
 
 7. Example 
 
-    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"expression":".1.3.8"}' http://[host_ip]:[storlever_port]/storlever/api/v1/utils/snmp_agent/monitor_list/test_monitor
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"expression":".1.3.8"}' http://192.168.1.15:6543/storlever/api/v1/utils/snmp_agent/monitor_list/test_monitor
 
 
 5.14 Delete monitor
