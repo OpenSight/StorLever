@@ -346,7 +346,7 @@ class TgtManager(object):
         if tgt_conf["incomingdiscoveryuser"] != "":
             name, sep, password = tgt_conf["incomingdiscoveryuser"].partition(":")
             tgt_conf["incomingdiscoveryuser"] = name.strip() + ":" + "*"
-        if tgt_conf["incomingdiscoveryuser"] != "":
+        if tgt_conf["outgoingdiscoveryuser"] != "":
             name, sep, password = tgt_conf["outgoingdiscoveryuser"].partition(":")
             tgt_conf["outgoingdiscoveryuser"] = name.strip() + ":" + "*"
 
