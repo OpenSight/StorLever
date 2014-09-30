@@ -329,7 +329,7 @@ This API is used to add a new FTP user to FTP server
 
 7. Example 
 
-    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"user_name":"abc"}' http://[host_ip]:[storlever_port]/storlever/api/v1/nas/ftp/user_list  
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"user_name":"abc"}' http://192.168.1.15:6543/storlever/api/v1/nas/ftp/user_list  
 
     
 1.6 Modify FTP user
@@ -376,7 +376,7 @@ This API is used to modify a user configuration of FTP server.
 
 7. Example 
 
-    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"login_enable": true}' http://[host_ip]:[storlever_port]/storlever/api/v1/nas/ftp/user_list/abc 
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"login_enable": true}' http://192.168.1.15:6543/storlever/api/v1/nas/ftp/user_list/abc 
     
 
 1.7 Delete FTP user
@@ -562,7 +562,7 @@ This API is used to add a new export point to NFS server
 
 7. Example 
 
-    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"name":"abc", "path": "/home", "clients":[{"host":"*", "options":"rw"}]}' http://[host_ip]:[storlever_port]/storlever/api/v1/nas/nfs/export_list 
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"name":"abc", "path": "/home", "clients":[{"host":"*", "options":"rw"}]}' http://192.168.1.15:6543/storlever/api/v1/nas/nfs/export_list 
 
 
 2.4 Modify export point
@@ -994,7 +994,7 @@ This API is used to add a new share service to Samba server
 
 7. Example 
 
-    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"share_name":"abc", "path":"/home"}' http://[host_ip]:[storlever_port]/storlever/api/v1/nas/smb/share_list
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"share_name":"abc", "path":"/home"}' http://192.168.1.15:6543/storlever/api/v1/nas/smb/share_list
 
         
 3.6 Modify share

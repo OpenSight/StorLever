@@ -25,14 +25,17 @@ StorLever SAN API has the following structure:
     * `1.14 Modify outgoing user password <#114-modify-outgoing-user-password>`_
     * `1.15 Delete outgoing user <#115-delete-outgoing-user>`_
     * `1.16 Get LUN list <#116-get-lun-list>`_
-
-
+    * `1.17 Get a LUN configuration <#117-get-a-lun-configuration>`_
+    * `1.18 Add LUN <#118-add-lun>`_
+    * `1.19 Modify LUN <#119-modify-lun>`_
+    * `1.20 Delete LUN <#120-delete-lun>`_
+    
 
 1 TGT management
 ------------------
 
 The following operations are used to manage TGT IPSAN server of StorLever. 
-StorLever make use of TGT as its IPSAN server implementation in current version. 
+StorLever make use of TGT as its IPSAN target server implementation in current version. 
 
 
 1.1 Get TGT global configuration
@@ -726,8 +729,244 @@ This API is used to retrieve the LUN list of the specific target
 
     curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/san/tgt/target_list/iqn.2014-09.com.example:test/lun_list
 
-        
+
+1.17 Get a LUN configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to retrieve one LUN configuration of the specific target. 
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/san/tgt/target_list/[target_iqn]/lun_list/[lun_number]
+
+    [target_iqn] is the IQN of the target    
     
+    [lun_number] is the LUN number, which can only be 1 ~ 255
+
+2. HTTP Method
+    
+    GET
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    A JSON object to describe this LUN configuration
+
+7. Example 
+
+    curl -v -X GET http://192.168.1.15:6543/storlever/api/v1/san/tgt/target_list/iqn.2014-09.com.example:test/lun_list/1
+    
+
+1.18 Add LUN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to add a new LUN to the specific target of TGT
+
+1. Resource URI
+
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/san/tgt/target_list/[target_iqn]/lun_list
+
+    [target_iqn] is the IQN of the target    
+
+    
+2. HTTP Method
+    
+    POST
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |    Fields             |   Type   | Optional |                            Meaning                             |
+    +=======================+==========+==========+================================================================+
+    |     lun               |   int    | Required | LUN number, can only be 1 to 255                               |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     path              |  string  | Required | path to a regular file, or block device, or a sg char device   |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     device_type       |  string  | Optional | the type of device . Possible device-types are: disk (emulate  |
+    |                       |          |          | a disk device), tape (emulate a tape reader), ssc (same as     |
+    |                       |          |          | tape), cd (emulate a DVD drive), changer (emulate a media      |
+    |                       |          |          | changer device), pt (passthrough type to export a /dev/sg      |
+    |                       |          |          | device). Default is disk                                       |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     bs_type           |  string  | Optional | the type of backend storage. Possible backend types are: rdwr  |
+    |                       |          |          | (Use normal file I/O. This is the default for disk devices),   |
+    |                       |          |          | aio (Use Asynchronous I/O), sg (Special backend type for       |
+    |                       |          |          | passthrough devices),  ssc (Special backend type for tape      |
+    |                       |          |          | emulation). Default is rdwr                                    |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     direct_map        |  bool    | Optional | if true, a direct mapped logical unit (LUN) with the same      |
+    |                       |          |          | properties as the physical device (such as VENDOR_ID,          |
+    |                       |          |          | SERIAL_NUM, etc.). Default is false                            |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     write_cache       |  bool    | Optional | enable write cache or not Default is true                      |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |      readonly         |  bool    | Optional | readonly or read-write. Default is false                       |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |      online           |  bool    | Optional | online or offline. Default is true                             |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     scsi_id           |  string  | Optional | scsi id, if empty, it would automatically be set to a default  |
+    |                       |          |          | value.                                                         |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     scsi_sn           |  string  | Optional | scsi sn, if empty, it would automatically be set to a default  |
+    |                       |          |          | value                                                          |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+
+
+4. Status Code
+
+    201      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    The following response header would be added
+
+    Location: [LUN_url]
+
+    [LUN_url] is the URL to retrieve the new LUN info
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"lun":1, "path":"/root/test.img"}' http://192.168.1.15:6543/storlever/api/v1/san/tgt/target_list/iqn.2014-09.com.example:test/lun_list
+    
+    
+1.19 Modify LUN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to modify a LUN configuration of specific target
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/san/tgt/target_list/[target_iqn]/lun_list/[lun_number]
+
+    [target_iqn] is the IQN of the target    
+    
+    [lun_number] is the LUN number, which can only be 1 ~ 255
+
+2. HTTP Method
+    
+    PUT
+
+3. Request Content
+
+    A JSON object with the following field definition. 
+
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |    Fields             |   Type   | Optional |                            Meaning                             |
+    +=======================+==========+==========+================================================================+
+    |     lun               |   int    | Required | LUN number, can only be 1 to 255                               |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     path              |  string  | Required | path to a regular file, or block device, or a sg char device   |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     device_type       |  string  | Optional | the type of device . Possible device-types are: disk (emulate  |
+    |                       |          |          | a disk device), tape (emulate a tape reader), ssc (same as     |
+    |                       |          |          | tape), cd (emulate a DVD drive), changer (emulate a media      |
+    |                       |          |          | changer device), pt (passthrough type to export a /dev/sg      |
+    |                       |          |          | device). Default is unchanged                                  |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     bs_type           |  string  | Optional | the type of backend storage. Possible backend types are: rdwr  |
+    |                       |          |          | (Use normal file I/O. This is the default for disk devices),   |
+    |                       |          |          | aio (Use Asynchronous I/O), sg (Special backend type for       |
+    |                       |          |          | passthrough devices),  ssc (Special backend type for tape      |
+    |                       |          |          | emulation). Default is unchanged                               |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     direct_map        |  bool    | Optional | if true, a direct mapped logical unit (LUN) with the same      |
+    |                       |          |          | properties as the physical device (such as VENDOR_ID,          |
+    |                       |          |          | SERIAL_NUM, etc.). Default is unchanged                        |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     write_cache       |  bool    | Optional | enable write cache or not Default is unchanged                 |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     readonly          |  bool    | Optional | readonly or read-write. Default is unchanged                   |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     online            |  bool    | Optional | online or offline. Default is unchanged                        |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     scsi_id           |  string  | Optional | scsi id, if empty, it would automatically be set to a default  |
+    |                       |          |          | value.                                                         |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+    |     scsi_sn           |  string  | Optional | scsi sn, if empty, it would automatically be set to a default  |
+    |                       |          |          | value                                                          |
+    +-----------------------+----------+----------+----------------------------------------------------------------+
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    NULL
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X PUT -H "Content-Type: application/json; charset=UTF-8" -d '{"readonly": true, "online":true}' http://192.168.1.15:6543/storlever/api/v1/san/tgt/target_list/iqn.2014-09.com.example:test/lun_list/1
+
+
+1.20 Delete LUN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This API is used to delete a LUN configuration of specific target
+
+1. Resource URI
+
+    http://[host_ip]:[storlever_port]/storlever/api/v1/san/tgt/target_list/[target_iqn]/lun_list/[lun_number]
+
+    [target_iqn] is the IQN of the target    
+    
+    [lun_number] is the LUN number, which can only be 1 ~ 255
+
+2. HTTP Method
+    
+    DELETE
+
+3. Request Content
+
+    NULL
+
+4. Status Code
+
+    200      -   Successful
+    
+    Others   -   Error
+
+5. Special Response Headers
+
+    No
+
+6. Response Content
+    
+    NULL
+
+7. Example 
+
+    curl -v -X DELETE http://192.168.1.15:6543/storlever/api/v1/san/tgt/target_list/iqn.2014-09.com.example:test/lun_list/1
+    
+        
 
 
 

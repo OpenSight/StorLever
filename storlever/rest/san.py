@@ -319,7 +319,7 @@ lun_conf_schema = Schema({
     # enable write cache or not
     Optional("write_cache"): BoolVal(),
 
-    # readonly an read-write
+    # readonly or read-write
     Optional("readonly"): BoolVal(),
 
     # online or offline
@@ -328,7 +328,7 @@ lun_conf_schema = Schema({
     # scsi id, if empty, it would automatically be set to a default value
     Optional("scsi_id"): StrRe(r"^\S*$"),
 
-    # scsi id, if empty, it would automatically be set to a default value
+    # scsi sn, if empty, it would automatically be set to a default value
     Optional("scsi_sn"): StrRe(r"^\S*$"),
 
     DoNotCare(Use(str)): object  # for all other key we don't care
