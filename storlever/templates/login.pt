@@ -1,58 +1,61 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal">
-<head>
-  <title>Login - Pyramid tutorial wiki (based on TurboGears
-    20-Minute Wiki)</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-  <meta name="keywords" content="python web application" />
-  <meta name="description" content="pyramid web application" />
-  <link rel="shortcut icon"
-        href="${request.static_url('storlever:static/favicon.ico')}" />
-  <link rel="stylesheet"
-        href="${request.static_url('storlever:static/pylons.css')}"
-        type="text/css" media="screen" charset="utf-8" />
-  <!--[if lte IE 6]>
-  <link rel="stylesheet"
-        href="${request.static_url('storlever:static/ie6.css')}"
-        type="text/css" media="screen" charset="utf-8" />
-  <![endif]-->
-</head>
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://v3.bootcss.com/examples/signin/ -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="http://v3.bootcss.com/docs-assets/ico/favicon.png">
+
+    <title>Signin Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
+		<!-- Custom styles for this template -->
+		<link rel="stylesheet" href="${request.static_url('storlever:static/css/signin.css')}" media="screen" charset="utf-8" />
+    
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+    <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css"></style></head>
+
 <body>
-  <div id="wrap">
-    <div id="top-small">
-      <div class="top-small align-center">
-        <div>
-          <img width="220" height="50" alt="pyramid"
-        src="${request.static_url('storlever:static/pyramid-small.png')}" />
+<header  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container first-container">
+            <div class="navbar-header" >                
+            <a class="navbar-brand" href="#">Storlever</a>
+            </div>
+            
         </div>
-      </div>
-    </div>
-    <div id="middle">
-      <div class="middle align-right">
-        <div id="left" class="app-welcome align-left">
-          <b>Login</b><br/>
-          <span tal:replace="message"/>
-        </div>
-        <div id="right" class="app-welcome align-right"></div>
-      </div>
-    </div>
-    <div id="bottom">
-      <div class="bottom">
-        <form action="${url}" method="post">
-          <input type="hidden" name="came_from" value="${came_from}"/>
-          <input type="text" name="login" value="${login}"/><br/>
-          <input type="password" name="password"
-                 value="${password}"/><br/>
-          <input type="submit" name="form.submitted" value="Log In"/>
-        </form>
-      </div>
-    </div>
-  </div>
-  <div id="footer">
-    <div class="footer"
-         >&copy; Copyright 2008-2011, Agendaless Consulting.</div>
-  </div>
-</body>
-</html>
+    </header>
+
+<div class="container" style="padding-top: 65px;">
+
+    <form class="form-signin" role="form" action="${url}" method="post">
+        
+        <input type="hidden" name="came_from" value="${came_from}"/>              
+        <input type="text" class="form-control" placeholder="Account" required="" autofocus="" name="login" value="${login}" />
+        <input type="password" class="form-control" placeholder="Password" required="" name="password"
+                 value="${password}" />
+        <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" name="form.submitted">Sign in</button>
+    </form>
+
+</div> <!-- /container -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+</body></html>
