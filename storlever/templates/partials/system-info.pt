@@ -3,7 +3,7 @@
         <tab heading="系统概要" select="selectOverview()">
             <div class="row row-in-tab">
                 <div class="col-sm-8">
-                    <div class="panel panel-default" ng-click="selectOverview">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">主机信息</h3>
                         </div>
@@ -58,7 +58,29 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+            <div class="row row-in-tab">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">CPU列表</h3>
+                        </div>
+                        <table class="table">
+                            <th>cache_size</th>
+                            <th>cpu_MHz</th>
+                            <th>processor</th>
+                            <th>model_name</th>
+                            <tr ng-repeat="cpu in cpulist">
+                                <td>{{cpu.cache_size}}</td>
+                                <td>{{cpu.cpu_MHz}}</td>
+                                <td>{{cpu.processor}}</td>
+                                <td>{{cpu.model_name}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </tab>
         <tab heading="系统配置" select="selectConfig()">Short Labeled Justified content</tab>
