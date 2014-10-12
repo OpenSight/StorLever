@@ -59,6 +59,24 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SELinux</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-4 control-label">状态</label>
+                                    <div class="col-sm-4">
+                                        <p class="form-control-static">{{selinux.state}}</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button type="button" class="btn btn-default" ng-click="saveHostname">关闭</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row row-in-tab">

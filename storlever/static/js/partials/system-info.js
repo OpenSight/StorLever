@@ -4,6 +4,9 @@
             $http.get("/storlever/api/v1/system/localhost").success(function(response) {
                 $scope.localhost = response;
             });
+            $http.get("/storlever/api/v1/system/selinux").success(function(response) {
+                $scope.selinux = response;
+            });
             $http.get("/storlever/api/v1/system/cpu_list").success(function(response) {
                 $scope.cpulist = response;
             });
