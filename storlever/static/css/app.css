@@ -22,3 +22,13 @@ body {
 .menu-list-leaf.active{
     background-color: #eee;
 }
+
+.tab-pane{
+    border-left: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+}
+
+.row-in-tab{
+    padding: 10px;
+}

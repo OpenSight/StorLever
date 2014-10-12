@@ -21,6 +21,9 @@
                 setRoute($routeProvider, list[i].sub_nodes);
             }
         }
+        $routeProvider.otherwise({
+            redirectTo: '/' + menuList[0].sub_nodes[0].sub_nodes[0].node_id
+        });
         return true;
     };
 
@@ -29,13 +32,11 @@
         'app.filters',
         'app.services',
         'app.directives',
-        'app.controllers'
+        'app.controllers',
+        'ui.bootstrap'
     ]).config(['$routeProvider',
         function($routeProvider) {
             setRoute($routeProvider, window.menuList);
-            $routeProvider.otherwise({
-                redirectTo: '/' + menuList[0].sub_nodes[0].sub_nodes[0].node_id
-            });
         }
     ]);
 })();

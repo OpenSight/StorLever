@@ -1,11 +1,7 @@
-var controllers = (function() {
+(function() {
     'use strict';
     /* Controllers */
-    return angular.module('app.controllers', []).controller('MyCtrl', ['$scope',
-        function($scope) {
-
-        }
-    ]).controller('MenuList', ['$scope', 'MenuListFac', 
+    angular.module('app.controllers', []).controller('Snmp', ['$scope', 'SnmpFac', 
         function($scope, MenuListFac) {
             $scope.roots = MenuListFac.get();
 
@@ -20,4 +16,17 @@ var controllers = (function() {
             $scope.activeNode($scope.roots[0].node_id);
         }
     ]);
+})();
+
+(function() {
+    'use strict';
+
+    /* Services */
+
+
+    // Demonstrate how to register services
+    // In this case it is a simple value service.
+    angular.module('app.services').factory('SnmpRes', function($resource) {
+        return $resource('../rest/snmp.php/:id'); // Note the full endpoint address
+    });
 })();

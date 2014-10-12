@@ -37,7 +37,7 @@
     </header>
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <ul ng-repeat="root in roots" class="list-group menu-list-trunk" ng-class="{active: root.node_id===activeInfo[0]}">
                     <li ng-repeat="branch in root.sub_nodes" class="list-group-item menu-list-branch" ng-click="activeNode(branch.node_id, $event)" ng-class="{active: branch.node_id===activeInfo[1]}">
                         <a href="#"><h4>{{branch.text}}</h4></a>
@@ -49,7 +49,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9" id="contentContainer" ng-view>
+            <div class="col-sm-9" id="contentContainer" ng-view>
                 <!-- <div class="tabbable" id="tabs-64902">
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -77,10 +77,14 @@
     <script src="${request.static_url('storlever:static/js/bootstrap.min.js')}"></script>
     <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
     <script src="${request.static_url('storlever:static/js/angular-route.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/ui-bootstrap-tpls-0.11.2.min.js')}"></script>
     <script src="${request.static_url('storlever:static/js/app.js')}"></script>
     <script src="${request.static_url('storlever:static/js/services.js')}"></script>
     <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
     <script src="${request.static_url('storlever:static/js/filters.js')}"></script>
     <script src="${request.static_url('storlever:static/js/directives.js')}"></script>
+    
+    <script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
   </body>
 </html>

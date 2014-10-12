@@ -5,4 +5,5 @@ def includeme(config):
     config.include(__name__ + '.login')
     config.include(__name__ + '.menu')
     config.include(__name__ + '.regist_menu')
+    config.include(__name__ + '.partials')
     config.scan()    # scan to register view callables, must be last statement

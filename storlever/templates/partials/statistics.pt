@@ -1,1 +1,6 @@
-缁熻淇℃伅
+<tabset>
+    <tab heading="CPU统计">Justified content</tab>
+    <tab heading="IO统计">Short Labeled Justified content</tab>
+    <tab heading="网络统计">Long Labeled Justified content</tab>
+    <tab heading="系统进程">Long Labeled Justified content</tab>
+</tabset>

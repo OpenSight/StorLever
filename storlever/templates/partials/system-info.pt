@@ -1,1 +1,67 @@
-系统信息
+<div class="container-fluid" ng-controller="SystemInfo">
+    <tabset>
+        <tab heading="系统概要" select="selectOverview()">
+            <div class="row row-in-tab">
+                <div class="col-sm-8">
+                    <div class="panel panel-default" ng-click="selectOverview">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">主机信息</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-3 control-label">主机名</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" ng-model="localhost.hostname" />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-default" ng-click="saveHostname">保存</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">操作系统</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.system}}({{localhost.dist_name}}&nbsp;{{localhost.dist_version}})</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">设备架构</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.machine}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">系统内核</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.release}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Storlever</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.version}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">运行时间</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.uptime}},&nbsp;Load average:{{localhost.loadavg[0]|number:2}}&nbsp;{{localhost.loadavg[1]|number:2}}&nbsp;{{localhost.loadavg[2]|number:2}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Dist ID</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{localhost.dist_id}}</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+        </tab>
+        <tab heading="系统配置" select="selectConfig()">Short Labeled Justified content</tab>
+        <tab heading="系统维护" select="selectMaintain()">Long Labeled Justified content</tab>
+    </tabset>
+</div>
