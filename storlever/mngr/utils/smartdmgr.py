@@ -217,7 +217,7 @@ class SmartdManager(object):
                     if not S_ISBLK(mode):
                         raise StorLeverError("Device (%s) not block device" % (monitor_conf["dev"]), 400)
 
-                if monitor_conf["mail_exec"] != "" and not os.paht.exists(monitor_conf["mail_exec"]):
+                if monitor_conf["mail_exec"] != "" and not os.path.exists(monitor_conf["mail_exec"]):
                     raise StorLeverError("mail_exec (%s) not found" % (monitor_conf["mail_exec"]), 404)
 
             # save new conf

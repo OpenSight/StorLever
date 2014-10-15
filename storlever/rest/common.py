@@ -107,12 +107,9 @@ def get_params_from_request(request, schema=None):
     :param schema:  the schema for the input params
 
     """
-    params = {}
+    params = dict(request.params)
     if "json" in request.content_type:
-        params = request.json_body
-    else:
-        params = dict(request.params)
-
+        params.update(request.json_body)
     if schema is not None:
         params = schema.validate(params)
 
