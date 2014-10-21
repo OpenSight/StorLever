@@ -19,7 +19,7 @@ def includeme(config):
     # POST:   add/remove PV from vg
     # DELETE: remove vg
     config.add_route('vg', '/block/lvm/vg_list/{vg}')
-    
+    config.add_route('vg_op', '/block/lvm/vg_list/{vg}/op')
     
     # lv (logical volume) list resource
     # GET:    lv list
@@ -30,7 +30,9 @@ def includeme(config):
     # POST:   enlarge/shrink lv
     # DELETE: delete lv
     config.add_route('lv', '/block/lvm/vg_list/{vg}/lv_list/{lv}')
-
+    config.add_route('lv_op', '/block/lvm/vg_list/{vg}/lv_list/{lv}/op')
+    config.add_route('lv_snapshot', '/block/lvm/vg_list/{vg}/lv_list/{lv}/snapshot')
+    config.add_route('pvmove', '/block/lvm/pv_move')
 
 #curl -v -X GET http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list
 @get_view(route_name='vg_list')
@@ -49,8 +51,8 @@ def get_vg_list(request):
     return vg_dict
 
 new_vg_schema = Schema({
-    Optional("vgname"): StrRe(r"^([a-zA-Z].+)$"),
-    Optional("dev"): Default(ListVal(StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$")), default=[]),
+    "vgname": StrRe(r"^([a-zA-Z].+)$"),
+    "dev": Default(ListVal(StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$")), default=[]),
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
@@ -88,6 +90,27 @@ def get_vg_info(request):
                }
     return vg_info
 
+vg_op_schema = Schema({
+    Optional("opcode"): StrRe(r"^(grow|shrink)$"),
+    Optional("dev"): Default(ListVal(StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$")), default=[]),
+    DoNotCare(Use(str)): object  # for all those key we don't care
+})
+
+#curl -v -X post -d opt=grow -d dev=/dev/sdb http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}/op
+@post_view(route_name='vg_op')
+def post_vg_op(request):
+    params = get_params_from_request(request, vg_op_schema)
+    vg_name = request.matchdict['vg']
+    lvm_mng = lvm.lvm_mgr()
+    vg = lvm_mng.get_vg(vg_name)
+    if(params['opt']) == 'grow' :
+        vg.grow(params['dev'])
+    elif(params['opt']) == 'shrink' :
+        vg.shrink(params['dev'])
+               
+    return Response(status=200)
+
+
 #curl -v -X delete http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}
 @delete_view(route_name='vg')
 def delete_vg_rest(request):
@@ -102,7 +125,7 @@ add_lv_schema = Schema({
     "size": IntVal(1024),
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
-#curl -v -X post -d lvname=aaa size=5G http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}
+#curl -v -X post -d lvname=vgx size=204800000 http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}
 @post_view(route_name='vg')
 def add_lv(request):
     vg_name = request.matchdict['vg']
@@ -165,3 +188,58 @@ def get_lv(request):
            }
     return lv_info
 
+lv_op_schema = Schema({
+    "opcode": StrRe(r"^(activate|disable)$"),
+    DoNotCare(Use(str)): object  # for all those key we don't care
+})
+
+#curl -v -X post -d opt=activate http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}/lv_list/{lv}/opt
+@post_view(route_name='lv_op')
+def post_lv_op(request):
+    params = get_params_from_request(request, lv_op_schema)
+    vg_name = request.matchdict['vg']
+    lv_name = request.matchdict['lv']
+    lvm_mng = lvm.lvm_mgr()
+    vg = lvm_mng.get_vg(vg_name)
+    lv = vg.get_lv(lv_name)
+    if(params['opt']) == 'activate' :
+        lv.activate()
+    elif(params['opt']) == 'disable' :
+        lv.deactivate()
+               
+    return Response(status=200)
+
+
+lv_snapshot_schema = Schema({
+    "name": StrRe(r"^([a-zA-Z].+)$"),
+    "size": IntVal(1024),
+    DoNotCare(Use(str)): object  # for all those key we don't care
+})
+
+#curl -v -X post -d opt=activate http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}/lv_list/{lv}/snapshot
+@post_view(route_name='lv_snapshot')
+def post_lv_snapshot(request):
+    params = get_params_from_request(request, lv_snapshot_schema)
+    vg_name = request.matchdict['vg']
+    lv_name = request.matchdict['lv']
+    lvm_mng = lvm.lvm_mgr()
+    vg = lvm_mng.get_vg(vg_name)
+    lv = vg.get_lv(lv_name)
+    lv.snapshot(params['lvname'],params['size'])
+    return Response(status=200)
+
+pv_move_schema = Schema({
+    "src":StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$"),
+    Optional("dst"): StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$"),
+    Optional("lvname"): StrRe(r"^([a-zA-Z].+)$"),
+    DoNotCare(Use(str)): object  # for all those key we don't care
+})
+
+#curl -v -X post -d src  http://192.168.1.123:6543/storlever/api/v1/block/lvm/pvmove
+@post_view(route_name='pvmove')
+def post_pv_move(request):
+    params = get_params_from_request(request, pv_move_schema)
+    pv_name = params["src"]
+    pv_mgr = lvm.PV(name=pv_name)
+    pv_mgr.move(params["dst"],params["lvname"])
+    return Response(status=200)
