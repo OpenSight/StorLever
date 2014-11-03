@@ -33,7 +33,8 @@
         'app.services',
         'app.directives',
         'app.controllers',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'chart.js'
     ]).config(['$routeProvider',
         function($routeProvider) {
             setRoute($routeProvider, window.menuList);
