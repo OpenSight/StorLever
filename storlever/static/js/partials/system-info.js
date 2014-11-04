@@ -1,11 +1,10 @@
 (function(){
     controllers.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
-        $scope.onClick = function(points, evt) {
-            console.log(points, evt);
-        };
         $scope.overview = (function(){
             return {
                 show: function() {
+                    $scope.distory();
+                    
                     $http.get("/storlever/api/v1/system/localhost").success(function(response) {
                         $scope.localhost = response;
                     });
@@ -21,13 +20,23 @@
                     });
 
                     $scope.overview.startGetCPUTimes();
+                    $scope.overview.getMemory();
                 },
                 cpu: {
                     series: ['Usage'],
                     labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                     data: [[0,0,0,0,0,0,0,0,0,0,0]],
                     options:{
-                        pointDot: false
+                        pointDot: false,
+                        animation: false
+                    }
+                },
+                memory: {
+                    labels: ['Usage', 'Free'],
+                    data: [100, 0],
+                    options:{
+                        pointDot: false,
+                        animation: false
                     }
                 },
                 startGetCPUTimes: function(){
@@ -73,6 +82,12 @@
                     idle = c.idle - p.idle;
                     return Math.round((totle - idle) * 10000/ totle) / 100;
                 },
+                getMemory: function(){
+                    $http.get("/storlever/api/v1/system/memory").success(function(response) {
+                        $scope.overview.memory.data[0] = Math.round(response.percent * 100) / 100;
+                        $scope.overview.memory.data[1] = 100 - $scope.overview.memory.data[0];
+                    });
+                },
                 distory: function(){
                     if (undefined !== $scope.overview.cpu.timer){
                         window.clearInterval($scope.overview.cpu.timer);
@@ -86,20 +101,16 @@
                 }
             };
         })();
-        // $scope.selectOverview = function(){
-        //     $scope.overview = {};
-
-        //     $scope.cpu.labels = [];
-        //     $scope.cpu.series = [];
-        //     $scope.cpu.data = [
-        //     ];
-        // };
 
         $scope.selectConfig = function(){
             alert('selectConfig');
         };
         $scope.selectMaintain = function(){
             alert('selectMaintain');
+        };
+
+        $scope.distory = function(){
+            $scope.overview.distory();
         };
     }]);
 })()

@@ -127,10 +127,14 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
+                        <div class="panel-heading btn-in-left">
                             <h3 class="panel-title">内存信息</h3>
+                            <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm">一键加速</button></div>
                         </div>
                         <div class="panel-body">
+                            <div class="container-fluid">
+                                <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options"></canvas> 
+                            </div>
                         </div>
                     </div>
                 </div>
