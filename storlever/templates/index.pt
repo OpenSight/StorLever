@@ -91,3 +91,4 @@
     <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
   </body>
 </html>
+
