@@ -1,0 +1,122 @@
+body {
+    min-height: 2000px;
+    padding-top: 110px;
+}
+
+.footer{
+    color:#999;text-align:center;
+    padding:30px 0;margin-top:70px;
+    border-top:1px solid #e5e5e5;background-color:#f5f5f5}
+
+.footer a{color:#999}
+
+.bannermin {
+    min-height: 100px;
+}
+.time_font{
+    font-family: "微软雅黑";
+    font-size: 15px;
+    color: #ababab;
+    background: transparent;
+    font-weight: bold;
+    padding-right: 18px;
+    padding-top: 20px;
+
+}
+
+.lvband_font {
+    font-family: "微软雅黑";
+    font-size: 28px;
+    background: transparent;
+    font-weight: bold;
+}
+
+.lv1_font > li>a
+{
+    font-family: "微软雅黑";
+    font-size: 17px;
+    color: #333333;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.picTip_font_98bbcd
+ {
+     color: #98bbcd;
+     background: transparent;;
+     font-weight: bold;
+ }
+
+.picTip_font_dcdcdc
+{
+    color: #dcdcdc;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.picTip_font_f38732
+{
+    color: #f38732;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.picTip_font_6ad2e7
+{
+    color: #6ad2e7;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.picTip_font_e0e4cc
+{
+    color: #e0e4cc;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.picTip_font_yellow
+{
+    color: #98bbcd;
+    background: transparent;;
+    font-weight: bold;
+}
+
+.lv1_font {
+
+}
+
+.lv2_font {
+    font-family: "微软雅黑";
+    font-size: 16px;
+    background: transparent;
+    color: #AAAAAA;
+    font-weight: bold;
+}
+
+
+.lv3_font {
+    font-family: "微软雅黑";
+    font-size: 15px;
+    line-height: 2;
+    color: #666666;
+    background: transparent;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+}
+
+.lv3_focus{
+    display: block;
+    padding-left: 10px;
+}
+
+.lv3_focus > li>a:active,
+.lv3_focus > li>a:hover,.lv3_focus > li>a:focus
+{
+    cursor: pointer;
+    background-color: #f1a32f;
+    text-decoration: none;
+    outline:none;
+}
+
