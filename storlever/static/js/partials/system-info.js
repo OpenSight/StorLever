@@ -2,30 +2,10 @@
     controllers.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
         $scope.overview = (function(){
             return {
-                show: function() {
-                    $scope.distory();
-                    
-                    $http.get("/storlever/api/v1/system/localhost").success(function(response) {
-                        $scope.localhost = response;
-                    });
-                    $http.get("/storlever/api/v1/system/selinux").success(function(response) {
-                        $scope.selinux = response;
-                    });
-                    $http.get("/storlever/api/v1/system/cpu_list").success(function(response) {
-                        $scope.cpulist = response;
-                    });
-
-                    $http.get("/storlever/api/v1/system/cpu_list").success(function(response) {
-                        $scope.cpulist = response;
-                    });
-
-                    $scope.overview.startGetCPUTimes();
-                    $scope.overview.getMemory();
-                },
                 cpu: {
                     series: ['Usage'],
-                    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                    data: [[0,0,0,0,0,0,0,0,0,0,0]],
+                    labels: ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+                    data: [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
                     options:{
                         pointDot: false,
                         animation: false
@@ -38,6 +18,43 @@
                         pointDot: false,
                         animation: false
                     }
+                },
+                show: function() {
+                    $scope.distory();
+                    $scope.aborter = $q.defer(),
+                    $http.get("/storlever/api/v1/system/localhost", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.localhost = response;
+                    });
+                    $http.get("/storlever/api/v1/system/selinux", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.selinux = response;
+                    });
+                    $http.get("/storlever/api/v1/system/cpu_list", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.cpulist = response;
+                    });
+
+                    $http.get("/storlever/api/v1/system/cpu_list", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.cpulist = response;
+                    });
+                    $scope.overview.startGetCPUTimes();
+                    $scope.overview.getMemory();
+                },
+                saveHostname: function(){
+                    $http.put("/storlever/api/v1/system/localhost", {
+                        timeout: $scope.aborter.promise
+                    }, JSON.stringify($scope.localhost));
+                },
+                setSELinuxState: function(state){
+                    $http.put("/storlever/api/v1/system/selinux", {
+                        timeout: $scope.aborter.promise
+                    }, JSON.stringify({state: state}));
                 },
                 startGetCPUTimes: function(){
                     if (undefined !== $scope.overview.cpu.timer){
@@ -66,7 +83,7 @@
                         var present = $scope.overview.getCPUPrecent(response, $scope.overview.cpu.pre);
 
                         $scope.overview.cpu.data[0].push(present);
-                        if (11 <= $scope.overview.cpu.data[0].length) {
+                        if (61 <= $scope.overview.cpu.data[0].length) {
                             $scope.overview.cpu.data[0].shift();
                         }
                         $scope.overview.cpu.pre = response;
@@ -83,9 +100,18 @@
                     return Math.round((totle - idle) * 10000/ totle) / 100;
                 },
                 getMemory: function(){
-                    $http.get("/storlever/api/v1/system/memory").success(function(response) {
+                    $http.get("/storlever/api/v1/system/memory", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
                         $scope.overview.memory.data[0] = Math.round(response.percent * 100) / 100;
                         $scope.overview.memory.data[1] = 100 - $scope.overview.memory.data[0];
+                    });
+                },
+                releaseMemory: function(){
+                    $http.post('/storlever/api/v1/system/flush_page_cache', {
+                        timeout: $scope.aborter.promise
+                    }).success(function(){
+                        $scope.overview.getMemory();
                     });
                 },
                 distory: function(){
@@ -98,12 +124,41 @@
                         $scope.overview.cpu.resolve();
                         delete $scope.overview.cpu.aborter;
                     }
+
+                    if (undefined !== $scope.aborter){
+                        $scope.aborter.resolve();
+                        delete $scope.aborter;
+                    }
                 }
             };
         })();
 
-        $scope.selectConfig = function(){
-            alert('selectConfig');
+        $scope.config = function(){
+            return {
+                datetime:{
+                    date:'',
+                    time:'',
+                    zone:'',
+                    opened: false
+                },
+                show: function(){
+                    $scope.distory();
+                    $scope.aborter = $q.defer(),
+                    $http.get("/storlever/api/v1/system/datetime", {
+                        timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.datetime = response.datetime;
+                        $scope.config.datetime.date = response.datetime.match(/[\d-]{10}/)[0];
+                        $scope.config.datetime.time = response.datetime.match(/[\d:]{8}/)[0];
+                        $scope.config.datetime.zone = response.datetime.match(/[+-][\d]{4}/)[0];
+                    });
+                },
+                openDatepicker: function($event){
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    $scope.datetime.opened = true;
+                }
+            };
         };
         $scope.selectMaintain = function(){
             alert('selectMaintain');
@@ -111,6 +166,10 @@
 
         $scope.distory = function(){
             $scope.overview.distory();
+            if (undefined !== $scope.aborter){
+                    $scope.aborter.resolve();
+                    delete $scope.aborter;
+            }
         };
     }]);
 })()
