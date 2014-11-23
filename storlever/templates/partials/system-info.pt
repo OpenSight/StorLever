@@ -1,375 +1,342 @@
 <div class="container-fluid" ng-controller="SystemInfo">
-    <tabset>
-        <tab heading="系统概要" select="overview.show()">
-            <div class="row row-in-tab">
-                <div class="col-sm-7">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">主机信息</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">主机名</label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="localhost.hostname" />
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <button type="button" class="btn btn-default" ng-click="overview.saveHostname">保存</button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">操作系统</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.system}}({{localhost.dist_name}}&nbsp;{{localhost.dist_version}})</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">设备架构</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.machine}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">系统内核</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.release}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Storlever</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.version}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">运行时间</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.uptime}}</p>
-                                    </div>
-                                </div>
-                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Load average</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.loadavg[0]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[1]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[2]|number:2}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Dist ID</label>
-                                    <div class="col-sm-9">
-                                        <p class="form-control-static">{{localhost.dist_id}}</p>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">CPU信息</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">cache_size</label>
-                                    <div class="col-sm-8">
-                                        <p class="form-control-static">{{cpulist[0].cache_size}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">cpu_MHz</label>
-                                    <div class="col-sm-8">
-                                        <p class="form-control-static">{{cpulist[0].cpu_MHz}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">processor</label>
-                                    <div class="col-sm-8">
-                                        <p class="form-control-static">{{cpulist[0].processor}}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">model_name</label>
-                                    <div class="col-sm-12">
-                                        <p class="form-control-static">{{cpulist[0].model_name}}</p>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <!-- <div class="panel-heading">
-                            <h3 class="panel-title">SELinux</h3>
-                        </div> -->
-                        <div class="panel-body">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">SELinux状态</label>
-                                    <div class="col-sm-4">
-                                        <p class="form-control-static">{{selinux.state}}</p>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-default" ng-click="setSELinuxState('enforcing')" ng-show="enforcing !== selinux.state">kaiqi</button>
-                                        <button type="button" class="btn btn-default" ng-click="setSELinuxState('disabled')" ng-show="enforcing === selinux.state">关闭</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+  <tabset>
+    <tab heading="系统概要" select="overview.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-7">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">主机信息</h3>
             </div>
-            <div class="row">
-                <div class="col-sm-10">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">CPU利用率</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <canvas id="cpu-line" class="chart chart-line" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
-                            </div>
-                        </div>
-                    </div>
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">主机名</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" ng-model="localhost.hostname" />
+                  </div>
+                  <div class="col-sm-2">
+                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">保存</button>
+                  </div>
                 </div>
-                <div class="col-sm-2">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">CPU利用率</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <canvas id="cpu-line" class="chart chart-line" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">操作系统</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.system}}({{localhost.dist_name}}&nbsp;{{localhost.dist_version}})</p>
+                  </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading btn-in-left">
-                            <h3 class="panel-title">内存信息</h3>
-                            <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm" ng-click="overview.releaseMemory">一键加速</button></div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options"></canvas> 
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">设备架构</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.machine}}</p>
+                  </div>
                 </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">系统内核</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.release}}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">Storlever</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.version}}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">运行时间</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.uptime}}</p>
+                  </div>
+                </div>
+                 <div class="form-group">
+                  <label class="col-sm-3 control-label">Load average</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.loadavg[0]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[1]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[2]|number:2}}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">Dist ID</label>
+                  <div class="col-sm-9">
+                    <p class="form-control-static">{{localhost.dist_id}}</p>
+                  </div>
+                </div>
+              </form>
             </div>
-        </tab>
-        <tab heading="系统配置" select="config.show()">
-            <div class="row row-in-tab">
-                <div class="col-sm-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Time</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form role="form">
-                                <div class="form-group">
-                                    <label  class="control-label">Time zone</label>
-                                    <select ng-model="config.datetime.zone" >
-                                        <option value="+1400">基里巴斯线岛时间 KLT UTC+14:00</option>
-                                        <option value="+1300">新西兰夏时制 NZDT UTC+13:00</option>
-                                        <option value="+1200">国际日期变更线， IDLE UTC+12:00</option>
-                                        <option value="+1200">新西兰标准时间 NZST UTC+12:00</option>
-                                        <option value="+1200">新西兰时间 NZT UTC+12:00</option>
-                                        <option value="+1100">澳大利亚东部标准夏时制 （俄罗斯马加丹时区） 东边（俄罗斯彼得罗巴甫洛夫斯克时区） AESST UTC+11:00</option>
-                                        <option value="+1030">中澳大利亚标准夏时制 ACSST UTC+10:30</option>
-                                        <option value="+1030">中澳大利亚夏时制 CADT UTC+10:30</option>
-                                        <option value="+1030">南澳大利亚夏时制 SADT UTC+10:30</option>
-                                        <option value="+1000">澳大利亚东部标准时间 AEST UTC+10:00</option>
-                                        <option value="+1000">东澳大利亚标准时间 EAST UTC+10:00</option>
-                                        <option value="+1000">关岛标准时间，（俄罗斯符拉迪沃斯托克时区） GST UTC+10:00</option>
-                                        <option value="+1000">澳大利亚墨尔本 LIGT UTC+10:00</option>
-                                        <option value="+0930">南澳大利亚标准时间 SAST UTC+09:30</option>
-                                        <option value="+0930">中澳大利亚标准时间 CAST UTC+09:30</option>
-                                        <option value="+0900">日本标准时间，（俄罗斯雅库茨克时区） JST UTC+09:00</option>
-                                        <option value="+0900">朝鲜 韩国标准时间 KST UTC+09:00</option>
-                                        <option value="+0900">马绍尔群岛瓜加林岛时间 MHT UTC+09:00</option>
-                                        <option value="+0800">澳大利亚西部标准时间 AWST UTC+08:00</option>
-                                        <option value="+0800">中国标准时间（俄罗斯伊尔库茨克时区） CCT UTC+08:00</option>
-                                        <option value="+0800">西澳大利亚标准时间 WST UTC+08:00</option>
-                                        <option value="+0730">爪哇时间 JT UTC+07:30</option>
-                                        <option value="+0700">阿拉木图 夏令时（俄罗斯泰梅尔半岛时区） ALMST UTC+07:00</option>
-                                        <option value="+0700">澳大利亚圣诞岛时间 CXT UTC+07:00</option>
-                                        <option value="+0630">缅甸时间 MMT UTC+06:30</option>
-                                        <option value="+0600">哈萨克斯坦阿拉木图 时间（俄罗斯鄂木斯克时区） ALMT UTC+06:00</option>
-                                        <option value="+0500">英属印度洋领地时间（俄罗斯彼尔姆时区） IOT UTC+05:00</option>
-                                        <option value="+0500">马尔代夫时间 MVT UTC+05:00</option>
-                                        <option value="+0500">法属凯尔盖朗岛时间 TFT UTC+05:00</option>
-                                        <option value="+0430">阿富汗时间 AFT UTC+04:30</option>
-                                        <option value="+0400">马达加斯加塔那那利佛时间 （俄罗斯萨马拉时区） EAST UTC+04:00</option>
-                                        <option value="+0400">毛里求斯时间 MUT UTC+04:00</option>
-                                        <option value="+0400">法属留尼汪岛时间 RET UTC+04:00</option>
-                                        <option value="+0400">塞舌尔马埃岛时间 SCT UTC+04:00</option>
-                                        <option value="+0330">伊朗时间 IRT,IT UTC+03:30</option>
-                                        <option value="+0300">科摩罗时间 EAT UTC+03:00</option>
-                                        <option value="+0300">巴格达时间 BT UTC+03:00</option>
-                                        <option value="+0300">东欧夏时制（俄罗斯莫斯科时区） EETDST UTC+03:00</option>
-                                        <option value="+0300">希腊地中海时间 HMT UTC+03:00</option>
-                                        <option value="+0200">英国双重标准时间 BDST UTC+02:00</option>
-                                        <option value="+0200">中欧夏令时 CEST UTC+02:00</option>
-                                        <option value="+0200">中欧夏时制 CETDST UTC+02:00</option>
-                                        <option value="+0200">东欧（俄罗斯加里宁格勒时区） EET UTC+02:00</option>
-                                        <option value="+0200">法国冬时制 FWT UTC+02:00</option>
-                                        <option value="+0200">以色列标准时间 IST UTC+02:00</option>
-                                        <option value="+0200">中欧夏时制 MEST UTC+02:00</option>
-                                        <option value="+0200">中欧白昼时间 METDST UTC+02:00</option>
-                                        <option value="+0200">瑞典夏时制 SST UTC+02:00</option>
-                                        <option value="+0100">英国夏时制 BST UTC+01:00</option>
-                                        <option value="+0100">中欧时间 CET UTC+01:00</option>
-                                        <option value="+0100">丹麦正规时间 DNT UTC+01:00</option>
-                                        <option value="+0100">法国夏时制 FST UTC+01:00</option>
-                                        <option value="+0100">中欧时间 MET UTC+01:00</option>
-                                        <option value="+0100">挪威标准时间 NOR UTC+01:00</option>
-                                        <option value="+0100">瑞典冬时制 SWT UTC+01:00</option>
-                                        <option value="+0100">西欧光照利用时间（夏时制） WETDST UTC+01:00</option>
-                                        <option value="+0000">全球时间 UT UTC+00:00</option>
-                                        <option value="+0000">校准的全球时间 UTC UTC+00:00</option>
-                                        <option value="+0000">和 UTC 相同 ZULU UTC+00:00</option>
-                                        <option value="+0000">西欧 WET UTC+00:00</option>
-                                        <option value="-0100">西非时间 WAT UTC-01:00</option>
-                                        <option value="-0100">巴西费尔南多·迪诺罗尼亚岛 夏令时 FNST UTC-01:00</option>
-                                        <option value="-0200">巴西费尔南多·迪诺罗尼亚岛时间 FNT UTC-02:00</option>
-                                        <option value="-0200">巴西利亚夏令时 BRST UTC-02:00</option>
-                                        <option value="-0230">纽芬兰夏时制 NDT UTC-02:30</option>
-                                        <option value="-0300">大西洋夏时制 ADT UTC-03:00</option>
-                                        <option value="-0300">巴西利亚时间 BRT UTC-03:00</option>
-                                        <option value="-0330">纽芬兰（Newfoundland）标准时间 NST,NFT UTC-03:30</option>
-                                        <option value="-0400">大西洋标准时间（加拿大） AST UTC-04:00</option>
-                                        <option value="-0400">大西洋阿雷格里港夏令时 ACST UTC-04:00</option>
-                                        <option value="-0500">大西洋阿雷格里港 标准时间 ACT UTC-05:00</option>
-                                        <option value="-0400">东部夏时制 EDT UTC-04:00</option>
-                                        <option value="-0500">中部夏时制 CDT UTC-05:00</option>
-                                        <option value="-0500">东部标准时间 EST UTC-05:00</option>
-                                        <option value="-0600">中部标准时间 CST UTC-06:00</option>
-                                        <option value="-0600">山地夏时制 MDT UTC-06:00</option>
-                                        <option value="-0700">山地标准时间 MST UTC-07:00</option>
-                                        <option value="-0700">太平洋夏时制 PDT UTC-07:00</option>
-                                        <option value="-0800">阿拉斯加白昼时间 AKDT UTC-08:00</option>
-                                        <option value="-0800">太平洋标准时间 PST UTC-08:00</option>
-                                        <option value="-0800">育空地区标准时 YST UTC-08:00</option>
-                                        <option value="-0900">阿拉斯加标准时间 AKST UTC-09:00</option>
-                                        <option value="-0900">夏威夷/阿拉斯加夏时制 HDT UTC-09:00</option>
-                                        <option value="-0930">马克萨斯群岛时间 MART UTC-09:30</option>
-                                        <option value="-1000">夏威夷-阿拉斯加标准时间 AHST UTC-10:00</option>
-                                        <option value="-1000">夏威夷标准时间 HST UTC-10:00</option>
-                                        <option value="-1000">中阿拉斯加时间 CAT UTC-10:00</option>
-                                        <option value="-1100">阿拉斯加诺姆时间（Nome Time） NT UTC-11:00</option>
-                                        <option value="-1200">国际日期变更线，西边 IDLW UTC-12:00</option>
-                                        <option value="+0930">中澳大利亚标准时间 ACST UTC+09:30</option>
-                                        <option value="+1030">澳大利亚中部标准时间 CST UTC+10:30</option>
-                                        <option value="+1000">澳大利亚东部标准时间 EST UTC+10:00</option>
-                                        <option value="+0930">南澳大利亚标准时间 SAT UTC+09:30</option>
-                                        <option value="+1000">东澳大利亚标准时间 EAST UTC+10:00</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Date</label>
-                                    <p class="input-group">
-                                        <input type="text" class="form-control"  ng-model="config.datetime.date" is-open="config.datetime.opened" ng-required="true" close-text="Close" />
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="config.openDatepicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Time</label>
-                                    <input type="text" class="form-control" ng-model="config.datetime.time" />
-                                </div>
-                                <button type="submit" class="btn btn-default">提交</button>
-                                <div  ng-show="config.datetime.submitFinished" class="alert" ng-class="{true: 'alert-success', false: 'alert-danger'}[config.datetime.submitSucceed]">
-                                    <span ng-show="config.datetime.submitSucceed">Set time succeed.</span>
-                                    <span ng-hide="config.datetime.submitSucceed">Set time failed.</span>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">CPU信息</h3>
             </div>
-        </tab>
-        <tab heading="系统维护" select="maintain.show()">
-            <div class="row row-in-tab">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Shutdown</h3>
-                    </div>
-                    <div class="panel-body">
-                        <button type="button" class="btn btn-primary">Shutdown</button>
-                        <button type="button" class="btn btn-primary">Resart</button>
-                    </div>
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">cache_size</label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static">{{cpulist[0].cache_size}}</p>
+                  </div>
                 </div>
-            </div>
-            <div class="row row-in-tab">
-                <div class="panel panel-default">
-                    <!-- <div class="panel-heading">
-                        <h3 class="panel-title">Shutdown</h3>
-                    </div> -->
-                    <div class="panel-body">
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Shutdown</button>
-                                </div>
-                                <label class="col-sm-8 control-label">Shutdown this machine.</label>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Restart</button>
-                                </div>
-                                <label class="col-sm-8 control-label">Restart this machine.</label>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Log</button>
-                                </div>
-                                <label class="col-sm-8 control-label">Backet and download sysytem log file.</label>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Configuration</button>
-                                </div>
-                                <label class="col-sm-8 control-label">Export configuration.</label>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <input type="file">
-                                </div>
-                                <label class="col-sm-8 control-label">Import configuration.</label>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-danger" ng-click="overview.saveHostname">Restore Configuration</button>
-                                </div>
-                                <label class="col-sm-8 control-label">Restore the default configuration.</label>
-                            </div>
-                        </form>
-                    </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">cpu_MHz</label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static">{{cpulist[0].cpu_MHz}}</p>
+                  </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Export system log files</h3>
-                    </div>
-                    <div class="panel-body">
-                        <button type="button" class="btn btn-primary">Export</button>
-                    </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">processor</label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static">{{cpulist[0].processor}}</p>
+                  </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Configuration Management</h3>
-                    </div>
-                    <div class="panel-body">
-                        <button type="button" class="btn btn-primary">Export</button>
-                    </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">model_name</label>
+                  <div class="col-sm-12">
+                    <p class="form-control-static">{{cpulist[0].model_name}}</p>
+                  </div>
                 </div>
+              </form>
             </div>
-        </tab>
-    </tabset>
+          </div>
+          <div class="panel panel-default">
+            <!-- <div class="panel-heading">
+              <h3 class="panel-title">SELinux</h3>
+            </div> -->
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">SELinux状态</label>
+                  <div class="col-sm-4">
+                    <p class="form-control-static">{{selinux.state}}</p>
+                  </div>
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-default" ng-click="setSELinuxState('enforcing')" ng-show="enforcing !== selinux.state">kaiqi</button>
+                    <button type="button" class="btn btn-default" ng-click="setSELinuxState('disabled')" ng-show="enforcing === selinux.state">关闭</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">CPU利用率</h3>
+            </div>
+            <div class="panel-body">
+              <div class="container-fluid">
+                <canvas id="cpu-line" class="chart chart-line" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">CPU利用率</h3>
+            </div>
+            <div class="panel-body">
+              <div class="container-fluid">
+                <canvas id="cpu-line" class="chart chart-line" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading btn-in-left">
+              <h3 class="panel-title">内存信息</h3>
+              <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm" ng-click="overview.releaseMemory">一键加速</button></div>
+            </div>
+            <div class="panel-body">
+              <div class="container-fluid">
+                <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options"></canvas> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="系统配置" select="config.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Time</h3>
+            </div>
+            <div class="panel-body">
+              <form role="form">
+                <div class="form-group">
+                  <label  class="control-label">Time zone</label>
+                  <select class="form-control" ng-model="config.datetime.zone" >
+                    <option value="+1400">基里巴斯线岛时间 KLT UTC+14:00</option>
+                    <option value="+1300">新西兰夏时制 NZDT UTC+13:00</option>
+                    <option value="+1200">国际日期变更线， IDLE UTC+12:00</option>
+                    <option value="+1200">新西兰标准时间 NZST UTC+12:00</option>
+                    <option value="+1200">新西兰时间 NZT UTC+12:00</option>
+                    <option value="+1100">澳大利亚东部标准夏时制 （俄罗斯马加丹时区） 东边（俄罗斯彼得罗巴甫洛夫斯克时区） AESST UTC+11:00</option>
+                    <option value="+1030">中澳大利亚标准夏时制 ACSST UTC+10:30</option>
+                    <option value="+1030">中澳大利亚夏时制 CADT UTC+10:30</option>
+                    <option value="+1030">南澳大利亚夏时制 SADT UTC+10:30</option>
+                    <option value="+1000">澳大利亚东部标准时间 AEST UTC+10:00</option>
+                    <option value="+1000">东澳大利亚标准时间 EAST UTC+10:00</option>
+                    <option value="+1000">关岛标准时间，（俄罗斯符拉迪沃斯托克时区） GST UTC+10:00</option>
+                    <option value="+1000">澳大利亚墨尔本 LIGT UTC+10:00</option>
+                    <option value="+0930">南澳大利亚标准时间 SAST UTC+09:30</option>
+                    <option value="+0930">中澳大利亚标准时间 CAST UTC+09:30</option>
+                    <option value="+0900">日本标准时间，（俄罗斯雅库茨克时区） JST UTC+09:00</option>
+                    <option value="+0900">朝鲜 韩国标准时间 KST UTC+09:00</option>
+                    <option value="+0900">马绍尔群岛瓜加林岛时间 MHT UTC+09:00</option>
+                    <option value="+0800">澳大利亚西部标准时间 AWST UTC+08:00</option>
+                    <option value="+0800">中国标准时间（俄罗斯伊尔库茨克时区） CCT UTC+08:00</option>
+                    <option value="+0800">西澳大利亚标准时间 WST UTC+08:00</option>
+                    <option value="+0730">爪哇时间 JT UTC+07:30</option>
+                    <option value="+0700">阿拉木图 夏令时（俄罗斯泰梅尔半岛时区） ALMST UTC+07:00</option>
+                    <option value="+0700">澳大利亚圣诞岛时间 CXT UTC+07:00</option>
+                    <option value="+0630">缅甸时间 MMT UTC+06:30</option>
+                    <option value="+0600">哈萨克斯坦阿拉木图 时间（俄罗斯鄂木斯克时区） ALMT UTC+06:00</option>
+                    <option value="+0500">英属印度洋领地时间（俄罗斯彼尔姆时区） IOT UTC+05:00</option>
+                    <option value="+0500">马尔代夫时间 MVT UTC+05:00</option>
+                    <option value="+0500">法属凯尔盖朗岛时间 TFT UTC+05:00</option>
+                    <option value="+0430">阿富汗时间 AFT UTC+04:30</option>
+                    <option value="+0400">马达加斯加塔那那利佛时间 （俄罗斯萨马拉时区） EAST UTC+04:00</option>
+                    <option value="+0400">毛里求斯时间 MUT UTC+04:00</option>
+                    <option value="+0400">法属留尼汪岛时间 RET UTC+04:00</option>
+                    <option value="+0400">塞舌尔马埃岛时间 SCT UTC+04:00</option>
+                    <option value="+0330">伊朗时间 IRT,IT UTC+03:30</option>
+                    <option value="+0300">科摩罗时间 EAT UTC+03:00</option>
+                    <option value="+0300">巴格达时间 BT UTC+03:00</option>
+                    <option value="+0300">东欧夏时制（俄罗斯莫斯科时区） EETDST UTC+03:00</option>
+                    <option value="+0300">希腊地中海时间 HMT UTC+03:00</option>
+                    <option value="+0200">英国双重标准时间 BDST UTC+02:00</option>
+                    <option value="+0200">中欧夏令时 CEST UTC+02:00</option>
+                    <option value="+0200">中欧夏时制 CETDST UTC+02:00</option>
+                    <option value="+0200">东欧（俄罗斯加里宁格勒时区） EET UTC+02:00</option>
+                    <option value="+0200">法国冬时制 FWT UTC+02:00</option>
+                    <option value="+0200">以色列标准时间 IST UTC+02:00</option>
+                    <option value="+0200">中欧夏时制 MEST UTC+02:00</option>
+                    <option value="+0200">中欧白昼时间 METDST UTC+02:00</option>
+                    <option value="+0200">瑞典夏时制 SST UTC+02:00</option>
+                    <option value="+0100">英国夏时制 BST UTC+01:00</option>
+                    <option value="+0100">中欧时间 CET UTC+01:00</option>
+                    <option value="+0100">丹麦正规时间 DNT UTC+01:00</option>
+                    <option value="+0100">法国夏时制 FST UTC+01:00</option>
+                    <option value="+0100">中欧时间 MET UTC+01:00</option>
+                    <option value="+0100">挪威标准时间 NOR UTC+01:00</option>
+                    <option value="+0100">瑞典冬时制 SWT UTC+01:00</option>
+                    <option value="+0100">西欧光照利用时间（夏时制） WETDST UTC+01:00</option>
+                    <option value="+0000">全球时间 UT UTC+00:00</option>
+                    <option value="+0000">校准的全球时间 UTC UTC+00:00</option>
+                    <option value="+0000">和 UTC 相同 ZULU UTC+00:00</option>
+                    <option value="+0000">西欧 WET UTC+00:00</option>
+                    <option value="-0100">西非时间 WAT UTC-01:00</option>
+                    <option value="-0100">巴西费尔南多·迪诺罗尼亚岛 夏令时 FNST UTC-01:00</option>
+                    <option value="-0200">巴西费尔南多·迪诺罗尼亚岛时间 FNT UTC-02:00</option>
+                    <option value="-0200">巴西利亚夏令时 BRST UTC-02:00</option>
+                    <option value="-0230">纽芬兰夏时制 NDT UTC-02:30</option>
+                    <option value="-0300">大西洋夏时制 ADT UTC-03:00</option>
+                    <option value="-0300">巴西利亚时间 BRT UTC-03:00</option>
+                    <option value="-0330">纽芬兰（Newfoundland）标准时间 NST,NFT UTC-03:30</option>
+                    <option value="-0400">大西洋标准时间（加拿大） AST UTC-04:00</option>
+                    <option value="-0400">大西洋阿雷格里港夏令时 ACST UTC-04:00</option>
+                    <option value="-0500">大西洋阿雷格里港 标准时间 ACT UTC-05:00</option>
+                    <option value="-0400">东部夏时制 EDT UTC-04:00</option>
+                    <option value="-0500">中部夏时制 CDT UTC-05:00</option>
+                    <option value="-0500">东部标准时间 EST UTC-05:00</option>
+                    <option value="-0600">中部标准时间 CST UTC-06:00</option>
+                    <option value="-0600">山地夏时制 MDT UTC-06:00</option>
+                    <option value="-0700">山地标准时间 MST UTC-07:00</option>
+                    <option value="-0700">太平洋夏时制 PDT UTC-07:00</option>
+                    <option value="-0800">阿拉斯加白昼时间 AKDT UTC-08:00</option>
+                    <option value="-0800">太平洋标准时间 PST UTC-08:00</option>
+                    <option value="-0800">育空地区标准时 YST UTC-08:00</option>
+                    <option value="-0900">阿拉斯加标准时间 AKST UTC-09:00</option>
+                    <option value="-0900">夏威夷/阿拉斯加夏时制 HDT UTC-09:00</option>
+                    <option value="-0930">马克萨斯群岛时间 MART UTC-09:30</option>
+                    <option value="-1000">夏威夷-阿拉斯加标准时间 AHST UTC-10:00</option>
+                    <option value="-1000">夏威夷标准时间 HST UTC-10:00</option>
+                    <option value="-1000">中阿拉斯加时间 CAT UTC-10:00</option>
+                    <option value="-1100">阿拉斯加诺姆时间（Nome Time） NT UTC-11:00</option>
+                    <option value="-1200">国际日期变更线，西边 IDLW UTC-12:00</option>
+                    <option value="+0930">中澳大利亚标准时间 ACST UTC+09:30</option>
+                    <option value="+1030">澳大利亚中部标准时间 CST UTC+10:30</option>
+                    <option value="+1000">澳大利亚东部标准时间 EST UTC+10:00</option>
+                    <option value="+0930">南澳大利亚标准时间 SAT UTC+09:30</option>
+                    <option value="+1000">东澳大利亚标准时间 EAST UTC+10:00</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Date</label>
+                  <p class="input-group">
+                    <input type="text" class="form-control"  ng-model="config.datetime.date" is-open="config.datetime.opened" ng-required="true" close-text="Close" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="config.openDatepicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </p>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Time</label>
+                  <input type="text" class="form-control" ng-model="config.datetime.time" />
+                </div>
+                <button type="submit" class="btn btn-default">提交</button>
+                <div  ng-show="config.datetime.submitFinished" class="alert" ng-class="{true: 'alert-success', false: 'alert-danger'}[config.datetime.submitSucceed]">
+                  <span ng-show="config.datetime.submitSucceed">Set time succeed.</span>
+                  <span ng-hide="config.datetime.submitSucceed">Set time failed.</span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="系统维护" select="maintain.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Shutdown</button>
+                  </div>
+                  <label class="col-sm-8 control-label">Shutdown this machine.</label>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Restart</button>
+                  </div>
+                  <label class="col-sm-8 control-label">Restart this machine.</label>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Log</button>
+                  </div>
+                  <label class="col-sm-8 control-label">Backet and download sysytem log file.</label>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Configuration</button>
+                  </div>
+                  <label class="col-sm-8 control-label">Export configuration.</label>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <input type="file"></div>
+                  <label class="col-sm-8 control-label">Import configuration.</label>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <button type="button" class="btn btn-danger" ng-click="overview.saveHostname">Restore Configuration</button>
+                  </div>
+                  <label class="col-sm-8 control-label">Restore the default configuration.</label>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+  </tabset>
 </div>
