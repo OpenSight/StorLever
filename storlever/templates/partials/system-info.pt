@@ -296,12 +296,10 @@
         <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-body">
-              <form class="form-horizontal" role="form">
+              <form role="form">
                 <div class="form-group">
-                  <div class="col-sm-4">
-                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Shutdown</button>
-                  </div>
-                  <label class="col-sm-8 control-label">Shutdown this machine.</label>
+                  <label class="control-label">Shutdown this machine.</label>
+                  <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Shutdown</button>
                 </div>
                 <div class="form-group">
                   <div class="col-sm-4">
