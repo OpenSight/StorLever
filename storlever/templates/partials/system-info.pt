@@ -298,8 +298,8 @@
             <div class="panel-body">
               <form role="form">
                 <div class="form-group">
-                  <label class="control-label">Shutdown this machine.</label>
-                  <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Shutdown</button>
+                  <label class="control-label">重启设备</label>
+                  <button type="button" class="btn btn-default form-control" ng-click="overview.saveHostname">重启</button>
                 </div>
                 <div class="form-group">
                   <div class="col-sm-4">
