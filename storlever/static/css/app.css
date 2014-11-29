@@ -32,7 +32,6 @@ body {
 .row-in-tab{
     padding: 10px;
 }
-
 .panel-heading.btn-in-right{
     position: relative;
 }
@@ -41,4 +40,12 @@ body {
     top: 5px;
     right: 25px;
     text-align: right;
+}
+.panel-body{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.form-group{
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
