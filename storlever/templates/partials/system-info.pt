@@ -110,7 +110,7 @@
                     <p class="form-control-static">{{selinux.state}}</p>
                   </div>
                   <div class="col-sm-4">
-                    <button type="button" class="btn btn-default" ng-click="setSELinuxState('enforcing')" ng-show="enforcing !== selinux.state">kaiqi</button>
+                    <button type="button" class="btn btn-default" ng-click="setSELinuxState('enforcing')" ng-show="enforcing !== selinux.state">开启</button>
                     <button type="button" class="btn btn-default" ng-click="setSELinuxState('disabled')" ng-show="enforcing === selinux.state">关闭</button>
                   </div>
                 </div>
@@ -119,7 +119,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row row-in-tab">
         <div class="col-sm-10">
           <div class="panel panel-default">
             <div class="panel-heading">
@@ -144,7 +144,7 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-heading btn-in-left">
               <h3 class="panel-title">内存信息</h3>
@@ -164,12 +164,12 @@
         <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Time</h3>
+              <h3 class="panel-title">时间配置</h3>
             </div>
             <div class="panel-body">
               <form role="form">
                 <div class="form-group">
-                  <label  class="control-label">Time zone</label>
+                  <label  class="control-label">时区</label>
                   <select class="form-control" ng-model="config.datetime.zone" >
                     <option value="+1400">基里巴斯线岛时间 KLT UTC+14:00</option>
                     <option value="+1300">新西兰夏时制 NZDT UTC+13:00</option>
@@ -268,7 +268,7 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="control-label">Date</label>
+                  <label class="control-label">日期</label>
                   <p class="input-group">
                     <input type="text" class="form-control"  ng-model="config.datetime.date" is-open="config.datetime.opened" ng-required="true" close-text="Close" />
                     <span class="input-group-btn">
@@ -277,7 +277,7 @@
                   </p>
                 </div>
                 <div class="form-group">
-                  <label class="control-label">Time</label>
+                  <label class="control-label">时间</label>
                   <input type="text" class="form-control" ng-model="config.datetime.time" />
                 </div>
                 <button type="submit" class="btn btn-default">提交</button>
@@ -296,39 +296,42 @@
         <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-body">
-              <form role="form">
+              <form class="form-horizontal" role="form">
                 <div class="form-group">
-                  <label class="control-label">重启设备</label>
-                  <button type="button" class="btn btn-default form-control" ng-click="overview.saveHostname">重启</button>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-4">
-                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Restart</button>
+                  <label class="col-sm-2 control-label">重启设备</label>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-default btn-block" ng-click="overview.saveHostname">重启</button>
                   </div>
-                  <label class="col-sm-8 control-label">Restart this machine.</label>
                 </div>
                 <div class="form-group">
-                  <div class="col-sm-4">
-                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Log</button>
+                  <label class="col-sm-2 control-label">关机</label>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-default btn-block" ng-click="overview.saveHostname">关机</button>
                   </div>
-                  <label class="col-sm-8 control-label">Backet and download sysytem log file.</label>
                 </div>
                 <div class="form-group">
-                  <div class="col-sm-4">
-                    <button type="button" class="btn btn-default" ng-click="overview.saveHostname">Export Configuration</button>
+                  <label class="col-sm-2 control-label">导出日志</label>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-default btn-block" ng-click="overview.saveHostname">导出</button>
                   </div>
-                  <label class="col-sm-8 control-label">Export configuration.</label>
                 </div>
                 <div class="form-group">
-                  <div class="col-sm-4">
-                    <input type="file"></div>
-                  <label class="col-sm-8 control-label">Import configuration.</label>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-4">
-                    <button type="button" class="btn btn-danger" ng-click="overview.saveHostname">Restore Configuration</button>
+                  <label class="col-sm-2 control-label">导出配置</label>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-default btn-block" ng-click="overview.saveHostname">导出</button>
                   </div>
-                  <label class="col-sm-8 control-label">Restore the default configuration.</label>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">导入配置</label>
+                  <div class="col-sm-3">
+                    <input class="control-control" type="file" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">恢复默认配置</label>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-danger btn-block" ng-click="overview.saveHostname">恢复默认配置</button>
+                  </div>
                 </div>
               </form>
             </div>

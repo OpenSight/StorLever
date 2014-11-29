@@ -1,6 +1,41 @@
-<tabset>
-    <tab heading="CPU统计">Justified content</tab>
-    <tab heading="IO统计">Short Labeled Justified content</tab>
-    <tab heading="网络统计">Long Labeled Justified content</tab>
-    <tab heading="系统进程">Long Labeled Justified content</tab>
-</tabset>
+<div class="container-fluid" ng-controller="SystemInfo">
+  <tabset>
+    <tab heading="CPU统计" select="overview.show()">
+      <div class="row row-in-tab">
+      </div>
+    </tab>
+    <tab heading="IO统计" select="config.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">时间</h3>
+            </div>
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="网络统计" select="maintain.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="系统进程" select="maintain.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+  </tabset>
+</div>
