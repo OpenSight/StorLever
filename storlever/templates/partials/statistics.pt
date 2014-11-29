@@ -3,7 +3,7 @@
     <tab heading="CPU统计" select="overview.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel panel-default panel-compact">
             <div class="panel-body">
               <form class="form-horizontal" role="form">
                 <div class="form-group">
