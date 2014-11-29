@@ -66,6 +66,7 @@
               </form>
             </div>
         </div>
+        </div>
       </div>
     </tab>
     <tab heading="IO统计" select="config.show()">
