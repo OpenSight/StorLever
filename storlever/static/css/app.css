@@ -49,6 +49,11 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
 }
-.table-no-border th{
+.table-no-border > thead > tr > th, 
+.table-no-border > tbody > tr > th, 
+.table-no-border > tfoot > tr > th, 
+.table-no-border > thead > tr > td, 
+.table-no-border > tbody > tr > td, 
+.table-no-border > tfoot > tr > td{
     border: 0 none;
 }
