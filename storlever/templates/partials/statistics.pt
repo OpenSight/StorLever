@@ -25,43 +25,43 @@
             <div class="panel-body">
               <form class="form-horizontal" role="form">
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">用户进程(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">用户进程</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.user}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">系统内核(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">系统内核</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.system}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">ni(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">ni</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.nice}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">空闲(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">空闲</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.idle}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">等待I/0(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">等待I/0</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.iowait}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">硬中断(%)</label>
-                  <div class="col-sm-2">
+                  <label class="col-sm-1 control-label">硬中断</label>
+                  <div class="col-sm-1">
                     <p class="form-control-static">{{cpu.totle.irq}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">软中断(%)</label>
+                  <label class="col-sm-2 control-label">软中断</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.softirq}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">steal(%)</label>
+                  <label class="col-sm-2 control-label">steal</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.steal}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">guest(%)</label>
+                  <label class="col-sm-2 control-label">guest</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.guest}}</p>
                   </div>
@@ -76,29 +76,29 @@
             <div class="panel-body">
               <form class="form-horizontal" role="form">
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">内存总量(MB)</label>
+                  <label class="col-sm-2 control-label">内存总量</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.totle}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">使用总量(MB)</label>
+                  <label class="col-sm-2 control-label">使用总量</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.used}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">可用总量(MB)</label>
+                  <label class="col-sm-2 control-label">可用总量</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.available}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">空闲(MB)</label>
+                  <label class="col-sm-2 control-label">空闲</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.free}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">内核缓存(MB)</label>
+                  <label class="col-sm-2 control-label">内核缓存</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.buffers}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">缓冲区(MB)</label>
+                  <label class="col-sm-2 control-label">缓冲区</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{mem.cached}}</p>
                   </div>
