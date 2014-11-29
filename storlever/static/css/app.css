@@ -41,11 +41,14 @@ body {
     right: 25px;
     text-align: right;
 }
-.panel-body{
+.panel-compact .panel-body{
     padding-top: 5px;
     padding-bottom: 5px;
 }
-.form-group{
+.panel-compact .form-group{
     margin-top: 5px;
     margin-bottom: 5px;
+}
+.table-no-border th{
+    border: 0 none;
 }
