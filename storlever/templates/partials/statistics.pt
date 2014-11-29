@@ -1,15 +1,64 @@
 <div class="container-fluid" ng-controller="SystemInfo">
   <tabset>
-    <tab heading="CPU统计" select="overview.show()">
+    <tab heading="CPU缁熻" select="overview.show()">
       <div class="row row-in-tab">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Refresh Interval(s)</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" ng-model="interval" />
+            </div>
+            <div class="col-sm-2">
+              <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">change</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">鐢ㄦ埛杩涚▼(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.user}}</p>
+            </div>
+            <label class="col-sm-2 control-label">绯荤粺鍐呮牳(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.system}}</p>
+            </div>
+            <label class="col-sm-2 control-label">ni(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.nice}}</p>
+            </div>
+            <label class="col-sm-2 control-label">绌洪棽(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.idle}}</p>
+            </div>
+            <label class="col-sm-2 control-label">绛夊緟I/0(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.iowait}}</p>
+            </div>
+            <label class="col-sm-2 control-label">irq(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.irq}}</p>
+            </div>
+            <label class="col-sm-2 control-label">softirq(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.softirq}}</p>
+            </div>
+            <label class="col-sm-2 control-label">steal(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.steal}}</p>
+            </div>
+            <label class="col-sm-2 control-label">guest(%)</label>
+            <div class="col-sm-2">
+              <p class="form-control-static">{{cpu.totle.guest}}</p>
+            </div>
+          </div>
+        </form>
       </div>
     </tab>
-    <tab heading="IO统计" select="config.show()">
+    <tab heading="IO缁熻" select="config.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">时间</h3>
+              <h3 class="panel-title">鏃堕棿</h3>
             </div>
             <div class="panel-body">
             </div>
@@ -17,7 +66,7 @@
         </div>
       </div>
     </tab>
-    <tab heading="网络统计" select="maintain.show()">
+    <tab heading="缃戠粶缁熻" select="maintain.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
           <div class="panel panel-default">
@@ -27,7 +76,7 @@
         </div>
       </div>
     </tab>
-    <tab heading="系统进程" select="maintain.show()">
+    <tab heading="绯荤粺杩涚▼" select="maintain.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
           <div class="panel panel-default">
