@@ -3,22 +3,24 @@
     <tab heading="CPU统计" select="overview.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <form class="form-horizontal" role="form">
-            <div class="panel panel-default">
-              <div class="panel-body">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Refresh Interval(s)</label>
+                  <label class="col-sm-2 control-label">更新间隔(s)</label>
                   <div class="col-sm-2">
                     <input type="text" class="form-control" ng-model="interval" />
                   </div>
                   <div class="col-sm-2">
-                    <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">change</button>
+                    <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">修改</button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-body">
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
                 <div class="form-group">
                   <label class="col-sm-2 control-label">用户进程(%)</label>
                   <div class="col-sm-2">
@@ -57,9 +59,9 @@
                     <p class="form-control-static">{{cpu.totle.guest}}</p>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
-          </form>
+        </div>
       </div>
     </tab>
     <tab heading="IO统计" select="config.show()">
