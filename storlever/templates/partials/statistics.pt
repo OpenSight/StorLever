@@ -34,6 +34,8 @@
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.nice}}</p>
                   </div>
+                </div>
+                <div class="form-group">
                   <label class="col-sm-2 control-label">空闲(%)</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.idle}}</p>
@@ -46,6 +48,8 @@
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.irq}}</p>
                   </div>
+                </div>
+                <div class="form-group">
                   <label class="col-sm-2 control-label">softirq(%)</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.softirq}}</p>
