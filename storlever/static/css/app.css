@@ -41,6 +41,9 @@ body {
     right: 25px;
     text-align: right;
 }
+.panel-compact .panel-heading{
+    padding: 5px 15px;
+}
 .panel-compact .panel-body{
     padding-top: 2px;
     padding-bottom: 2px;
