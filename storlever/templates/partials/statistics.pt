@@ -19,6 +19,9 @@
             </div>
           </div>
           <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">CPU详细信息</h3>
+            </div>
             <div class="panel-body">
               <form class="form-horizontal" role="form">
                 <div class="form-group">
@@ -44,13 +47,13 @@
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.iowait}}</p>
                   </div>
-                  <label class="col-sm-2 control-label">irq(%)</label>
+                  <label class="col-sm-2 control-label">硬中断(%)</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.irq}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">softirq(%)</label>
+                  <label class="col-sm-2 control-label">软中断(%)</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.softirq}}</p>
                   </div>
@@ -61,6 +64,47 @@
                   <label class="col-sm-2 control-label">guest(%)</label>
                   <div class="col-sm-2">
                     <p class="form-control-static">{{cpu.totle.guest}}</p>
+                  </div>
+                </div>
+              </form>
+            </div>
+        </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">内存详细信息</h3>
+            </div>
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+"available": 887078912, 
+    "cached": 52322304, 
+
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">内存总量(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.totle}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">使用总量(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.used}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">可用总量(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.available}}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">空闲(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.free}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">内核缓存(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.buffers}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">缓冲区(MB)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{mem.cached}}</p>
                   </div>
                 </div>
               </form>
