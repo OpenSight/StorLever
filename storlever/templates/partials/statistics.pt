@@ -2,55 +2,64 @@
   <tabset>
     <tab heading="CPU统计" select="overview.show()">
       <div class="row row-in-tab">
-        <form class="form-horizontal" role="form">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Refresh Interval(s)</label>
-            <div class="col-sm-2">
-              <input type="text" class="form-control" ng-model="interval" />
+        <div class="col-sm-12">
+          <form class="form-horizontal" role="form">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Refresh Interval(s)</label>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control" ng-model="interval" />
+                  </div>
+                  <div class="col-sm-2">
+                    <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">change</button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col-sm-2">
-              <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">change</button>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">用户进程(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.user}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">系统内核(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.system}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">ni(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.nice}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">空闲(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.idle}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">等待I/0(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.iowait}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">irq(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.irq}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">softirq(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.softirq}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">steal(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.steal}}</p>
+                  </div>
+                  <label class="col-sm-2 control-label">guest(%)</label>
+                  <div class="col-sm-2">
+                    <p class="form-control-static">{{cpu.totle.guest}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">用户进程(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.user}}</p>
-            </div>
-            <label class="col-sm-2 control-label">系统内核(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.system}}</p>
-            </div>
-            <label class="col-sm-2 control-label">ni(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.nice}}</p>
-            </div>
-            <label class="col-sm-2 control-label">空闲(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.idle}}</p>
-            </div>
-            <label class="col-sm-2 control-label">等待I/0(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.iowait}}</p>
-            </div>
-            <label class="col-sm-2 control-label">irq(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.irq}}</p>
-            </div>
-            <label class="col-sm-2 control-label">softirq(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.softirq}}</p>
-            </div>
-            <label class="col-sm-2 control-label">steal(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.steal}}</p>
-            </div>
-            <label class="col-sm-2 control-label">guest(%)</label>
-            <div class="col-sm-2">
-              <p class="form-control-static">{{cpu.totle.guest}}</p>
-            </div>
-          </div>
-        </form>
+          </form>
       </div>
     </tab>
     <tab heading="IO统计" select="config.show()">
