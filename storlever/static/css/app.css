@@ -30,7 +30,7 @@ body {
 }
 
 .row-in-tab{
-    padding: 10px;
+    padding: 5px;
 }
 .panel-heading.btn-in-right{
     position: relative;
@@ -42,12 +42,12 @@ body {
     text-align: right;
 }
 .panel-compact .panel-body{
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 .panel-compact .form-group{
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 .table-no-border > thead > tr > th, 
 .table-no-border > tbody > tr > th, 
@@ -56,4 +56,15 @@ body {
 .table-no-border > tbody > tr > td, 
 .table-no-border > tfoot > tr > td{
     border: 0 none;
+}
+.table-compact{
+    margin-bottom: 0;
+}
+.table-compact > thead > tr > th, 
+.table-compact > tbody > tr > th, 
+.table-compact > tfoot > tr > th, 
+.table-compact > thead > tr > td, 
+.table-compact > tbody > tr > td, 
+.table-compact > tfoot > tr > td{
+    padding: 2px 5px;
 }
