@@ -23,7 +23,7 @@
               <h3 class="panel-title">CPU</h3>
             </div>
             <div class="panel-body">
-              <table class="table table-no-border">
+              <table class="table table-no-border table-compact">
                 <th>用户进程</th>
                 <th>系统内核 </th>
                 <th>ni </th>
@@ -96,7 +96,7 @@
               <h3 class="panel-title">内存</h3>
             </div>
             <div class="panel-body">
-              <table class="table table-no-border">
+              <table class="table table-no-border table-compact">
                 <th>内存总量</th>
                 <th>使用总量</th>
                 <th>可用总量</th>
