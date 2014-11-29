@@ -23,6 +23,28 @@
               <h3 class="panel-title">CPU</h3>
             </div>
             <div class="panel-body">
+              <table class="table">
+                <th>用户进程</th>
+                <th>系统内核 </th>
+                <th>ni </th>
+                <th>空闲 </th>
+                <th>等待I/0 </th>
+                <th>硬中断 </th>
+                <th>软中断 </th>
+                <th>steal </th>
+                <th>guest </th>
+                <tr>
+                  <td>{{cpu.totle.user}}</td>
+                  <td>{{cpu.totle.system}}</td>
+                  <td>{{cpu.totle.nice}}</td>
+                  <td>{{cpu.totle.idle}}</td>
+                  <td>{{cpu.totle.iowait}}</td>
+                  <td>{{cpu.totle.irq}}</td>
+                  <td>{{cpu.totle.softirq}}</td>
+                  <td>{{cpu.totle.steal}}</td>
+                  <td>{{cpu.totle.guest}}</td>
+                </tr>
+              </table>
               <form class="form-horizontal" role="form">
                 <div class="form-group">
                   <label class="col-sm-2 control-label">用户进程</label>
