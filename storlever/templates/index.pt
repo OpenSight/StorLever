@@ -78,6 +78,9 @@
     <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
     <script src="${request.static_url('storlever:static/js/angular-route.min.js')}"></script>
     <script src="${request.static_url('storlever:static/js/ui-bootstrap-tpls-0.11.2.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/Chart.min.js')}"></script>
+    <script src="${request.static_url('storlever:static/js/angular-chart.js')}"></script>
+    
     <script src="${request.static_url('storlever:static/js/app.js')}"></script>
     <script src="${request.static_url('storlever:static/js/services.js')}"></script>
     <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
@@ -88,3 +91,4 @@
     <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
   </body>
 </html>
+

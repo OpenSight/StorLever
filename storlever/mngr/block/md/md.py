@@ -16,6 +16,7 @@ from storlever.lib.command import check_output
 from storlever.lib.lock import lock as lock_factory
 from storlever.lib.exception import StorLeverError
 from storlever.lib import logger
+from storlever.mngr.system.modulemgr import ModuleManager
 
 
 MODULE_INFO = {
@@ -33,6 +34,7 @@ class MDManager(object):
 
     def get_all_md(self):
         return MDs(self.lock)
+
 
 class MDs():
     def __init__(self, lock):
@@ -70,7 +72,7 @@ class MDs():
         return self._detail[md_device]
 
     def delete(self, md_device):
-        '''
+        """
         Destroy a RAID device.
 
         WARNING This will zero the superblock of all members of the RAID array..
@@ -80,7 +82,7 @@ class MDs():
         .. code-block:: bash
 
         salt '*' raid.destroy /dev/md0
-        '''
+        """
         md = MD(md_device, self._lock)
 
         stop_cmd = '/sbin/mdadm --stop {0}'.format(md_device)
@@ -105,7 +107,7 @@ class MDs():
                level,
                devices,
                **kwargs):
-        '''
+        """
         Create a RAID device.
 
         .. versionchanged:: Helium
@@ -157,7 +159,7 @@ class MDs():
         salt '*' raid.detail /dev/md0
 
         For more info, read the ``mdadm(8)`` manpage
-        '''
+        """
         devices_string = ' '.join(devices)
 
         opts = ''
@@ -192,7 +194,7 @@ class MD(object):
         self._lock = lock
 
     def refresh(self):
-        '''
+        """
         Show detail for a specified RAID device
 
         CLI Example:
@@ -200,7 +202,7 @@ class MD(object):
         .. code-block:: bash
 
         salt '*' raid.detail '/dev/md0'
-        '''
+        """
         self.raid_level = ''
         self.state = ''
         self.array_size = 0
@@ -272,7 +274,6 @@ class MD(object):
                 if hasattr(self, comps[0]):
                     setattr(self, comps[0], comps[1])
 
-
     def remove_component(self, device):
         fail_cmd = '/sbin/mdadm {0} --fail {1}'.format(self.dev_file, device)
         remove_cmd = '/sbin/mdadm {0} --remove {1}'.format(self.dev_file, device)
@@ -305,3 +306,6 @@ MDManager = MDManager()
 
 def md_mgr():
     return MDManager
+
+
+ModuleManager.register_module(**MODULE_INFO)

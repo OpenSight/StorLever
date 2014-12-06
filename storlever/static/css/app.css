@@ -32,3 +32,13 @@ body {
 .row-in-tab{
     padding: 10px;
 }
+
+.panel-heading.btn-in-right{
+    position: relative;
+}
+.btn-right-container{
+    position: absolute;
+    top: 5px;
+    right: 25px;
+    text-align: right;
+}

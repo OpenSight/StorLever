@@ -1,8 +1,8 @@
 <div class="container-fluid" ng-controller="SystemInfo">
     <tabset>
-        <tab heading="系统概要" select="selectOverview()">
+        <tab heading="系统概要" select="overview.show()">
             <div class="row row-in-tab">
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">主机信息</h3>
@@ -58,7 +58,40 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">CPU信息</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-4 control-label">cache_size</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-static">{{cpulist[0].cache_size}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-4 control-label">cpu_MHz</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-static">{{cpulist[0].cpu_MHz}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-4 control-label">processor</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-static">{{cpulist[0].processor}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-4 control-label">model_name</label>
+                                    <div class="col-sm-12">
+                                        <p class="form-control-static">{{cpulist[0].model_name}}</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">SELinux</h3>
@@ -80,23 +113,29 @@
                 </div>
             </div>
             <div class="row row-in-tab">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">CPU列表</h3>
+                            <h3 class="panel-title">CPU利用率</h3>
                         </div>
-                        <table class="table">
-                            <th>cache_size</th>
-                            <th>cpu_MHz</th>
-                            <th>processor</th>
-                            <th>model_name</th>
-                            <tr ng-repeat="cpu in cpulist">
-                                <td>{{cpu.cache_size}}</td>
-                                <td>{{cpu.cpu_MHz}}</td>
-                                <td>{{cpu.processor}}</td>
-                                <td>{{cpu.model_name}}</td>
-                            </tr>
-                        </table>
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <canvas id="cpu-line" class="chart chart-line" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading btn-in-left">
+                            <h3 class="panel-title">内存信息</h3>
+                            <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm">一键加速</button></div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options"></canvas> 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
