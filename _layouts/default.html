@@ -1,20 +1,86 @@
 <!DOCTYPE html>
-<html>
+<!-- saved from url=(0038)http://v3.bootcss.com/examples/signin/ -->
+<html lang="zh-cn">
+{% include head.html %}
+<body>
+{% include header.html %}
 
-  {% include head.html %}
 
-  <body>
-
-    {% include header.html %}
-
-    <div class="page-content">
-      <div class="wrapper">
-        {{ content }}
-      </div>
+<div class="container" style="margin-top: -55px;">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" role="navigation">
+            <ul class="list-group">
+                <li class="list-group-item lv2_font">
+                    <a href="#">News</a>
+                </li>
+                <li class="list-group-item lv2_font">
+                    <a href="#">Highlight</a>
+                </li>
+                <li class="list-group-item lv2_font">
+                    <a href="#">Doc</a>
+                </li>
+                <li class="list-group-item lv2_font">
+                    <a href="#">About团队目的</a>
+                </li>
+                <li class="list-group-item lv2_font">
+                    <a href="#">FeedBack</a>
+                </li>
+                <li class="list-group-item lv2_font">
+                    Download
+                    <ul class="lv3_focus">
+                        <li style="display: block">
+                            <a href="#" class="lv3_font">Release</a>
+                        </li>
+                        <li style="display: block" >
+                            <a href="#" class="lv3_font">Stable</a>
+                        </li>
+                        <li style="display: block" >
+                            <a href="#" class="lv3_font">latest</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item lv2_font">
+                    <a href="#">How to build</a>
+                </li>
+                <ul class="list-group">
+                    <li class="list-group-item lv2_font">
+                        <a href="#">Help</a>
+                    </li>
+                </ul>
+            </ul>
+        </div>
+        <div class="col-xs-12 col-sm-10">
+            {{ content }}
+        </div>
     </div>
+</div>
 
-    {% include footer.html %}
 
-  </body>
 
-</html>
+{% include footer.html %}
+
+<!--div class="container" style="padding-top: 65px;">
+
+    <form class="form-signin" role="form" action="${url}" method="post">
+
+        <input type="hidden" name="came_from" value="${came_from}"/>
+        <input type="text" class="form-control" placeholder="Account" required="" autofocus="" name="login" value="${login}" />
+        <input type="password" class="form-control" placeholder="Password" required="" name="password"
+               value="${password}" />
+        <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" name="form.submitted">Sign in</button>
+    </form>
+
+</div!--> <!-- /container -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+</body></html>
+
+
