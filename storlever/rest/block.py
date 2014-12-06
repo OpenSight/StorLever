@@ -3,6 +3,7 @@ from storlever.rest.common import (get_view, post_view,
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.block import blockmgr
 from storlever.mngr.block import scsimgr
+from storlever.mngr.block.md import md
 from pyramid.response import Response
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError, BoolVal, StrRe, ListVal
@@ -19,6 +20,11 @@ def includeme(config):
     config.add_route('scan_bus', '/block/scsi/scan_bus')
     config.add_route('scsi_dev', '/block/scsi/dev_list/{scsi_id}')
     config.add_route('scsi_dev_smart', '/block/scsi/dev_list/{scsi_id}/smart')
+    
+    ####md rest
+    config.add_route('md_list', '/block/md_list') #post get 
+    config.add_route('md_list', '/block/md_list/{md_name}')#get put delete
+    
     # adapter list resource (HBA, raid controller etc)
     # GET:    adapter list
     config.add_route('adapter_list', '/block/adapter_list')
@@ -207,6 +213,37 @@ def set_scsi_dev_smart(request):
     offline_set = params.get("offline_auto", None),
     scsi_dev_info.set_smart_config(smart_set,offline_set)
     return Response(status=200)
+
+
+
+
+
+#http://192.168.1.10:6543/storlever/api/v1/block/md_list
+@get_view(route_name='md_list')
+def get_md_list(request):
+    md =  md.MDManager()
+    scsi_dev_info = scsi_mgr.get_scsi_dev_by_id(scsi_id)
+    samrt_info = scsi_dev_info.get_smart_info()
+    return samrt_info
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @get_view(route_name='adapter_list')
 def adapters_get(request):
