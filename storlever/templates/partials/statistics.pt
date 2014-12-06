@@ -1,6 +1,185 @@
-<tabset>
-    <tab heading="CPUͳ��">Justified content</tab>
-    <tab heading="IOͳ��">Short Labeled Justified content</tab>
-    <tab heading="����ͳ��">Long Labeled Justified content</tab>
-    <tab heading="ϵͳ����">Long Labeled Justified content</tab>
-</tabset>
+<div class="container-fluid" ng-controller="SystemInfo">
+  <tabset>
+    <tab heading="CPU统计" select="overview.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default panel-compact">
+            <div class="panel-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">更新间隔(s)</label>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control" ng-model="interval" />
+                  </div>
+                  <div class="col-sm-2">
+                    <button type="button" class="btn btn-default" ng-click="cpu.changeInterval">修改</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel panel-default panel-compact">
+            <div class="panel-heading">
+              <h3 class="panel-title">CPU</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-no-border table-compact">
+                <th>用户进程</th>
+                <th>系统内核 </th>
+                <th>ni </th>
+                <th>空闲 </th>
+                <th>等待I/0 </th>
+                <th>硬中断 </th>
+                <th>软中断 </th>
+                <th>steal </th>
+                <th>guest </th>
+                <tr>
+                  <td>12%{{cpu.totle.user}}</td>
+                  <td>12%{{cpu.totle.system}}</td>
+                  <td>12%{{cpu.totle.nice}}</td>
+                  <td>12%{{cpu.totle.idle}}</td>
+                  <td>12%{{cpu.totle.iowait}}</td>
+                  <td>12%{{cpu.totle.irq}}</td>
+                  <td>12%{{cpu.totle.softirq}}</td>
+                  <td>12%{{cpu.totle.steal}}</td>
+                  <td>12%{{cpu.totle.guest}}</td>
+                </tr>
+              </table>
+              <!--<form class="form-horizontal" role="form">-->
+              <!--  <div class="form-group">-->
+              <!--    <label class="col-sm-2 control-label">用户进程</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.user}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">系统内核</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.system}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">ni</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.nice}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">空闲</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.idle}}</p>-->
+              <!--    </div>-->
+              <!--  </div>-->
+              <!--  <div class="form-group">-->
+              <!--    <label class="col-sm-2 control-label">等待I/0</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.iowait}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">硬中断</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.irq}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">软中断</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.softirq}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">steal</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.steal}}</p>-->
+              <!--    </div>-->
+              <!--  </div>-->
+              <!--  <div class="form-group">-->
+              <!--    <label class="col-sm-2 control-label">guest</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{cpu.totle.guest}}</p>-->
+              <!--    </div>-->
+              <!--  </div>-->
+              <!--</form>-->
+            </div>
+        </div>
+          <div class="panel panel-default panel-compact">
+            <div class="panel-heading">
+              <h3 class="panel-title">内存</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-no-border table-compact">
+                <th>内存总量</th>
+                <th>使用总量</th>
+                <th>可用总量</th>
+                <th>空闲</th>
+                <th>内核缓存</th>
+                <th>缓冲区 </th>
+                <tr>
+                  <td>12%{{mem.totle}}</td>
+                  <td>12%{{mem.used}}</td>
+                  <td>12%{{mem.available}}</td>
+                  <td>12%{{mem.free}}</td>
+                  <td>12%{{mem.buffers}}</td>
+                  <td>12%{{mem.cached}}</td>
+                </tr>
+              </table>
+              <!--<form class="form-horizontal" role="form">-->
+              <!--  <div class="form-group">-->
+              <!--  <td>12%{{mem.user}}</td>-->
+              <!--    <label class="col-sm-2 control-label">内存总量</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.totle}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">使用总量</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.used}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">可用总量</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.available}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">空闲</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.free}}</p>-->
+              <!--    </div>-->
+              <!--  </div>-->
+              <!--  <div class="form-group">-->
+              <!--    <label class="col-sm-2 control-label">内核缓存</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.buffers}}</p>-->
+              <!--    </div>-->
+              <!--    <label class="col-sm-2 control-label">缓冲区</label>-->
+              <!--    <div class="col-sm-1">-->
+              <!--      <p class="form-control-static">{{mem.cached}}</p>-->
+              <!--    </div>-->
+              <!--  </div>-->
+              <!--</form>-->
+            </div>
+        </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="IO统计" select="config.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">时间</h3>
+            </div>
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="网络统计" select="maintain.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+    <tab heading="系统进程" select="maintain.show()">
+      <div class="row row-in-tab">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+  </tabset>
+</div>
