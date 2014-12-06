@@ -10,6 +10,9 @@ This module provide some utils function for storlever lib
 
 """
 
+import json
+
+
 def filter_dict(d, keys, invert=False):
     """ Filters a dict by only permitting certain keys. """
     if invert:
@@ -17,3 +20,26 @@ def filter_dict(d, keys, invert=False):
     else:
         key_set = set(keys) & set(d.keys())
     return dict([ (k, d[k]) for k in key_set ])
+
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, o):
+        try:
+            return json.JSONEncoder.default(self, o)
+        except TypeError:
+            if isinstance(o, set):
+                return json.JSONEncoder.default(self, list(o))
+            elif hasattr(o, '__dict__'):
+                obj_dict = {}
+                for k, v in o.__dict__.iteritems():
+                    if not k.startswith('_'):
+                        obj_dict[k] = v
+                return self.default(obj_dict)
+
+
+def encode_json(o):
+    return json.dumps(o, cls=CustomEncoder)
+
+
+
+
