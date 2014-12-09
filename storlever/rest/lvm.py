@@ -62,7 +62,6 @@ new_vg_schema = Schema({
 def create_vg(request):
     lvm_mng = lvm.lvm_mgr()
     params = get_params_from_request(request, new_vg_schema)
-    
     vg = lvm_mng.new_vg(params['vgname'],params['dev'])
     
     if vg is None:
@@ -122,7 +121,7 @@ def delete_vg_rest(request):
 
 add_lv_schema = Schema({
     "lvname": StrRe(r"^([a-zA-Z].+)$"),
-    "size": IntVal(1024),
+    "size": IntVal(1024), #min 1024
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
 #curl -v -X post -d lvname=vgx size=204800000 http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list/{vg}

@@ -5,6 +5,7 @@ def includeme(config):
     config.include(__name__ + '.system')
     config.include(__name__ + '.lvm')
     config.include(__name__ + '.block')
+    config.include(__name__ + '.md')
     config.include(__name__ + '.fs')
     config.include(__name__ + '.utils')
     config.include(__name__ + '.nas')

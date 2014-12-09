@@ -221,7 +221,7 @@ add_quoat_group_schema = Schema({
     Optional("inode_hardlimit"): Default(int(),default=0),
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
-@post_view(route_name='group_quota_list')
+@post_view(route_name='quota_group_list')
 def add_quota_group(request):
     fs_name = request.matchdict['fsname']
     fs_mrg = fsmgr.fs_mgr()

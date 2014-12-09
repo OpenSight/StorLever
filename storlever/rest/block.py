@@ -21,16 +21,6 @@ def includeme(config):
     config.add_route('scsi_dev', '/block/scsi/dev_list/{scsi_id}')
     config.add_route('scsi_dev_smart', '/block/scsi/dev_list/{scsi_id}/smart')
     
-    ####md rest
-    config.add_route('md_list', '/block/md_list') #post get 
-    config.add_route('md_list', '/block/md_list/{md_name}')#get put delete
-    
-    # adapter list resource (HBA, raid controller etc)
-    # GET:    adapter list
-    config.add_route('adapter_list', '/block/adapter_list')
-    config.add_route('adapter', '/block/adapter_list/{adapter}')
-    config.add_route('adapter_disk_list', '/block/adapter_list/{adapter}/disk_list')
-    config.add_route('adapter_vdisk_list', '/block/adapter_list/{adapter}/vdisk_list')
 
 
 # http://192.168.1.10:6543/storlever/api/v1/block/block_list
@@ -216,50 +206,21 @@ def set_scsi_dev_smart(request):
 
 
 
+#@get_view(route_name='adapter_list')
+#def adapters_get(request):
+    #pass
 
 
-#http://192.168.1.10:6543/storlever/api/v1/block/md_list
-@get_view(route_name='md_list')
-def get_md_list(request):
-    md =  md.MDManager()
-    scsi_dev_info = scsi_mgr.get_scsi_dev_by_id(scsi_id)
-    samrt_info = scsi_dev_info.get_smart_info()
-    return samrt_info
+#@get_view(route_name='adapter')
+#def adapters_get(request):
+    #pass
 
 
+#@get_view(route_name='adapter_disk_list')
+#def adapters_get(request):
+    #pass
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@get_view(route_name='adapter_list')
-def adapters_get(request):
-    pass
-
-
-@get_view(route_name='adapter')
-def adapters_get(request):
-    pass
-
-
-@get_view(route_name='adapter_disk_list')
-def adapters_get(request):
-    pass
-
-
-@get_view(route_name='adapter_vdisk_list')
-def adapters_get(request):
-    pass
+#@get_view(route_name='adapter_vdisk_list')
+#def adapters_get(request):
+    #pass
