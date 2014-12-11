@@ -28,17 +28,17 @@ class CustomEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, o)
         except TypeError:
             if isinstance(o, set):
-                return json.JSONEncoder.default(self, list(o))
+                return list(o)
             elif hasattr(o, '__dict__'):
                 obj_dict = {}
                 for k, v in o.__dict__.iteritems():
                     if not k.startswith('_'):
                         obj_dict[k] = v
-                return self.default(obj_dict)
+                return obj_dict
 
 
 def encode_json(o):
-    return json.dumps(o, cls=CustomEncoder)
+    return json.dumps(o, check_circular=True, cls=CustomEncoder)
 
 
 
