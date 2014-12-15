@@ -28,6 +28,26 @@ MODULE_INFO = {
 }
 
 
+def _block_name_to_dev_file(name):
+
+    if os.path.exists(os.path.join("/dev/", name)):
+        dev_file = os.path.join("/dev/", name)
+    elif os.path.exists(os.path.join("/dev/mapper/", name)):
+        dev_file = os.path.join("/dev/mapper/", name)
+    else:
+        raise StorLeverError("Device File (%s) Not Found" % name, 404)
+
+    return dev_file
+
+
+def _md_name_to_dev_file(name):
+    if name.startswith('md'):
+        dev_file = os.path.join('/dev/', name)
+    else:
+        dev_file = os.path.join('/dev/md/', name)
+    return dev_file
+
+
 class MDManager(object):
     def __init__(self):
         self.lock = lock_factory()
@@ -53,11 +73,16 @@ class MDs():
                 continue
             comps = line.split()
             device = comps[1]
-            ret[os.path.basename(device)] = {"dev_file": device}
+            md_name = os.path.basename(device)
+            ret[md_name] = {"dev_file": device}
             for comp in comps[2:]:
                 key = comp.split('=')[0].lower()
                 value = comp.split('=')[1]
-                ret[device][key] = value
+                ret[md_name][key] = value
+            full_name = ret[md_name].get('name')
+            if full_name:
+                ret[md_name]['full_name'] = full_name
+            ret[md_name]['name'] = md_name
         return ret
 
     def _update_mdadm_conf(self):
@@ -66,12 +91,12 @@ class MDs():
         update_cmd = '/sbin/mdadm --examine --scan > /etc/mdadm.conf'
         check_output(update_cmd, shell=True)
 
-    def get_md(self, md_device):
-        if md_device not in self._detail:
-            self._detail[md_device] = MD(md_device, self._lock)
-        return self._detail[md_device]
+    def get_md(self, md_name):
+        if md_name not in self._detail:
+            self._detail[md_name] = MD(md_name, self._lock)
+        return self._detail[md_name]
 
-    def delete(self, md_device):
+    def delete(self, md_name):
         """
         Destroy a RAID device.
 
@@ -83,7 +108,9 @@ class MDs():
 
         salt '*' raid.destroy /dev/md0
         """
-        md = MD(md_device, self._lock)
+        md = MD(md_name, self._lock)
+
+        md_device  = _md_name_to_dev_file(md_name)
 
         stop_cmd = '/sbin/mdadm --stop {0}'.format(md_device)
         zero_cmd = '/sbin/mdadm --zero-superblock {0}'
@@ -160,6 +187,7 @@ class MDs():
 
         For more info, read the ``mdadm(8)`` manpage
         """
+        md_device = _md_name_to_dev_file(name)
         devices_string = ' '.join(devices)
 
         opts = ''
@@ -171,7 +199,7 @@ class MDs():
                     opts += '--{0}={1} '.format(key, kwargs[key])
 
         with self._lock:
-            cmd = "yes | /sbin/mdadm -C {0} --force {1} -l {2} -n {3} {4}".format(name,
+            cmd = "yes | /sbin/mdadm -C {0} --force {1} -l {2} -n {3} {4}".format(md_device,
                                                                      opts,
                                                                      level,
                                                                      len(devices),
@@ -187,9 +215,9 @@ class MDs():
 
 
 class MD(object):
-    def __init__(self, device, lock):
-        self.name = os.path.basename(device)
-        self.dev_file = device
+    def __init__(self, name, lock):
+        self.name = name
+        self.dev_file = _md_name_to_dev_file(name)
         self.refresh()
         self._lock = lock
 
@@ -271,7 +299,9 @@ class MD(object):
                                    "Failed to parse MD detail [{0}] [{1}]".format(comps[0], comps[1]))
                         continue
 
-                if hasattr(self, comps[0]):
+                if comps[0] == 'name':
+                    setattr(self, 'full_name', comps[1])
+                elif hasattr(self, comps[0]):
                     setattr(self, comps[0], comps[1])
 
     def remove_component(self, device):
