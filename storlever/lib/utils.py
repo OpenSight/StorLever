@@ -22,7 +22,12 @@ def filter_dict(d, keys, invert=False):
     return dict([ (k, d[k]) for k in key_set ])
 
 
-class CustomEncoder(json.JSONEncoder):
+class CustomJSONEncoder(json.JSONEncoder):
+    def __init__(self, *args, **kwargs):
+        # dirty hack to keep 'default' method intact
+        kwargs.pop('default', None)
+        super(CustomJSONEncoder, self).__init__(*args, **kwargs)
+
     def default(self, o):
         try:
             return json.JSONEncoder.default(self, o)
@@ -38,7 +43,7 @@ class CustomEncoder(json.JSONEncoder):
 
 
 def encode_json(o):
-    return json.dumps(o, check_circular=True, cls=CustomEncoder)
+    return json.dumps(o, check_circular=True, cls=CustomJSONEncoder)
 
 
 
