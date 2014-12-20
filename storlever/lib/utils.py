@@ -34,6 +34,8 @@ class CustomJSONEncoder(json.JSONEncoder):
         except TypeError:
             if isinstance(o, set):
                 return list(o)
+            elif hasattr(o, '__json__'):
+                return o.__json__()
             elif hasattr(o, '__dict__'):
                 obj_dict = {}
                 for k, v in o.__dict__.iteritems():
