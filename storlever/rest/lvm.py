@@ -90,7 +90,7 @@ def get_vg_info(request):
     return vg_info
 
 vg_op_schema = Schema({
-    Optional("opcode"): StrRe(r"^(grow|shrink)$"),
+    Optional("opt"): StrRe(r"^(grow|shrink)$"),
     Optional("dev"): Default(ListVal(StrRe(r"^(/dev/sd[a-z]|/dev/md.+)$")), default=[]),
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
@@ -188,7 +188,7 @@ def get_lv(request):
     return lv_info
 
 lv_op_schema = Schema({
-    "opcode": StrRe(r"^(activate|disable)$"),
+    "opt": StrRe(r"^(activate|disable)$"),
     DoNotCare(Use(str)): object  # for all those key we don't care
 })
 
