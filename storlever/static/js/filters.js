@@ -9,7 +9,7 @@
     };
   }]).filter('KB', [function() {
     var step = 1024;
-    var unit = ·['KB', 'MB', 'GB', 'TB'];
+    var unit = ['KB', 'MB', 'GB', 'TB'];
     return function(capacity, bit) {
       for (var i = 0, l = unit.length; i < l; i++){
         capacity = capacity / step;
