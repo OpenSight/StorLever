@@ -11,7 +11,8 @@
     var step = 1024;
     var unit = ['KB', 'MB', 'GB', 'TB'];
     return function(capacity, bit) {
-      if (capacity < 0){
+      debugger;
+      if (capacity < 1){
         return capacity + unit[0];
       }
       for (var i = 0, l = unit.length; i < l && capacity > 1; i++){
