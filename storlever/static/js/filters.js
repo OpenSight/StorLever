@@ -7,14 +7,10 @@
     return function(text) {
       return String(text).replace(/\%VERSION\%/mg, version);
     };
-  }]).filter('KB', [function() {
+  }]).filter('byte', [function() {
     var step = 1024;
-    var unit = ['KB', 'MB', 'GB', 'TB'];
+    var unit = ['B', 'KB', 'MB', 'GB', 'TB'];
     return function(capacity, bit) {
-      debugger;
-      if (capacity < 1){
-        return capacity + unit[0];
-      }
       for (var i = 0, l = unit.length; i < l && capacity > 1; i++){
         capacity = capacity / step;
       }
