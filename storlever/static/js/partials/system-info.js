@@ -16,7 +16,8 @@
           data: [100, 0],
           options:{
             pointDot: false,
-            animation: false
+            animation: false,
+            showTooltips: false
           }
         },
         show: function() {
@@ -103,6 +104,7 @@
           $http.get("/storlever/api/v1/system/memory", {
             timeout: $scope.aborter.promise
           }).success(function(response) {
+            $scope.overview.memory.detail = response;
             $scope.overview.memory.data[0] = Math.round(response.percent * 100) / 100;
             $scope.overview.memory.data[1] = 100 - $scope.overview.memory.data[0];
           });

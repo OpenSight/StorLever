@@ -1,59 +1,59 @@
 body {
-    padding-top: 60px;
-    padding-bottom: 30px;
+  padding-top: 60px;
+  padding-bottom: 30px;
 }
 .first-container{
-    /*margin-top: 100px;*/
+  /*margin-top: 100px;*/
 }
 
 .menu-list-trunk{
-    display: none;
+  display: none;
 }
 .menu-list-trunk.active{
-    display: block;
+  display: block;
 }
 .menu-list-branch.active, 
 .menu-list-branch.active:hover, 
 .menu-list-branch.active:focus{
-    background-color: #fff;
-    border: 1px solid #ddd;
-    color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #333;
 }
 .menu-list-leaf.active{
-    background-color: #eee;
+  background-color: #eee;
 }
 
 .tab-pane{
-    border-left: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    border-right: 1px solid #eee;
+  border-left: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 .row-in-tab{
-    padding: 5px;
+  padding: 5px;
 }
 .panel-heading.btn-in-right{
-    position: relative;
+  position: relative;
 }
 .btn-right-container{
-    position: absolute;
-    top: 5px;
-    right: 25px;
-    text-align: right;
+  position: absolute;
+  top: 5px;
+  right: 25px;
+  text-align: right;
 }
 .panel-compact{
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 .panel-compact .panel-heading{
-    padding: 5px 15px;
+  padding: 5px 15px;
 }
 .panel-compact .panel-body{
-    padding-top: 2px;
-    padding-bottom: 2px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 .panel-compact .form-group{
-    margin-top: 2px;
-    margin-bottom: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 .table-no-border > thead > tr > th, 
 .table-no-border > tbody > tr > th, 
@@ -61,10 +61,10 @@ body {
 .table-no-border > thead > tr > td, 
 .table-no-border > tbody > tr > td, 
 .table-no-border > tfoot > tr > td{
-    border: 0 none;
+  border: 0 none;
 }
 .table-compact{
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 .table-compact > thead > tr > th, 
 .table-compact > tbody > tr > th, 
@@ -72,5 +72,45 @@ body {
 .table-compact > thead > tr > td, 
 .table-compact > tbody > tr > td, 
 .table-compact > tfoot > tr > td{
-    padding: 2px 5px;
+  padding: 2px 5px;
+}
+
+.chart-legend dt{
+  text-align: left;
+  width: 120px;
+}
+.chart-legend dd{
+  margin-left: 120px;
+}
+.chart-legend dt span{
+  border-radius: 0.2em;
+  display: inline-block;
+  height: 1em;
+  margin-right: 0.5em;
+  vertical-align: middle;
+  width: 1em;
+}
+.chart-legend .divider{
+  height: 0.8em;
+}
+.chart-legend dt span.legend-color1{
+  background-color: #97BBCD;
+}
+.chart-legend dt span.legend-color2{
+  background-color: #DCDCDC;
+}
+.chart-legend dt span.legend-color3{
+  background-color: #F7464A;
+}
+.chart-legend dt span.legend-color4{
+  background-color: #46BFBD;
+}
+.chart-legend dt span.legend-color5{
+  background-color: #FDB45C;
+}
+.chart-legend dt span.legend-color6{
+  background-color: #949FB1;
+}
+.pie-legend dt span.legend-color7{
+  background-color: #4D5360;
 }
