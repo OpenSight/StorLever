@@ -14,7 +14,7 @@
       if (capacity < 0){
         return capacity + unit[0];
       }
-      for (var i = 0, l = unit.length; i < l || capacity < 0; i++){
+      for (var i = 0, l = unit.length; i < l && capacity > 0; i++){
         capacity = capacity / step;
       }
       var tmp = Math.pow(10, bit);
