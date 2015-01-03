@@ -127,23 +127,23 @@
             </div>
             <div class="panel-body">
               <div class="container-fluid">
-                <canvas id="cpu-line" class="chart chart-line canvas-default" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
+                <canvas id="cpu-line" class="chart chart-line canvas-default" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options" height="100"></canvas> 
               </div>
             </div>
           </div>
         </div>
-        <div class="col-sm-2">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">CPU利用率</h3>
-            </div>
-            <div class="panel-body">
-              <div class="container-fluid">
-                <canvas id="cpu-line" class="chart chart-line canvas-default" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> 
-              </div>
-            </div>
-          </div>
-        </div>
+        <!--<div class="col-sm-2">-->
+        <!--  <div class="panel panel-default">-->
+        <!--    <div class="panel-heading">-->
+        <!--      <h3 class="panel-title">CPU利用率</h3>-->
+        <!--    </div>-->
+        <!--    <div class="panel-body">-->
+        <!--      <div class="container-fluid">-->
+        <!--        <canvas id="cpu-line" class="chart chart-line canvas-default" data="overview.cpu.data" labels="overview.cpu.labels" series="overview.cpu.series" options="overview.cpu.options"></canvas> -->
+        <!--      </div>-->
+        <!--    </div>-->
+        <!--  </div>-->
+        <!--</div>-->
         <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-heading btn-in-left">
@@ -152,7 +152,33 @@
             </div>
             <div class="panel-body">
               <div class="container-fluid">
-                <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options"></canvas> 
+                <div class="row">
+                  <div class="col-sm-6">
+                    <canvas id="memory-pie" class="chart chart-pie" data="overview.memory.data" labels="overview.memory.labels" options="overview.memory.options" height="200"></canvas> 
+                  </div>
+                  <div class="col-sm-6">
+                    <dl class="dl-horizontal chart-legend">
+                      <dt><span class="legend-color1"></span>已使用</dt>
+                      <dd>{{overview.memory.data[0]}}%</dd>
+                      <dt><span class="legend-color2"></span>可用</dt>
+                      <dd>{{overview.memory.data[1]}}%</dd>
+                      <dt class="divider"></dt>
+                      <dd></dd>
+                      <dt>内存总量</dt>
+                      <dd>{{overview.memory.detail.total}}MB</dd>
+                      <dt>已使用总量</dt>
+                      <dd>{{overview.memory.detail.used}}MB</dd>
+                      <dt>可用总量</dt>
+                      <dd>{{overview.memory.detail.available}}MB</dd>
+                      <dt>空闲</dt>
+                      <dd>{{overview.memory.detail.free}}MB</dd>
+                      <dt>内核缓存</dt>
+                      <dd>{{overview.memory.detail.cached}}MB</dd>
+                      <dt>缓冲区</dt>
+                      <dd>{{overview.memory.detail.buffers}}MB</dd>
+                    </dl>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
