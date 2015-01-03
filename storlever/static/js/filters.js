@@ -11,15 +11,15 @@
     var step = 1024;
     var unit = ['KB', 'MB', 'GB', 'TB'];
     return function(capacity, bit) {
-      for (var i = 0, l = unit.length; i < l; i++){
+      if (capacity < 0){
+        return capacity + unit[0];
+      }
+      for (var i = 0, l = unit.length; i < l || capacity < 0; i++){
         capacity = capacity / step;
-        if (capacity < 0){
-          break;
-        }
       }
       var tmp = Math.pow(10, bit);
       capacity = Math.round(capacity * step * tmp) / tmp;
-      return String(text).replace(/\%VERSION\%/mg, version);
+      return capacity + unit[i - 1];
     };
   }]);
 })();
