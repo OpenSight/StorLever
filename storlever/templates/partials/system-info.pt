@@ -165,17 +165,17 @@
                       <dt class="divider"></dt>
                       <dd></dd>
                       <dt>内存总量</dt>
-                      <dd>{{overview.memory.detail.total}}MB</dd>
+                      <dd>{{overview.memory.detail.total|KB:2}}</dd>
                       <dt>已使用总量</dt>
-                      <dd>{{overview.memory.detail.used}}MB</dd>
+                      <dd>{{overview.memory.detail.used|KB:2}}MB</dd>
                       <dt>可用总量</dt>
-                      <dd>{{overview.memory.detail.available}}MB</dd>
+                      <dd>{{overview.memory.detail.available|KB:2}}</dd>
                       <dt>空闲</dt>
-                      <dd>{{overview.memory.detail.free}}MB</dd>
+                      <dd>{{overview.memory.detail.free|KB:2}}</dd>
                       <dt>内核缓存</dt>
-                      <dd>{{overview.memory.detail.cached}}MB</dd>
+                      <dd>{{overview.memory.detail.cached|KB:2}}</dd>
                       <dt>缓冲区</dt>
-                      <dd>{{overview.memory.detail.buffers}}MB</dd>
+                      <dd>{{overview.memory.detail.buffers|KB:2}}</dd>
                     </dl>
                   </div>
                 </div>
