@@ -15,7 +15,7 @@ import subprocess
 
 from storlever.lib.config import Config
 from storlever.lib.command import check_output, set_selinux_permissive
-from storlever.lib.exception import StorLeverError
+from storlever.lib.exception import StorLeverError, StorLeverCmdError
 from storlever.lib import logger
 from storlever.lib.utils import filter_dict
 import logging
@@ -528,7 +528,11 @@ class SmbManager(object):
         connections = []
         pids = {}
 
-        ll = check_output([SMBSTATUS_CMD, '-p']).splitlines()
+        try:
+            ll = check_output([SMBSTATUS_CMD, '-p']).splitlines()
+        except StorLeverCmdError:
+            return connections
+
         if len(ll) >= 5 and "anonymous mode" in ll[4]:
             return connections
         for l in ll[4:]:
