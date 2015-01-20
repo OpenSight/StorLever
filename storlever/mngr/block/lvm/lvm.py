@@ -87,7 +87,7 @@ class _LVM(object):
             raise StorLeverError(lvm_errmsg(self._hdlr))
 
     @check_hdlr
-    def _create_pv(self, device):
+    def create_pv(self, device):
         if lvm_pv_create(self._hdlr, device, 0) != 0:
             self.raise_from_error(info='Can not create PV on {0}'.format(device))
 
@@ -108,6 +108,9 @@ class _LVM(object):
         with _VG(self, vg_name, mode=_VG.MODE_NEW) as vg:
             vg.set_extent_size(pe_size)
             for device in devices:
+                if not os.path.exists(device):
+                    raise StorLeverError('Not valid device {0}'.format(device))
+                self.create_pv(device)
                 vg.add_pv(device)
 
     @check_hdlr
@@ -221,9 +224,6 @@ class _VG(object):
 
     @check_hdlr
     def add_pv(self, device):
-        if not os.path.exists(device):
-            raise StorLeverError('Not valid device {0}'.format(device))
-            #self._create_pv(device)
         rc = lvm_vg_extend(self._hdlr, device)
         if rc != 0:
             raise self.raise_from_error()

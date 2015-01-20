@@ -19,6 +19,7 @@ def main(global_config, **settings):
     """
     from storlever.lib.lock import set_lock_factory_from_name
     from storlever.lib.security import AclRootFactory
+    from storlever.lib.utils import CustomJSONEncoder
     from pyramid.config import Configurator
     from pyramid.renderers import JSON
 
@@ -51,7 +52,7 @@ def main(global_config, **settings):
                                    settings.get("lock.factory"))
 
     # make JSON as the default renderer
-    config.add_renderer(None, JSON(indent=json_indent))
+    config.add_renderer(None, JSON(indent=json_indent, check_circular=True, cls=CustomJSONEncoder))
 
     # route and view configuration of REST API version 1 can be found in module storlever.rest
     # check storlever.rest.__init__.py for more detail
@@ -65,6 +66,7 @@ def main(global_config, **settings):
     launch_extensions(config)
 
     return config.make_wsgi_app()
+
 
 def launch_extensions(config):
 

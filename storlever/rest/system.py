@@ -29,10 +29,12 @@ from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError, BoolVal, StrRe
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.system import modulemgr
+from storlever import storlever_version, build_date
 
 
 def includeme(config):
 
+    config.add_route('storlever_version', '/version')
     config.add_route('system_localhost', '/system/localhost')
     config.add_route('cpu_list', '/system/cpu_list')
     config.add_route('cpu_percent', '/system/cpu_percent')
@@ -64,6 +66,17 @@ def includeme(config):
     config.add_route('module_list', '/system/module_list')
     config.add_route('module_info', '/system/module_list/{module_name}')
 
+
+
+
+@get_view(route_name='storlever_version')
+def get_storlever_version(request):
+
+    info = {
+        'storlever_version': storlever_version,
+        'build_date': build_date,
+    }
+    return info
 
 
 @get_view(route_name='system_localhost')

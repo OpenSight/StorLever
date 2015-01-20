@@ -3,6 +3,7 @@ from storlever.rest.common import (get_view, post_view,
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.block import blockmgr
 from storlever.mngr.block import scsimgr
+from storlever.mngr.block.md import md
 from pyramid.response import Response
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError, BoolVal, StrRe, ListVal
@@ -19,12 +20,7 @@ def includeme(config):
     config.add_route('scan_bus', '/block/scsi/scan_bus')
     config.add_route('scsi_dev', '/block/scsi/dev_list/{scsi_id}')
     config.add_route('scsi_dev_smart', '/block/scsi/dev_list/{scsi_id}/smart')
-    # adapter list resource (HBA, raid controller etc)
-    # GET:    adapter list
-    config.add_route('adapter_list', '/block/adapter_list')
-    config.add_route('adapter', '/block/adapter_list/{adapter}')
-    config.add_route('adapter_disk_list', '/block/adapter_list/{adapter}/disk_list')
-    config.add_route('adapter_vdisk_list', '/block/adapter_list/{adapter}/vdisk_list')
+    
 
 
 # http://192.168.1.10:6543/storlever/api/v1/block/block_list
@@ -208,21 +204,23 @@ def set_scsi_dev_smart(request):
     scsi_dev_info.set_smart_config(smart_set,offline_set)
     return Response(status=200)
 
-@get_view(route_name='adapter_list')
-def adapters_get(request):
-    pass
 
 
-@get_view(route_name='adapter')
-def adapters_get(request):
-    pass
+#@get_view(route_name='adapter_list')
+#def adapters_get(request):
+    #pass
 
 
-@get_view(route_name='adapter_disk_list')
-def adapters_get(request):
-    pass
+#@get_view(route_name='adapter')
+#def adapters_get(request):
+    #pass
 
 
-@get_view(route_name='adapter_vdisk_list')
-def adapters_get(request):
-    pass
+#@get_view(route_name='adapter_disk_list')
+#def adapters_get(request):
+    #pass
+
+
+#@get_view(route_name='adapter_vdisk_list')
+#def adapters_get(request):
+    #pass
