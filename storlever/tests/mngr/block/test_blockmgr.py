@@ -16,8 +16,10 @@ class TestBlockMgr(unittest.TestCase):
         block_list = mgr.get_block_dev_list()
         block_dev = None
         for block_entry in block_list:
-            if block_entry.name.startswith("sd"):
-                block_dev = block_entry
+            # if block_entry.name.startswith("sd"):
+            block_dev = block_entry
+            break
+
         self.assertTrue(block_dev is not None)
         block_dev.flush_block_buf()
 
