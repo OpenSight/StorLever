@@ -45,7 +45,7 @@ class PhysicalDriveManager(object):
 
     def list_pd(self):
         # list all PD
-        # MegaCli –PDList –aN|-a0,1..|-aAll|
+        # MegaCli -PDList -aN|-a0,1..|-aAll|
         pass
 
     def pd_info(self, pd):
@@ -53,31 +53,31 @@ class PhysicalDriveManager(object):
         pass
 
     def online(self, pd):
-        # MegaCli –PDOnline -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDOnline -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def offline(self, pd):
-        # MegaCli –PDOffline -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDOffline -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def make_good(self, pd, force=False):
-        # MegaCli –PDMakeGood -PhysDrv[E0:S0,E1:S1....] | [-Force] -aN|-a0,1,2|-aALL
+        # MegaCli -PDMakeGood -PhysDrv[E0:S0,E1:S1....] | [-Force] -aN|-a0,1,2|-aALL
         pass
 
     def start_init(self, pd):
-        # MegaCli –PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def stop_init(self, pd):
-        # MegaCli –PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def init_progress(self, pd):
-        # MegaCli –PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDClear -Start |-Stop|-ShowProg |-ProgDsply -PhysDrv[E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def start_rebuild(self, pd):
-        # MegaCli –PDRbld –Start |-Stop|-Suspend|-Resume|-ShowProg |-ProgDsply –PhysDrv [E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
+        # MegaCli -PDRbld -Start |-Stop|-Suspend|-Resume|-ShowProg |-ProgDsply -PhysDrv [E0:S0,E1:S1....] -aN|-a0,1,2|-aALL
         pass
 
     def stop_rebuild(self, pd):
@@ -97,25 +97,25 @@ class VirtualDriveManager(object):
         pass
 
     def vd_list(self):
-        # MegaCli –LDInfo –Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
+        # MegaCli -LDInfo -Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
         pass
 
     def vd_info(self, vd):
-        # MegaCli –LDInfo –Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
+        # MegaCli -LDInfo -Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
         pass
 
     def create_vd(self, ):
         # to create raid 0 1 5 6
-        # MegaCli –CfgLDAdd
+        # MegaCli -CfgLDAdd
         pass
 
     def create_vd_ext(self):
         # to create raid 10 50 60
-        # MegaCli –CfgSpanAdd
+        # MegaCli -CfgSpanAdd
         pass
 
     def delete_vd(self, vd):
-        # MegaCli –CfgLDDel –Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
+        # MegaCli -CfgLDDel -Lx|-L0,1,2|-Lall -aN|-a0,1,2|-aALL
         pass
 
     def set_cache_policy(self, write_back=True, read_ahead=True, cached=True):
