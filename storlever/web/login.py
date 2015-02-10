@@ -9,6 +9,7 @@ This module implements index web page of storlever
 
 """
 
+import hashlib
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import remember, forget
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
@@ -52,6 +53,8 @@ def login(request):
         if save_passwd is None:
             message = 'Failed login (user does not exists)'
         else:
+            # hash password
+            password = hashlib.sha256(password).hexdigest()
             if password == save_passwd:
                 headers = remember(request, login)
                 return HTTPFound(location = came_from,
@@ -65,6 +68,7 @@ def login(request):
         came_from = came_from,
         login = login,
         password = password,
+        salt = 'OpenSight2013',
         )
 
 
