@@ -13,6 +13,7 @@ import hashlib
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import remember, forget
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from storlever.web.webconfig import WebPassword
 
 
 from storlever.rest.common import get_view, post_view, put_view, delete_view
@@ -24,16 +25,6 @@ def includeme(config):
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
 
-def get_passwd(user):
-    """ get password for the given user
-
-    if the user exist, return the user's passwd.
-    if the user does not exist, retur NOne
-    """
-    if user == "admin":
-        return "123456"
-    else:
-        return None
 
 @view_config(route_name='login', renderer='storlever:templates/login.pt')
 @forbidden_view_config(renderer='storlever:templates/login.pt')
@@ -49,19 +40,12 @@ def login(request):
     if 'form.submitted' in request.params:
         login = request.params['login']
         password = request.params['password']
-        save_passwd = get_passwd(login)
-        if save_passwd is None:
-            message = 'Failed login (user does not exists)'
+        if WebPassword().check_passwd(login, password) is False:
+            message = 'Failed login (username or password is wrong)'
         else:
-            # hash password
-            password = hashlib.sha256(password).hexdigest()
-            if password == save_passwd:
-                headers = remember(request, login)
-                return HTTPFound(location = came_from,
-                                 headers = headers)
-            else:
-                message = 'Failed login (password is wrong)'
-
+            headers = remember(request, login)
+            return HTTPFound(location = came_from,
+                             headers = headers)
     return dict(
         message = message,
         url = request.application_url + '/login',
