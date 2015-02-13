@@ -47,7 +47,7 @@ def login(request):
         came_from = came_from,
         login = login,
         password = password,
-        salt = 'OpenSight2013',
+        salt = WebPassword.PBKDF2_SALT,
         )
 
 

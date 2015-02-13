@@ -19,7 +19,7 @@ from storlever.lib.schema import Schema, Use
 
 class WebConfig(Config):
     """
-    default password is opensight2013,
+    default password is 123456,
     fc91f9f874d2ef4d48fdde151271716f268977c1f77241d5321b61fda137ac3c is sha256 hash of result of PBKDF2 to 123456
     """
     CONF_FILE = os.path.join(STORLEVER_CONF_DIR, 'web.yaml')
@@ -69,6 +69,7 @@ class WebConfig(Config):
 
 
 class WebPassword(object):
+    PBKDF2_SALT = 'OpenSight2013'
     def __init__(self):
         self._web_conf = WebConfig.from_file()
         self._saved_password = self._web_conf.conf['password']
