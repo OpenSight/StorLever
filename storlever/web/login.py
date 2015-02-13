@@ -9,16 +9,11 @@ This module implements index web page of storlever
 
 """
 
-import hashlib
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import remember, forget
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
-from storlever.web.webconfig import WebPassword
+from pyramid.httpexceptions import HTTPFound
 
-
-from storlever.rest.common import get_view, post_view, put_view, delete_view
-
-from storlever.lib.exception import StorLeverError
+from storlever.mngr.system.webconfig import WebPassword
 
 
 def includeme(config):
@@ -40,7 +35,7 @@ def login(request):
     if 'form.submitted' in request.params:
         login = request.params['login']
         password = request.params['password']
-        if WebPassword().check_passwd(login, password) is False:
+        if WebPassword().check_password(login, password) is False:
             message = 'Failed login (username or password is wrong)'
         else:
             headers = remember(request, login)
