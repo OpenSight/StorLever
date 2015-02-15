@@ -25,6 +25,7 @@ from storlever.mngr.system import sysinfo
 from storlever.mngr.system import usermgr
 from storlever.mngr.system import servicemgr
 from storlever.mngr.system import cfgmgr
+from storlever.mngr.system import webconfig
 from storlever.lib.schema import Schema, Optional, DoNotCare, \
     Use, IntVal, Default, SchemaError, BoolVal, StrRe
 from storlever.lib.exception import StorLeverError
@@ -59,6 +60,7 @@ def includeme(config):
     config.add_route('group_info', '/system/group_list/{group_name}')
     config.add_route('service_list', '/system/service_list')
     config.add_route('service_info', '/system/service_list/{service_name}')
+    config.add_route('web_password', '/system/web_password')
     config.add_route('storlever_conf', '/system/conf_tar')
     config.add_route('backup_conf_to_file', '/system/backup_conf')
     config.add_route('restore_conf_from_file', '/system/restore_conf')
@@ -520,6 +522,40 @@ def put_service(request):
             service.disable_auto_start(request.client_addr)
 
     return Response(status=200)
+
+
+web_password_check_schema = Schema({
+    "login": Use(str),
+    "password": Use(str)
+})
+
+
+@get_view(route_name='web_password')
+def check_password(request):
+    check_web_password_request = get_params_from_request(request, web_password_check_schema)
+    if webconfig.WebPassword().check_password(check_web_password_request['login'],
+                                              check_web_password_request['password']):
+        return Response(status=200)
+    else:
+        raise StorLeverError('Wrong user name or password')
+
+
+web_password_change_schema = Schema({
+    "login": Use(str),
+    "old_password": Use(str),
+    "new_password": Use(str),
+})
+
+
+@post_view(route_name='web_password')
+def change_password(request):
+    change_password_request = get_params_from_request(request, web_password_change_schema)
+    if webconfig.WebPassword().change_password(change_password_request['login'],
+                                               change_password_request['old_password'],
+                                               change_password_request['new_password']):
+        return Response(status=200)
+    else:
+        raise StorLeverError('Unable to change password')
 
 
 def remove_tmp_conf_file(request):

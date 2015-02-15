@@ -38,12 +38,14 @@
 
 <div class="container" style="padding-top: 65px;">
 
-    <form class="form-signin" role="form" action="${url}" method="post">
+    <form class="form-signin" role="form" action="${url}" method="post" onsubmit="return CheckAndSubmit()">
         
-        <input type="hidden" name="came_from" value="${came_from}"/>              
-        <input type="text" class="form-control" placeholder="Account" required="" autofocus="" name="login" value="${login}" />
-        <input type="password" class="form-control" placeholder="Password" required="" name="password"
-                 value="${password}" />
+        <input type="hidden" name="came_from" value="${came_from}"/>
+        <input type="hidden" name="salt" id="salt" value="${salt}">
+        <input type="text" class="form-control" placeholder="Account" required="" autofocus="" name="login" id="login"
+               value="${login}" />
+        <input type="password" class="form-control" placeholder="Password" required="" name="password" id="password"
+                 value="" />
         <label class="checkbox">
             <input type="checkbox" value="remember-me"> Remember me
         </label>
@@ -56,6 +58,23 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
+<script src="${request.static_url('storlever:static/js/sjcl.js')}"></script>
+<script type="text/javascript">
+    function CheckAndSubmit () {
+        var userName = document.getElementById ("login");
+        if (userName.value.length < 3) {
+            alert ("The name of the user must be at least 3 characters long!");
+            return false;
+        }
 
+        var password = document.getElementById ("password");
+        if (password.value.length < 6) {
+            alert ("The password must be at least 6 characters long!");
+            return false;
+        }
 
+        document.getElementById("password").value = sjcl.codec.hex.fromBits(sjcl.misc.pbkdf2(password.value, salt.value));
+        return true;
+    }
+</script>
 </body></html>

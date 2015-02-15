@@ -19,8 +19,8 @@ class Config(object):
                 if self.schema:
                     self.conf = self.schema.validate(self.conf)
                 return self.conf
-            except Exception:
-                raise ConfigError(str(Exception))
+            except Exception as e:
+                raise ConfigError(str(e))
         else:
             raise ConfigError("conf file absent")
 
