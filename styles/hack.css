@@ -3,6 +3,17 @@ body {
     padding-top: 110px;
 }
 
+.top-header {
+    background-color: #23313D;
+}
+
+.inner_header_wrapper {
+    margin: 0px auto;
+    position: relative;
+    background: url("/images/gradiant-dark-top301.png") repeat-x scroll 0% 0% #2E3D4A;
+    border-bottom: 10px solid #F6F6F5;
+}
+
 .footer{
     color:#999;text-align:center;
     padding:30px 0;margin-top:70px;
