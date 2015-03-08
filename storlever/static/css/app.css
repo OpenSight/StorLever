@@ -1,26 +1,65 @@
 body {
-  padding-top: 60px;
+  padding-top: 50px;
   padding-bottom: 30px;
+  background-color: #fafafa;
+  font-size: 12px;
+  /*
+  红色
+  rgb(215, 0, 12)
+  rgb(215, 59, 47)
+
+  黑色
+  rgb(40,29,26)
+  
+  灰色
+  rgb(238,238,238)
+  */
+}
+
+.storlever .navbar{
+  min-height: 40px;
+}
+.storlever .navbar-collapse.collapse{
+  /*height: 30px !important;*/
+}
+.storlever .navbar-brand,
+.storlever .nav>li>a{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.storlever .navbar-brand{
+  height: 40px;
+  color: #ed930d;
 }
 .first-container{
   /*margin-top: 100px;*/
 }
 
+.menu-list-root{
+  font-size: 14px;
+}
 .menu-list-trunk{
   display: none;
 }
 .menu-list-trunk.active{
   display: block;
 }
-.menu-list-branch.active, 
+
+/*.navbar-inverse .navbar-nav>.menu-list-root.active>a,
+.navbar-inverse .navbar-nav>.menu-list-root.active>a:hover, 
+.navbar-inverse .navbar-nav>.menu-list-root.active>a:focus{
+  background-color: #f39e21;
+  color: #fff;
+}*/
+/*.menu-list-branch.active, 
 .menu-list-branch.active:hover, 
 .menu-list-branch.active:focus{
-  background-color: #fff;
+  background-color: #f39e21;
   border: 1px solid #ddd;
-  color: #333;
-}
+  color: #8c5708;
+}*/
 .menu-list-leaf.active{
-  background-color: #eee;
+  background-color: #f39e21;
 }
 
 .tab-pane{
@@ -41,15 +80,50 @@ body {
   right: 25px;
   text-align: right;
 }
+
+.container-compact{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.container-compact .row{
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.container-compact .col-xs-1, .container-compact .col-sm-1, .container-compact .col-md-1, .container-compact .col-lg-1, 
+.container-compact .col-xs-2, .container-compact .col-sm-2, .container-compact .col-md-2, .container-compact .col-lg-2, 
+.container-compact .col-xs-3, .container-compact .col-sm-3, .container-compact .col-md-3, .container-compact .col-lg-3, 
+.container-compact .col-xs-4, .container-compact .col-sm-4, .container-compact .col-md-4, .container-compact .col-lg-4, 
+.container-compact .col-xs-5, .container-compact .col-sm-5, .container-compact .col-md-5, .container-compact .col-lg-5, 
+.container-compact .col-xs-6, .container-compact .col-sm-6, .container-compact .col-md-6, .container-compact .col-lg-6, 
+.container-compact .col-xs-7, .container-compact .col-sm-7, .container-compact .col-md-7, .container-compact .col-lg-7, 
+.container-compact .col-xs-8, .container-compact .col-sm-8, .container-compact .col-md-8, .container-compact .col-lg-8, 
+.container-compact .col-xs-9, .container-compact .col-sm-9, .container-compact .col-md-9, .container-compact .col-lg-9, 
+.container-compact .col-xs-10, .container-compact.col-sm-10, .container-compact .col-md-10, .container-compact .col-lg-10, 
+.container-compact .col-xs-11, .container-compact.col-sm-11, .container-compact .col-md-11, .container-compact .col-lg-11, 
+.container-compact .col-xs-12, .container-compact.col-sm-12, .container-compact .col-md-12, .container-compact .col-lg-12{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .panel-compact{
   margin-bottom: 10px;
+  border: 0 none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 .panel-compact .panel-heading{
   padding: 5px 15px;
+  color: rgb(221, 84, 0);
+  background-color: transparent;
+  border-color: rgb(221, 84, 0);
 }
 .panel-compact .panel-body{
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  border: 0 none;
+}
+.panel-compact .panel-body:after{
+  color: transparent;
 }
 .panel-compact .form-group{
   margin-top: 2px;

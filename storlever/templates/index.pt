@@ -1,94 +1,94 @@
 <!DOCTYPE html>
 <html lang="zh-CN" ng-app="app">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Storlevel</title>
-    <link rel="shortcut icon" href="${request.static_url('storlever:static/img/favicon.ico')}" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="${request.static_url('storlever:static/css/app.css')}">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storlevel</title>
+  <link rel="shortcut icon" href="${request.static_url('storlever:static/img/favicon.ico')}" />
+  <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="${request.static_url('storlever:static/css/app.css')}">
 </head>
-<body ng-controller="MenuList">
-    <!-- Fixed navbar -->
-    <header  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container first-container">
-            <div class="navbar-header" >
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Storlever</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li ng-repeat="root in roots" class="menu-list-root" ng-click="activeNode(root.node_id, $event)" ng-class="{active: root.node_id===activeInfo[0]}">
-                        <a href="#">{{root.text}}</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a>注销</a></li>
-                    <li><a>帮助</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-    </header>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-3">
-                <ul ng-repeat="root in roots" class="list-group menu-list-trunk" ng-class="{active: root.node_id===activeInfo[0]}">
-                    <li ng-repeat="branch in root.sub_nodes" class="list-group-item menu-list-branch" ng-click="activeNode(branch.node_id, $event)" ng-class="{active: branch.node_id===activeInfo[1]}">
-                        <a href="#"><h4>{{branch.text}}</h4></a>
-                        <ul class="nav nav-list">
-                            <li ng-repeat="leaf in branch.sub_nodes track by $index" class="menu-list-leaf" id="{{leaf.node_id}}" ng-click="activeNode(leaf.node_id, $event)" ng-class="{active: leaf.node_id===activeInfo[2]}">
-                                <a href="#/{{leaf.node_id}}">{{leaf.text}}</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-sm-9" id="contentContainer" ng-view>
-                <!-- <div class="tabbable" id="tabs-64902">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="#panel-931479" data-toggle="tab">第一部分</a>
-                        </li>
-                        <li>
-                            <a href="#panel-820165" data-toggle="tab">第二部分</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="panel-931479">
-                            <p>第一部分内容.</p>
-                        </div>
-                        <div class="tab-pane" id="panel-820165">
-                            <p>第二部分内容.</p>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
-        </div>
+<body ng-controller="MenuList" class="storlever">
+  <!-- Fixed navbar -->
+  <header  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container first-container">
+      <div class="navbar-header" >
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Storlever</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li ng-repeat="root in roots" class="menu-list-root" ng-click="activeNode(root.node_id, $event)" ng-class="{active: root.node_id===activeInfo[0]}">
+            <a href="#">{{root.text}}</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a>注销</a></li>
+          <li><a>帮助</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
     </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${request.static_url('storlever:static/js/jquery-2.1.1.min.js')}"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${request.static_url('storlever:static/js/bootstrap.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/angular-route.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/ui-bootstrap-tpls-0.11.2.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/Chart.min.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/angular-chart.js')}"></script>
-    
-    <script src="${request.static_url('storlever:static/js/app.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/services.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/filters.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/directives.js')}"></script>
-    
-    <script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
-    <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
+  </header>
+  <div class="container container-compact">
+    <div class="row">
+      <div class="col-sm-3">
+        <ul ng-repeat="root in roots" class="list-group menu-list-trunk" ng-class="{active: root.node_id===activeInfo[0]}">
+          <li ng-repeat="branch in root.sub_nodes" class="list-group-item menu-list-branch" ng-click="activeNode(branch.node_id, $event)" ng-class="{active: branch.node_id===activeInfo[1]}">
+            <a href="#"><h4>{{branch.text}}</h4></a>
+            <ul class="nav nav-list">
+              <li ng-repeat="leaf in branch.sub_nodes track by $index" class="menu-list-leaf" id="{{leaf.node_id}}" ng-click="activeNode(leaf.node_id, $event)" ng-class="{active: leaf.node_id===activeInfo[2]}">
+                <a href="#/{{leaf.node_id}}">{{leaf.text}}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-9" id="contentContainer" ng-view>
+        <!-- <div class="tabbable" id="tabs-64902">
+          <ul class="nav nav-tabs">
+            <li class="active">
+              <a href="#panel-931479" data-toggle="tab">第一部分</a>
+            </li>
+            <li>
+              <a href="#panel-820165" data-toggle="tab">第二部分</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="panel-931479">
+              <p>第一部分内容.</p>
+            </div>
+            <div class="tab-pane" id="panel-820165">
+              <p>第二部分内容.</p>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="${request.static_url('storlever:static/js/jquery-2.1.1.min.js')}"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="${request.static_url('storlever:static/js/bootstrap.min.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/angular.min.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/angular-route.min.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/ui-bootstrap-tpls-0.11.2.min.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/Chart.min.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/angular-chart.js')}"></script>
+  
+  <script src="${request.static_url('storlever:static/js/app.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/services.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/filters.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/directives.js')}"></script>
+  
+  <script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
   </body>
 </html>
 

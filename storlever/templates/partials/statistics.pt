@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-controller="SystemInfo">
+<div class="container-fluid container-compact" ng-controller="SystemInfo">
   <tabset>
     <tab heading="CPU统计" select="overview.show()">
       <div class="row row-in-tab">
@@ -151,11 +151,22 @@
     <tab heading="IO统计" select="config.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel panel-default panel-compact">
             <div class="panel-heading">
-              <h3 class="panel-title">时间</h3>
+              <h3 class="panel-title">磁盘IO</h3>
             </div>
             <div class="panel-body">
+<!-- 
+              {
+    "read_time": 93066, 
+    "read_count": 34678, 
+    "write_count": 1233859, 
+    "time": 1421415786.432914, 
+    "write_bytes": 5606563840, 
+    "write_time": 5779335, 
+    "read_bytes": 410109952, 
+    "disk_name": "all"
+} -->
             </div>
           </div>
         </div>
