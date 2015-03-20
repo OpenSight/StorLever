@@ -97,9 +97,20 @@ body {
     font-weight: bold;
 }
 
+.bk_lever{
+    border-top: 3px solid #C0C4C9;
+    background: none repeat scroll 0% 0% #F5F5F5;
+}
+
 .p_font {
     font-family: "微软雅黑";
     font-size: 16px;
+    font-weight: bold;
+}
+
+.p2_font {
+    font-family: "微软雅黑";
+    font-size: 13px;
     background: transparent;
 }
 
