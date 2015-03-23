@@ -1,4 +1,4 @@
-<div class="container-fluid container-compact" ng-controller="SystemInfo">
+<div class="container-fluid container-compact os-tab-container" ng-controller="SystemInfo">
   <tabset>
     <tab heading="系统概要" select="overview.show()">
       <div class="row row-in-tab">
