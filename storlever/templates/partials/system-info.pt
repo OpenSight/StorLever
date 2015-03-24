@@ -1,17 +1,17 @@
 <div class="container-fluid container-compact os-tab-container" ng-controller="SystemInfo">
   <tabset>
     <tab heading="系统概要" select="overview.show()">
-      <div class="row row-in-tab">
-        <div class="col-sm-7">
-          <div class="panel panel-default">
+      <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-6">
+          <div class="panel os-panel">
             <div class="panel-heading">
               <h3 class="panel-title">主机信息</h3>
             </div>
             <div class="panel-body">
-              <form class="form-horizontal" role="form">
+              <form class="form-horizontal os-form" role="form">
                 <div class="form-group">
                   <label class="col-sm-3 control-label">主机名</label>
-                  <div class="col-sm-7">
+                  <div class="col-sm-6">
                     <input type="text" class="form-control" ng-model="localhost.hostname" />
                   </div>
                   <div class="col-sm-2">
@@ -20,43 +20,43 @@
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">操作系统</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.system}}({{localhost.dist_name}}&nbsp;{{localhost.dist_version}})</p>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">设备架构</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.machine}}</p>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">系统内核</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.release}}</p>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">Storlever</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.version}}</p>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">运行时间</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.uptime}}</p>
                   </div>
                 </div>
                  <div class="form-group">
                   <label class="col-sm-3 control-label">Load average</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.loadavg[0]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[1]|number:2}}&nbsp;&nbsp;{{localhost.loadavg[2]|number:2}}</p>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-3 control-label">Dist ID</label>
-                  <div class="col-sm-9">
+                  <div class="col-sm-8">
                     <p class="form-control-static">{{localhost.dist_id}}</p>
                   </div>
                 </div>
@@ -64,48 +64,48 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-5">
-          <div class="panel panel-default">
+        <div class="col-sm-6 os-col-nopadding-right">
+          <div class="panel os-panel">
             <div class="panel-heading">
               <h3 class="panel-title">CPU信息</h3>
             </div>
             <div class="panel-body">
-              <form class="form-horizontal" role="form">
+              <form class="form-horizontal os-form" role="form">
                 <div class="form-group">
-                  <label class="col-sm-4 control-label">cache_size</label>
-                  <div class="col-sm-8">
-                    <p class="form-control-static">{{cpulist[0].cache_size}}</p>
+                  <label class="col-sm-2 control-label">型号</label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static">{{cpulist[0].model_name}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-4 control-label">cpu_MHz</label>
-                  <div class="col-sm-8">
-                    <p class="form-control-static">{{cpulist[0].cpu_MHz}}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-4 control-label">processor</label>
-                  <div class="col-sm-8">
+                  <label class="col-sm-2 control-label">处理器</label>
+                  <div class="col-sm-10">
                     <p class="form-control-static">{{cpulist[0].processor}}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-4 control-label">model_name</label>
-                  <div class="col-sm-12">
-                    <p class="form-control-static">{{cpulist[0].model_name}}</p>
+                  <label class="col-sm-2 control-label">缓存</label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static">{{cpulist[0].cache_size}}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">主频</label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static">{{cpulist[0].cpu_MHz}}</p>
                   </div>
                 </div>
               </form>
             </div>
           </div>
-          <div class="panel panel-default">
-            <!-- <div class="panel-heading">
+          <div class="panel os-panel">
+            <div class="panel-heading">
               <h3 class="panel-title">SELinux</h3>
-            </div> -->
+            </div>
             <div class="panel-body">
-              <form class="form-horizontal" role="form">
+              <form class="form-horizontal os-form" role="form">
                 <div class="form-group">
-                  <label class="col-sm-4 control-label">SELinux状态</label>
+                  <label class="col-sm-2 control-label">状态</label>
                   <div class="col-sm-4">
                     <p class="form-control-static">{{selinux.state}}</p>
                   </div>
@@ -121,7 +121,7 @@
       </div>
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel os-panel">
             <div class="panel-heading">
               <h3 class="panel-title">CPU利用率</h3>
             </div>
@@ -133,7 +133,7 @@
           </div>
         </div>
         <!--<div class="col-sm-2">-->
-        <!--  <div class="panel panel-default">-->
+        <!--  <div class="panel os-panel">-->
         <!--    <div class="panel-heading">-->
         <!--      <h3 class="panel-title">CPU利用率</h3>-->
         <!--    </div>-->
@@ -145,7 +145,7 @@
         <!--  </div>-->
         <!--</div>-->
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel os-panel">
             <div class="panel-heading btn-in-left">
               <h3 class="panel-title">内存信息</h3>
               <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm" ng-click="overview.releaseMemory">一键加速</button></div>
@@ -188,12 +188,12 @@
     <tab heading="系统配置" select="config.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel os-panel">
             <div class="panel-heading">
               <h3 class="panel-title">时间配置</h3>
             </div>
             <div class="panel-body">
-              <form role="form">
+              <form class="os-form" role="form">
                 <div class="form-group">
                   <label  class="control-label">时区</label>
                   <select class="form-control" ng-model="config.datetime.zone" >
@@ -320,9 +320,9 @@
     <tab heading="系统维护" select="maintain.show()">
       <div class="row row-in-tab">
         <div class="col-sm-12">
-          <div class="panel panel-default">
+          <div class="panel os-panel">
             <div class="panel-body">
-              <form class="form-horizontal" role="form">
+              <form class="form-horizontal os-form" role="form">
                 <div class="form-group">
                   <label class="col-sm-2 control-label">重启设备</label>
                   <div class="col-sm-3">
