@@ -14,7 +14,7 @@ body {
 .inner_header_wrapper {
     margin: 0px auto;
     position: relative;
-    background: url("/images/xxx.png") repeat-x scroll 0% 0% #1F262C;
+    background: radial-gradient(circle, rgba(35, 38, 48, 0.8), rgba(0, 0, 0, 1)) repeat scroll 0% 0% transparent;
     border-bottom: 10px solid #BDBDB4;
 }
 
@@ -98,7 +98,7 @@ body {
 }
 
 .bk_lever{
-    border-top: 3px solid #C0C4C9;
+    border-top: 3px solid #727B87;
     background: none repeat scroll 0% 0% #F5F5F5;
 }
 

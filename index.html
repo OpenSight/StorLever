@@ -4,7 +4,6 @@ layout: default
 
 
 <div class="col-md-4">
-    <div class="thumbnail">
         <div class="caption">
             <p class="p_font bk_lever">
                 StorLever是什么？
@@ -13,13 +12,10 @@ layout: default
                 StorLever是一个针对Linux操作系统的存储和网络资源，进行统一管理、配置和系统监控的项目。它给用户提供了一套精心设计的RESTful风格的Web API以及Web面板。
                 <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
-
         </div>
-    </div>
 </div>
 
 <div class="col-md-4">
-    <div class="thumbnail">
         <div class="caption">
             <p class="p_font bk_lever">
                 StorLever对于管理员
@@ -29,11 +25,9 @@ layout: default
                 <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
         </div>
-    </div>
 </div>
 
 <div class="col-md-4">
-    <div class="thumbnail">
         <div class="caption">
             <p class="p_font bk_lever">
                 StorLever的二次开发
@@ -43,11 +37,9 @@ layout: default
                 <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
         </div>
-    </div>
 </div>
 
 <div class="col-md-6">
-    <div class="thumbnail">
         <div class="caption">
             <p class="p_font bk_lever">
                 StorLever可接管的资源
@@ -61,14 +53,14 @@ layout: default
             <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
         </div>
-    </div>
+
 </div>
 
 <div class="col-md-6">
-    <div class="thumbnail">
+
         <div class="caption">
             <p class="p_font bk_lever">
-                StorLever的功能
+                StorLever的亮点
             </p>
             <p class="p2_font">
             <ul>
@@ -79,24 +71,24 @@ layout: default
             <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
         </div>
-    </div>
+
 </div>
 
 <div class="col-md-12">
-    <div class="thumbnail">
+
         <div class="caption">
             <p class="p_font bk_lever">
                 新闻
             </p>
             <p class="p2_font">
                 {% for post in site.posts limit:3 %}
-                {{ post.date | date_to_string }} &nbsp; "{{ post.title }}":{{ post.url }}
-            <blockquote>{{ post.excerpt | truncate:100 }}......</blockquote>
+                {{ post.date | date_to_string }} &nbsp; "{{ post.title }}"
+            <blockquote class="p2_font">{{ post.excerpt | truncate:100 }}......</blockquote>
             {% endfor %}
             <a class="p2_font" href="index.html">更多详细 »</a>
             </p>
         </div>
-    </div>
+
 </div>
 
 
