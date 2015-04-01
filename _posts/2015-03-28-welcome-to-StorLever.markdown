@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: page
 title:  "欢迎访问StorLever!"
 date:   2015-03-28 02:21:07
 ---

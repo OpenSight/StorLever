@@ -10,7 +10,7 @@ layout: default
             </p>
             <p class="p2_font">
                 StorLever是一个部署在Linux服务器上的配置、管理、监控系统，用于管理服务器上的各种网络和存储资源（功能）。它提供了一组精心设计的RESTful风格的Web可编程接口，以及一个简介的Web操作面板。
-                <a class="p2_font" href="doc_chinese.html##StorLever的亮点">更多详细 »</a>
+                <a class="p2_font" href="/doc_chinese.html#storlever">更多详细 »</a>
             </p>
         </div>
 </div>
@@ -21,8 +21,8 @@ layout: default
                 管理员的优势
             </p>
             <p class="p2_font">
-                StorLever是一个针对Linux操作系统的存储和网络资源，进行统一管理、配置和系统监控的项目。它给用户提供了一套精心设计的RESTful风格的Web API以及Web面板。
-                <a class="p2_font" href="index.html">更多详细 »</a>
+                一般情况下，Linux的发行版本会为系统管理员提供两种方式的本地操作接口，即命令行接口和图形界面。这两种方式曾经是管理Linux系统最流行的方式。随着网络，尤其是因特网的快速发展，Linux系统常常是部署在远程的服务器（例如虚拟主机）上，上述两种本地接口无法应用于这种环境，管理员喜欢使用SSH登陆到远程的主机来管理配置它们。通过SSH方式来管理是十分灵活的，但却也是困难的，痛苦的，而且耗时的。因此，很多Web控制面板的项目就被开发出来帮助系统管理员轻松地完成配置管理工作。
+                <a class="p2_font" href="/doc_chinese.html#storlever-1">更多详细 »</a>
             </p>
         </div>
 </div>
@@ -33,8 +33,10 @@ layout: default
                 如何参与开发
             </p>
             <p class="p2_font">
-                StorLever是一个针对Linux操作系统的存储和网络资源，进行统一管理、配置和系统监控的项目。它给用户提供了一套精心设计的RESTful风格的Web API以及Web面板。
-                <a class="p2_font" href="index.html">更多详细 »</a>
+                StorLever的最新代码托管在Github上，项目的URL是：
+                https://github.com/OpenSight/StorLever
+                开发者能够利用Github的issue系统来向StorLever的维护人员和开发人员反馈Bugs和提出新需求
+                <a class="p2_font" href="/doc_chinese.html#storlever-6">更多详细 »</a>
             </p>
         </div>
 </div>
@@ -45,12 +47,19 @@ layout: default
                 StorLever可接管的资源
             </p>
             <p class="p2_font">
-                <ul>
-                    <li>xxxxxxx                    </li>
-                    <li>xxxxxxx                    </li>
-                    <li>xxxxxxx                    </li>
-                </ul>
-            <a class="p2_font" href="index.html">更多详细 »</a>
+            <ul>
+                <li>Block device</li>
+                <li>SCSI device</li>
+                <li>MD Raid</li>
+                <li>Mega Raid (LSI chip, through extension)</li>
+                <li>LVM</li>
+                <li>XFS</li>
+                <li>EXT4</li>
+                <li>NFS Client & Server</li>
+                <li>SAMBA Server</li>
+                <li>FTP Server</li>
+            </ul>
+            <a class="p2_font" href="/doc_chinese.html#storlever-3">更多详细 »</a>
             </p>
         </div>
 
@@ -64,11 +73,12 @@ layout: default
             </p>
             <p class="p2_font">
             <ul>
-                <li>xxxxxxx                    </li>
-                <li>xxxxxxx                    </li>
-                <li>xxxxxxx                    </li>
+                <li>集成了Linux系统的多种存储管理技术</li>
+                <li>提供多种操作接口</li>
+                <li>可扩展，添加插件十分容易</li>
+                <li>简单，纯Python</li>
             </ul>
-            <a class="p2_font" href="index.html">更多详细 »</a>
+            <a class="p2_font" href="/doc_chinese.html#storlever-2">更多详细 »</a>
             </p>
         </div>
 
@@ -85,7 +95,7 @@ layout: default
                 {{ post.date | date_to_string }} &nbsp; "{{ post.title }}"
             <blockquote class="p2_font">{{ post.excerpt | truncate:100 }}......</blockquote>
             {% endfor %}
-            <a class="p2_font" href="index.html">更多详细 »</a>
+            <a class="p2_font" href="/news-detail.html">更多详细 »</a>
             </p>
         </div>
 

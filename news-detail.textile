@@ -1,0 +1,11 @@
+---
+layout: page
+title: 更多新闻
+---
+
+{% for post in site.posts limit:10 %}
+{{ post.date | date_to_string }} &nbsp; "{{ post.title }}":{{ post.url }}
+<blockquote>{{ post.excerpt | truncate:100 }}</blockquote>
+{% endfor %}
+
+"查看全部......":/news-list.html
