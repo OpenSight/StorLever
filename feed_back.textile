@@ -3,6 +3,6 @@ layout: page
 title: 意见反馈
 ---
 
-我们使用Github的issue系统来收集、跟踪小伙伴们对我们团队的意见，请访问以下URL打开issue系统，并提交一个issue给我们，我们将尽快给予答复。
+我们使用Github的issue系统来收集、跟踪小伙伴们对我们项目的反馈意见，请访问以下URL打开issue系统，并提交一个issue给我们，我们将尽快给予答复。
 
 "前往意见反馈页面":https://github.com/OpenSight/StorLever/issues
