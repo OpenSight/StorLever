@@ -45,8 +45,9 @@
           }).success(function(response) {
             $scope.cpulist = response;
           });
-          $scope.overview.startGetCPUTimes();
-          $scope.overview.getMemory();
+          // $scope.overview.startGetCPUTimes();
+          $scope.overview.startTimer();
+          // $scope.overview.getMemory();
         },
         saveHostname: function(){
           $http.put("/storlever/api/v1/system/localhost", {
@@ -57,6 +58,15 @@
           $http.put("/storlever/api/v1/system/selinux", {
             timeout: $scope.aborter.promise
           }, JSON.stringify({state: state}));
+        },
+        startTimer: function(){
+          if (undefined !== $scope.overview.timer){
+            return;
+          }
+          $scope.overview.timer = window.setInterval(function(){
+            $scope.overview.getCPUTimes();
+            $scope.overview.getMemory();
+          }, 1000);
         },
         startGetCPUTimes: function(){
           if (undefined !== $scope.overview.cpu.timer){
@@ -73,7 +83,7 @@
           if (undefined !== $scope.overview.cpu.aborter){
             return;
           }
-          $scope.overview.cpu.aborter = $q.defer(),
+          $scope.overview.cpu.aborter = $q.defer();
           $http.get("/storlever/api/v1/system/cpu_times", {
             timeout: $scope.overview.cpu.aborter.promise
           }).success(function(response) {
@@ -102,16 +112,23 @@
           return Math.round((totle - idle) * 10000/ totle) / 100;
         },
         getMemory: function(){
+          if (undefined !== $scope.overview.memory.aborter){
+            return;
+          }
+          $scope.overview.memory.aborter = $q.defer();
           $http.get("/storlever/api/v1/system/memory", {
-            timeout: $scope.aborter.promise
+            timeout: $scope.overview.memory.aborter.promise
           }).success(function(response) {
+            delete $scope.overview.memory.aborter;
             $scope.overview.memory.total = response.total;
             $scope.overview.memory.free = response.free;
             $scope.overview.memory.cached = response.cached + response.buffers;
             $scope.overview.memory.used = response.used - response.cached - response.buffers;
             $scope.overview.memory.data[0] = Math.round($scope.overview.memory.used * 10000 / response.total) / 100;
             $scope.overview.memory.data[1] = Math.round($scope.overview.memory.free * 10000 / response.total) / 100;
-            $scope.overview.memory.data[2] = 100 - $scope.overview.memory.data[0] - $scope.overview.memory.data[1];
+            $scope.overview.memory.data[2] = Math.round((100 - $scope.overview.memory.data[0] - $scope.overview.memory.data[1]) * 100) / 100;
+          }).error(function(){
+            delete $scope.overview.memory.aborter;
           });
         },
         releaseMemory: function(){
@@ -130,6 +147,11 @@
           if (undefined !== $scope.overview.cpu.aborter){
             $scope.overview.cpu.resolve();
             delete $scope.overview.cpu.aborter;
+          }
+
+          if (undefined !== $scope.overview.memory.aborter){
+            $scope.overview.memory.resolve();
+            delete $scope.overview.memory.aborter;
           }
 
           if (undefined !== $scope.aborter){
