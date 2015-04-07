@@ -15,7 +15,10 @@ body {
   rgb(238,238,238)
   */
 }
-
+.ng-hide{
+  display: block;
+  opacity: 0;
+}
 .storlever .navbar{
   min-height: 40px;
 }
@@ -92,9 +95,9 @@ body {
   color: #fff;
 }
 
-.row-in-tab{
+/*.row-in-tab{
   padding: 5px;
-}
+}*/
 .panel-heading.btn-in-right{
   position: relative;
 }
@@ -259,7 +262,11 @@ body {
   height: 28px;
 }
 .os-form .btn{
-  padding: 3px 6px;
+  padding: 3px 12px;
+}
+
+.os-submit-btn{
+  min-width: 100px;
 }
 
 .panel-compact{

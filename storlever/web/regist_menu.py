@@ -24,7 +24,8 @@ _ = TranslationStringFactory('storlever')
 def includeme(config):
     mgr = web_menu_mgr()
     regist_system(mgr)
-    regist_store(mgr)
+    regist_storage(mgr)
+    regist_server(mgr)
 
 def regist_system(mgr):
     root_text = _("System")
@@ -61,11 +62,19 @@ def regist_system(mgr):
     mgr.add_leaf_node("Zabbix", "INTER_NODE_Tools", leaf_text, "partials/zabbix")
     
 
-def regist_store(mgr):
-    root_text = _("Store")
-    mgr.add_root_node("ROOT_NODE_Store", root_text, "")
-    inter_text = _("Store")
-    mgr.add_intermediate_node("INTER_NODE_Store", "ROOT_NODE_Store", inter_text, "")
-    leaf_text = _("Store")
-    mgr.add_leaf_node("store", "INTER_NODE_Store", leaf_text, "partials/store")
+def regist_storage(mgr):
+    root_text = _("Storage")
+    mgr.add_root_node("ROOT_NODE_Storage", root_text, "")
+    inter_text = _("Storage")
+    mgr.add_intermediate_node("INTER_NODE_Storage", "ROOT_NODE_Storage", inter_text, "")
+    leaf_text = _("Storage")
+    mgr.add_leaf_node("storage", "INTER_NODE_Storage", leaf_text, "partials/store")
+    
+def regist_server(mgr):
+    root_text = _("Server")
+    mgr.add_root_node("ROOT_NODE_Server", root_text, "")
+    inter_text = _("Server")
+    mgr.add_intermediate_node("INTER_NODE_Server", "ROOT_NODE_Server", inter_text, "")
+    leaf_text = _("Server")
+    mgr.add_leaf_node("server", "INTER_NODE_Server", leaf_text, "partials/store")
     

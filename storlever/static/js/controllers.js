@@ -18,6 +18,7 @@ var controllers = (function() {
             };
 
             $scope.activeNode($scope.roots[0].node_id);
+            $scope.inited = true;
         }
     ]);
 })();
