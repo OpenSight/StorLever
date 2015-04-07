@@ -12,12 +12,13 @@
           }
         },
         memory: {
-          labels: ['Usage', 'Free'],
-          data: [100, 0],
+          labels: ['已占用', '空闲', '缓存'],
+          data: [100, 0, 0],
           options:{
             pointDot: false,
             animation: false,
-            showTooltips: false
+            showTooltips: true,
+            tooltipTemplate: '<%if (label){%><%=label%>: <%}%><%= value %>%'
           }
         },
         show: function() {
@@ -104,9 +105,13 @@
           $http.get("/storlever/api/v1/system/memory", {
             timeout: $scope.aborter.promise
           }).success(function(response) {
-            $scope.overview.memory.detail = response;
-            $scope.overview.memory.data[0] = Math.round(response.percent * 100) / 100;
-            $scope.overview.memory.data[1] = 100 - $scope.overview.memory.data[0];
+            $scope.overview.memory.total = response.total;
+            $scope.overview.memory.free = response.free;
+            $scope.overview.memory.cached = response.cached + response.buffers;
+            $scope.overview.memory.used = response.used - response.cached - response.buffers;
+            $scope.overview.memory.data[0] = Math.round($scope.overview.memory.used * 10000 / response.total) / 100;
+            $scope.overview.memory.data[1] = Math.round($scope.overview.memory.free * 10000 / response.total) / 100;
+            $scope.overview.memory.data[2] = 100 - $scope.overview.memory.data[0] - $scope.overview.memory.data[1];
           });
         },
         releaseMemory: function(){

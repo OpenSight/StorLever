@@ -164,7 +164,7 @@
           <div class="panel os-panel">
             <div class="panel-heading btn-in-left">
               <h3 class="panel-title">内存信息</h3>
-              <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm" ng-click="overview.releaseMemory">一键加速</button></div>
+              <div class="btn-right-container"><button type="button" class="btn btn-default btn-sm" ng-click="overview.releaseMemory">清空缓存</button></div>
             </div>
             <div class="panel-body">
               <div class="container-fluid">
@@ -174,24 +174,14 @@
                   </div>
                   <div class="col-sm-6">
                     <dl class="dl-horizontal chart-legend">
-                      <dt><span class="legend-color1"></span>已使用</dt>
-                      <dd>{{overview.memory.data[0]}}%</dd>
-                      <dt><span class="legend-color2"></span>可用</dt>
-                      <dd>{{overview.memory.data[1]}}%</dd>
-                      <dt class="divider"></dt>
-                      <dd></dd>
                       <dt>内存总量</dt>
-                      <dd>{{overview.memory.detail.total|byte:2}}</dd>
-                      <dt>已使用总量</dt>
-                      <dd>{{overview.memory.detail.used|byte:2}}</dd>
-                      <dt>可用总量</dt>
-                      <dd>{{overview.memory.detail.available|byte:2}}</dd>
+                      <dd>{{overview.memory.total|byte:2}}</dd>
+                      <dt>已占用</dt>
+                      <dd>{{overview.memory.used|byte:2}}</dd>
                       <dt>空闲</dt>
-                      <dd>{{overview.memory.detail.free|byte:2}}</dd>
-                      <dt>内核缓存</dt>
-                      <dd>{{overview.memory.detail.cached|byte:2}}</dd>
-                      <dt>缓冲区</dt>
-                      <dd>{{overview.memory.detail.buffers|byte:2}}</dd>
+                      <dd>{{overview.memory.free|byte:2}}</dd>
+                      <dt>缓存</dt>
+                      <dd>{{overview.memory.cached|byte:2}}</dd>
                     </dl>
                   </div>
                 </div>
