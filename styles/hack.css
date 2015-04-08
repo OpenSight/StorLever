@@ -3,6 +3,11 @@ body {
     padding-top: 110px;
 }
 
+.storlever {
+    border-radius: 0px;
+    border: 0px;
+}
+
 .top-header {
     background-color: #1A1F29;
 }
@@ -10,10 +15,12 @@ body {
 .navbar-textadd {
     float: right;
 }
+.storlever .navbar-brand {
+    color: #ED930D;
+}
 
 .inner_header_wrapper {
     margin: 0px auto;
-    position: relative;
     background: radial-gradient(circle, rgba(35, 38, 48, 0.8), rgba(0, 0, 0, 1)) repeat scroll 0% 0% transparent;
     border-bottom: 10px solid #BDBDB4;
 }
