@@ -118,6 +118,16 @@
     line-height: 1.6;
 }
 
+.center_font {
+    font-family: "微软雅黑";
+    font-size: 13px;
+    background: transparent;
+    line-height: 1.6;
+    display: block;
+    text-align: center;
+    padding: 5px;
+}
+
 .lv1_font {
 
 }
