@@ -3,11 +3,12 @@ layout: docLayout
 title: 文档
 ---
 
-# 1 StorLever是什么？ 
+# 1 StorLever是什么？
+---------------------------
 
 StorLever是一个部署在Linux服务器上的配置、管理、监控系统，用于管理服务器上的各种网络和存储资源（功能）。它提供了一组精心设计的RESTful风格的Web可编程接口，以及一个简介的Web操作面板。
 
-StorLever建立在Linux系统中各种成熟的命令行管理工具之上，通过脚本来调用底层命令来实现。它的主要目的是隐藏底层各种管理工具的使用细节，向用户提供一致的、简单的操作接口，从而减轻Linux服务器系统管理工作的难度。StorLever向系统管理员提供了一个非常简单的Web操作面板，一方面，减轻了系统管理员的学习难度，增强了他们的操作体验，另一方面，使得管理员可以在他的PC端轻松地管理远程存储服务器而无需到现场进行维护。 
+StorLever建立在Linux系统中各种成熟的命令行管理工具之上，通过脚本来调用底层命令来实现。它的主要目的是隐藏底层各种管理工具的使用细节，向用户提供一致的、简单的操作接口，从而减轻Linux服务器系统管理工作的难度。StorLever向系统管理员提供了一个非常简单的Web操作面板，一方面，减轻了系统管理员的学习难度，增强了他们的操作体验，另一方面，使得管理员可以在他的PC端轻松地管理远程存储服务器而无需到现场进行维护。
 
 除此之外，StorLever还有一个更强大的特点，它提供了一组RESTful风格（HTTP+JSON）的API来远程管理Linux系统。基于这个功能，运行在其他主机上的第三方的服务器管理软件（例如某些中心管理系统），无论它使用什么语言开发，或者运行在什么平台（Windows? Linux? Unix?），都能够非常便捷地接管安装有StorLever的服务器。RESTful风格的API的输出结果，既便于普通人阅读理解，也便于计算机程序分析。当今任何一种程序设计语言都提供了成熟的用于处理HTTP协议和解释JSON字符串的工具库，因此针对RESTful风格的API进行开发，是一件十分容易的事情。
 
@@ -33,7 +34,7 @@ StorLever由纯Python开发，因此它很简单，容易理解，稳定可靠�
 
 * Ajenti
 
-> Ajenti是另一个十分优秀的开源项目，它也是由纯python开发，主要目的是为Linux虚拟主机提供一个Web控制面板，同时，它也支持插件方式扩展功能。它是一个通用型的控制面板，包括Linux上各种管理工具，可是并不是特别针对存储管理子系统，因此很多存储资源它的管理能力十分有限。同时，更重要的，它并对其它系统提供远程调用API。 
+> Ajenti是另一个十分优秀的开源项目，它也是由纯python开发，主要目的是为Linux虚拟主机提供一个Web控制面板，同时，它也支持插件方式扩展功能。它是一个通用型的控制面板，包括Linux上各种管理工具，可是并不是特别针对存储管理子系统，因此很多存储资源它的管理能力十分有限。同时，更重要的，它并对其它系统提供远程调用API。
 
 * OpenLMI
 
@@ -55,12 +56,12 @@ StorLever由纯Python开发，因此它很简单，容易理解，稳定可靠�
 * MD Raid
 * Mega Raid (LSI chip, through extension)
 * LVM
-* XFS 
-* EXT4 
+* XFS
+* EXT4
 * NFS Client & Server
 * SAMBA Server
 * FTP Server
-* iSCSI Initiator & Target(TGT) 
+* iSCSI Initiator & Target(TGT)
 * SMART
 
 以下列出了StorLever所管理的Linux系统中的网络资源。
@@ -81,8 +82,9 @@ StorLever由纯Python开发，因此它很简单，容易理解，稳定可靠�
 * HTTP
 
 # 2 StorLever的软件架构
+-------------------------------------
 
-StorLever项目的总体软件结构如下图所示。 
+StorLever项目的总体软件结构如下图所示。
 
 ![StorLever软件结构](images/arch.png)
 
@@ -108,10 +110,11 @@ StorLever项目的总体软件结构如下图所示。
 
 
 # 3 StorLever如何使用
+-------------------------------
 
 > 有关StorLever安装、部署、使用方面的资料，请参考源码目录中的README文档。
 
-## 3.1 安装与部署 
+## 3.1 安装与部署
 
 StorLever是一个轻量级的Web应用，目的是于减轻CentOS/RHEL服务器上各种存储资源的管理工作。它使用纯Python语言开发，基于一个出色的Python的Web应用框架[Pyramid](http://www.pylonsproject.org/)来构建自己的Web服务。同时，利用了[PasteDeploy](http://pythonpaste.org/deploy/)系统来部署它的WSGI服务器/应用的配置。
 
@@ -169,7 +172,7 @@ StorLever在启动时将会默认读入此配置文件。你能够对该文件�
 
     $ python setup.py develop
 
-此命令将不会把StorLever安装到你系统python的site-packages目录，而仅仅是在site-packages目录建立一个链接到StorLever项目的源码目录中。而且，该过程也不会将init脚本和paste配置文件安装到你系统的/etc/目录下。 
+此命令将不会把StorLever安装到你系统python的site-packages目录，而仅仅是在site-packages目录建立一个链接到StorLever项目的源码目录中。而且，该过程也不会将init脚本和paste配置文件安装到你系统的/etc/目录下。
 
 然后，你能够输入以下的命令以前景模式运行StorLever服务。
 
@@ -198,13 +201,15 @@ StorLever另外一个重要特色是提供了一组RESTful风格的API，你可�
 你能够参考StorLever WIKI的API手册来获取更多信息。
 
 # 4 StorLever API手册
+---------------------------
 
 StorLever的API是RESTful风格的Web Service，参考手册在StorLever的[Wiki](https://github.com/OpenSight/StorLever/wiki/API-Reference-v1.0)中提供。
 
 
 # 5 如何参与StorLever的开发
+-------------------------------
 
-StorLever的最新代码托管在Github上，项目的URL是： 
+StorLever的最新代码托管在Github上，项目的URL是：
 
     https://github.com/OpenSight/StorLever
 
@@ -213,6 +218,7 @@ StorLever的最新代码托管在Github上，项目的URL是：
 如果开发者想参与StorLever的开发，向StorLever贡献他们的代码。我们建议使用Github提供的Fork + Pull Request模式向StorLever的master分支推送你的修改。如果StorLever采纳了你的代码，我们将会把你的名称放入StorLever的作者列表中，感谢大家的参与。
 
 # 6 如何开发StorLever的插件
- 
+--------------------------------
+
 如果你想开发一个StorLever的扩展（插件），你应该遵循和StorLever一致的习惯和代码风格。StorLever的扩展（插件）应该和StorLever保持相同的软件结构，也应该包含三个部分：管理器，REST API， Web面板三个主要部分，并基于Pyramid框架输出其Web服务。
 我们将会在Wiki中提供一份How-to文档来详细解释插件开发的主题。StorLever的项目源码中也包含了一个扩展程序（megaraid）的样列供开发者参考
