@@ -139,9 +139,9 @@
           });
         },
         distory: function(){
-          if (undefined !== $scope.overview.cpu.timer){
-            window.clearInterval($scope.overview.cpu.timer);
-            delete $scope.overview.cpu.timer;
+          if (undefined !== $scope.overview.timer){
+            window.clearInterval($scope.overview.timer);
+            delete $scope.overview.timer;
           }
 
           if (undefined !== $scope.overview.cpu.aborter){
@@ -168,10 +168,12 @@
           date: '',
           time: '',
           zone: '',
-          opened: false
+          opened: true
         },
         show: function() {
           $scope.distory();
+
+          
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/system/datetime", {
               timeout: $scope.aborter.promise
@@ -182,10 +184,10 @@
               $scope.config.datetime.zone = response.datetime.match(/[+-][\d]{4}/)[0];
             });
         },
-        openDatepicker: function($event) {
+        open: function($event) {
           $event.preventDefault();
           $event.stopPropagation();
-          $scope.datetime.opened = true;
+          $scope.config.datetime.opened = true;
         }
       };
     })();
@@ -225,5 +227,7 @@
           delete $scope.aborter;
       }
     };
+
+    $scope.$on('$destroy', $scope.distory);
   }]);
 })()

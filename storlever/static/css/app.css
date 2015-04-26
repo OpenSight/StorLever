@@ -3,6 +3,7 @@ body {
   padding-bottom: 30px;
   background-color: #fafafa;
   font-size: 12px;
+  overflow-y: scroll;
   /*
   红色
   rgb(215, 0, 12)
@@ -264,7 +265,12 @@ body {
 .os-form .btn{
   padding: 3px 12px;
 }
-
+.os-form p.input-group{
+  margin: 0;
+}
+.os-form>.os-submit-group{
+  margin-top: 10px;
+}
 .os-submit-btn{
   min-width: 100px;
 }

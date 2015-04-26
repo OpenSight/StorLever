@@ -1,4 +1,4 @@
-<div class="container-fluid container-compact" ng-controller="SystemInfo">
+<div class="container-fluid container-compact" ng-controller="Statistics">
   <tabset>
     <tab heading="CPU统计" select="overview.show()">
       <div class="row row-in-tab">
