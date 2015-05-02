@@ -3,3 +3,4 @@ def includeme(config):
     # in order to register routes
     config.include(__name__ + '.statistics')
     config.include(__name__ + '.system-info')
+    config.include(__name__ + '.user')

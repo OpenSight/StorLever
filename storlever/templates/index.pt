@@ -89,6 +89,7 @@
   
   <script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
   <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/partials/user.js')}"></script>
   </body>
 </html>
 
