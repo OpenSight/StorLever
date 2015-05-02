@@ -18,6 +18,9 @@
         },
         showDetail: function(item){
           item.bDetailShown = !(true === item.bDetailShown);
+        },
+        showAddForm: function(item){
+          item.adding = !(true === item.adding);
         }
       };
     })();
@@ -28,9 +31,6 @@
           $scope.distory();
           $scope.data.get();
         },
-        showAddForm: function() {
-          $scope.user.adding = !(true === $scope.user.adding);
-        },
         distory: function(){
         }
       };
@@ -40,12 +40,7 @@
       return {
         init: function() {
           $scope.distory();          
-          $scope.aborter = $q.defer(),
-            $http.get("/storlever/api/v1/system/group_list", {
-              timeout: $scope.aborter.promise
-            }).success(function(response) {
-              $scope.group.list = response;
-            });
+          $scope.data.get();
         },
 		distory: function(){}
       };
