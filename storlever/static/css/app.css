@@ -275,6 +275,24 @@ body {
   min-width: 100px;
 }
 
+.os-table-toolbar{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.os-table-container{
+  border: 1px solid #ddd;
+}
+.os-table-container>.os-table{
+  margin-bottom: 0;
+}
+.os-table>thead>tr>th{
+  border-bottom-width: 1px;
+}
+.os-table>tbody+tbody{
+  border: 0 none;
+}
+
 .panel-compact{
   margin-bottom: 10px;
   border: 0 none;
