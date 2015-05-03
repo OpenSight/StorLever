@@ -292,6 +292,15 @@ body {
 .os-table>tbody+tbody{
   border: 0 none;
 }
+.os-multi-select-container .multiSelect > button{
+  min-height: 20px !important; 
+}
+.os-multi-select-container .multiSelect .buttonLabel {
+  padding: 0;
+}
+.os-multi-select-container .multiSelect .multiSelectItem{
+  min-width: 150px;
+} 
 
 .panel-compact{
   margin-bottom: 10px;

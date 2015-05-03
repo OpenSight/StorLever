@@ -19,22 +19,22 @@
                 <th class="col-sm-1">删除</th>
               </tr>
             </thead>
-            <tbody ng-repeat="user in data.users | filter: user.seach">
+            <tbody ng-repeat="u in data.users | filter: user.seach">
               <tr>
-                <td ng-click="data.showDetail(user)">{{user.uid}}</td>
-                <td ng-click="data.showDetail(user)">
-                  <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;{{user.name}}
+                <td ng-click="data.showDetail(u)">{{u.uid}}</td>
+                <td ng-click="data.showDetail(u)">
+                  <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;{{u.name}}
                 </td>
-                <td ng-click="data.showDetail(user)">
-                  <span ng-show="true === user.login">已登录</span>
-                  <span ng-show="true !== user.login">未登录</span>
+                <td ng-click="data.showDetail(u)">
+                  <span ng-show="true === u.login">已登录</span>
+                  <span ng-show="true !== u.login">未登录</span>
                 </td>
-                <td ng-click="data.showDetail(user)">{{user.groups}}</td>
+                <td ng-click="data.showDetail(u)">{{u.groups}}</td>
                 <td>
                   <i class="glyphicon glyphicon-remove"></i>
                 </td>
               </tr>
-              <tr class="ng-hide" ng-show="user.bDetailShown">
+              <tr class="ng-hide" ng-show="u.bDetailShown">
                 <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
@@ -42,40 +42,40 @@
                         <div class="form-group">
                           <label class="col-sm-1 control-label">用户名</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.name" />
+                            <input type="text" class="form-control" ng-model="u.name" />
                           </div>
                           <label class="col-sm-1 control-label">ID</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.uid" />
+                            <input type="text" class="form-control" ng-model="u.uid" />
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="col-sm-1 control-label">群组</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.groups" />
+                            <input type="text" class="form-control" ng-model="u.groups" />
                           </div>
                           <label class="col-sm-1 control-label">初级群组</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.primary_group" />
+                            <input type="text" class="form-control" ng-model="u.primary_group" />
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="col-sm-1 control-label">目录</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.primary_group" />
+                            <input type="text" class="form-control" ng-model="u.primary_group" />
                           </div>
                           <label class="col-sm-1 control-label">登录状态</label>
                           <div class="col-sm-4">
                             <p class="form-control-static">
-                              <span ng-show="true === user.login">已登录</span>
-                              <span ng-show="true !== user.login">未登录</span>
+                              <span ng-show="true === u.login">已登录</span>
+                              <span ng-show="true !== u.login">未登录</span>
                             </p>
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="col-sm-1 control-label">新密码</label>
                           <div class="col-sm-4">
-                            <input type="password" class="form-control" ng-model="user.new_password" />
+                            <input type="password" class="form-control" ng-model="u.new_password" />
                           </div>
                         </div>
                         <div class="form-group os-submit-group">
@@ -157,44 +157,37 @@
                 </th>
               </tr>
             </thead>
-            <tbody ng-repeat="group in data.groups | filter: group.search">
+            <tbody ng-repeat="g in data.groups | filter: group.search">
               <tr> 
-                <td class="col-sm-11" ng-click="data.showDetail(group)">{{group.name}}</td>
+                <td class="col-sm-11" ng-click="group.showDetail(g)">{{g.name}}</td>
                 <td class="col-sm-1">
                   <i class="glyphicon glyphicon-remove"></i>
                 </td>
               </tr>
-              <tr class="ng-hide" ng-show="group.bDetailShown">
+              <tr class="ng-hide" ng-show="g.bDetailShown">
                 <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
                       <form class="form-horizontal os-form" role="form">
                         <div class="form-group">
-                          <label class="col-sm-2 control-label">名称</label>
+                          <label class="col-sm-1 control-label">名称</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="group.name" ng-readonly="true" />
+                            <input type="text" class="form-control" ng-model="g.name" ng-readonly="true" />
                           </div>
-                          <label class="col-sm-2 control-label">ID</label>
+                          <label class="col-sm-1 control-label">ID</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="group.gid" />
+                            <input type="text" class="form-control" ng-model="g.gid" />
                           </div>
                         </div>
                         <div class="form-group">
-                          <label class="col-sm-2 control-label">成员</label>
-                          <div class="col-sm-10">
-                            <label class="col-sm-2" ng-repeat="user in data.users">
-                              <input type="checkbox" ng-model="group.member" name="{{group.name}}" ng-change="group.changMember(user, group)" />
-                              {{user.name}}
-                            </label>
-                            <input type="ng" class="form-control" ng-model="user.member" />
+                          <label class="col-sm-1 control-label">成员</label>
+                          <div class="col-sm-9 os-multi-select-container">
+                            <div isteven-multi-select input-model="g.users" output-model="g.member" button-label="name" item-label="name" tick-property="selected"  orientation="horizontal" max-labels="10"></div>
                           </div>
                         </div>
                         <div class="form-group os-submit-group">
                           <label class="col-sm-2 control-label"></label>
-                          <div class="col-sm-4">
-                            <button class="btn btn-default">确定</button>
-                            <button class="btn btn-default">取消</button>
-                          </div>
+                          <div class="col-sm-4">  
                         </div>
                       </form>
                     </div>

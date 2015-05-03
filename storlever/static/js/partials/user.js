@@ -3,6 +3,8 @@
     $scope.data = (function(){
       return {
         get: function(){
+          $scope.data.users = [];
+          $scope.data.groups = [];
           $scope.aborter = $q.defer(),
           $http.get("/storlever/api/v1/system/user_list", {
             timeout: $scope.aborter.promise
@@ -42,7 +44,20 @@
           $scope.distory();          
           $scope.data.get();
         },
-		distory: function(){}
+        showDetail: function(g){
+          g.bDetailShown = !(true === g.bDetailShown);
+          if (undefined !== g.users){
+            return;
+          }
+          g.users = [];
+          for (var i = 0, l = $scope.data.users.length; i < l; i ++){
+            g.users.push({
+              name: $scope.data.users[i].name,
+              selected: -1 !== g.member.indexOf($scope.data.users[i].name)
+            });
+          }
+        },
+        distory: function(){}
       };
     })();
     
