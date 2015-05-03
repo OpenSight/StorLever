@@ -2,29 +2,40 @@
   <tabset>
     <tab heading="用户" select="user.init()">
       <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group">
+          <span class="input-group-addon"> 
+            <i class="glyphicon glyphicon-search"></i>
+          </span>
+          <input type="text" class="form-control" placeholder="Filter..." ng-model="user.seach.name" />            
+        </div>
         <div class="col-sm-12">
           <table class="table">
             <thead>
               <tr>
-                <th colspan="2">
-                  <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Filter..." ng-model="user.seach.name" />
-                  </div>
-                </th>
+                <th class="col-sm-1">ID</th>
+                <th class="col-sm-5">用户</th>
+                <th class="col-sm-2">状态</th>
+                <th class="col-sm-3">组</th>
+                <th class="col-sm-1">删除</th>
               </tr>
             </thead>
             <tbody ng-repeat="user in data.users | filter: user.seach">
-              <tr> 
-                <td class="col-sm-11" ng-click="data.showDetail(user)">
-                  <i class="glyphicon glyphicon-user"></i>&nbsp;{{user.name}}
+              <tr>
+                <td ng-click="data.showDetail(user)">{{user.uid}}</td>
+                <td ng-click="data.showDetail(user)">
+                  <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;{{user.name}}
                 </td>
-                <td class="col-sm-1">
+                <td ng-click="data.showDetail(user)">
+                  <span ng-show="true === user.login">已登录</span>
+                  <span ng-show="true !== user.login">未登录</span>
+                </td>
+                <td ng-click="data.showDetail(user)">{{user.groups}}</td>
+                <td>
                   <i class="glyphicon glyphicon-remove"></i>
                 </td>
               </tr>
               <tr class="ng-hide" ng-show="user.bDetailShown">
-                <td colspan="2">
+                <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
                       <form class="form-horizontal os-form" role="form">
@@ -33,7 +44,7 @@
                           <div class="col-sm-4">
                             <input type="text" class="form-control" ng-model="user.name" />
                           </div>
-                          <label class="col-sm-2 control-label">UID</label>
+                          <label class="col-sm-2 control-label">ID</label>
                           <div class="col-sm-4">
                             <input type="text" class="form-control" ng-model="user.uid" />
                           </div>
@@ -49,16 +60,16 @@
                           </div>
                         </div>
                         <div class="form-group">
+                          <label class="col-sm-2 control-label">目录</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="user.primary_group" />
+                          </div>
                           <label class="col-sm-2 control-label">登录状态</label>
                           <div class="col-sm-4">
                             <p class="form-control-static">
                               <span ng-show="true === user.login">已登录</span>
                               <span ng-show="true !== user.login">未登录</span>
                             </p>
-                          </div>
-                          <label class="col-sm-2 control-label">目录</label>
-                          <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="user.primary_group" />
                           </div>
                         </div>
                         <div class="form-group">
@@ -82,14 +93,14 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="2">
+                <td colspan="999">
                   <bttton class="btn btn-default" ng-click="data.showAddForm(user)">
                     <i class="glyphicon glyphicon-plus"></i>&nbsp;添加
                   </bttton>
                 </td>
               </tr>
               <tr ng-show="user.adding">
-                <td colspan="2">
+                <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
                       <form class="form-horizontal os-form" role="form">
@@ -140,7 +151,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th colspan="2">
+                <th colspan="999">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                     <input type="text" class="form-control" placeholder="Filter..." ng-model="group.search.name" />
@@ -156,7 +167,7 @@
                 </td>
               </tr>
               <tr class="ng-hide" ng-show="group.bDetailShown">
-                <td colspan="2">
+                <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
                       <form class="form-horizontal os-form" role="form">
@@ -165,9 +176,9 @@
                           <div class="col-sm-4">
                             <input type="text" class="form-control" ng-model="group.name" ng-readonly="true" />
                           </div>
-                          <label class="col-sm-2 control-label">UID</label>
+                          <label class="col-sm-2 control-label">ID</label>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" ng-model="group.uid" />
+                            <input type="text" class="form-control" ng-model="group.gid" />
                           </div>
                         </div>
                         <div class="form-group">
@@ -195,14 +206,14 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="2">
+                <td colspan="999">
                   <bttton class="btn btn-default" ng-click="data.showAddForm(group)">
                     <i class="glyphicon glyphicon-plus"></i>&nbsp;添加
                   </bttton>
                 </td>
               </tr>
               <tr ng-show="group.adding">
-                <td colspan="2">
+                <td colspan="999">
                   <div class="panel os-panel">
                     <div class="panel-body">
                       <form class="form-horizontal os-form" role="form">
