@@ -18,5 +18,9 @@
       capacity = Math.round(capacity * step * tmp) / tmp;
       return capacity + unit[i - 1];
     };
+  }]).filter('index', [function() {
+    return function(i) {
+      return i + 1;
+    };
   }]);
 })();
