@@ -81,8 +81,8 @@
                         <div class="form-group os-submit-group">
                           <label class="col-sm-1 control-label"></label>
                           <div class="col-sm-4">
-                            <button class="btn btn-default">确定</button>
-                            <button class="btn btn-default">取消</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                           </div>
                         </div>
                       </form>
@@ -124,8 +124,8 @@
                         <div class="form-group os-submit-group">
                           <label class="col-sm-2 control-label"></label>
                           <div class="col-sm-4">
-                            <button class="btn btn-default">确定</button>
-                            <button class="btn btn-default">取消</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                           </div>
                         </div>
                       </form>
@@ -195,8 +195,11 @@
                           </div> -->
                         </div>
                         <div class="form-group os-submit-group">
-                          <label class="col-sm-2 control-label"></label>
-                          <div class="col-sm-4">  
+                          <label class="col-sm-1 control-label"></label>
+                          <div class="col-sm-4">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                          </div>
                         </div>
                       </form>
                     </div>
@@ -236,8 +239,8 @@
                         <div class="form-group os-submit-group">
                           <label class="col-sm-2 control-label"></label>
                           <div class="col-sm-4">
-                            <button class="btn btn-default">确定</button>
-                            <button class="btn btn-default">取消</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                           </div>
                         </div>
                       </form>
