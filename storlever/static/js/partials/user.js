@@ -46,16 +46,16 @@
         },
         showDetail: function(g){
           g.bDetailShown = !(true === g.bDetailShown);
-          if (undefined !== g.users){
-            return;
-          }
-          g.users = [];
-          for (var i = 0, l = $scope.data.users.length; i < l; i ++){
-            g.users.push({
-              name: $scope.data.users[i].name,
-              selected: -1 !== g.member.indexOf($scope.data.users[i].name)
-            });
-          }
+          // if (undefined !== g.users){
+          //   return;
+          // }
+          // g.users = [];
+          // for (var i = 0, l = $scope.data.users.length; i < l; i ++){
+          //   g.users.push({
+          //     name: $scope.data.users[i].name,
+          //     selected: -1 !== g.member.indexOf($scope.data.users[i].name)
+          //   });
+          // }
         },
         distory: function(){}
       };

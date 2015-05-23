@@ -34,8 +34,9 @@
         'app.directives',
         'app.controllers',
         'ui.bootstrap',
-        'chart.js',
-        'isteven-multi-select'
+        'chart.js'
+        // ,
+        // 'isteven-multi-select'
     ]).config(['$routeProvider',
         function($routeProvider) {
             setRoute($routeProvider, window.menuList);
