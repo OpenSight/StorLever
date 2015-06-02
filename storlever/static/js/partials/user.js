@@ -1,5 +1,5 @@
-(function(){
-  controllers.controller('User', ['$scope', '$http', '$q', function($scope, $http, $q){
+
+  app.register.controller('User', ['$scope', '$http', '$q', function($scope, $http, $q){
     $scope.data = (function(){
       return {
         get: function(){
@@ -71,4 +71,3 @@
 
     $scope.$on('$destroy', $scope.distory);
   }]);
-})();

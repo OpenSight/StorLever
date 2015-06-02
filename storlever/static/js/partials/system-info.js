@@ -1,5 +1,4 @@
-(function(){
-  controllers.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
+  app.register.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
     $scope.overview = (function(){
       return {
         cpu: {
@@ -230,4 +229,3 @@
 
     $scope.$on('$destroy', $scope.distory);
   }]);
-})()

@@ -1,6 +1,7 @@
 var controllers = (function() {
     'use strict';
     /* Controllers */
+
     return angular.module('app.controllers', []).controller('MyCtrl', ['$scope',
         function($scope) {
 
@@ -22,3 +23,4 @@ var controllers = (function() {
         }
     ]);
 })();
+

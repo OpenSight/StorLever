@@ -1,6 +1,4 @@
-
-(function(){
-  controllers.controller('Statistics', ['$scope', '$http', '$q', function($scope, $http, $q){
+  app.register.controller('Statistics', ['$scope', '$http', '$q', function($scope, $http, $q){
     $scope.cpu = (function(){
       return {
         init: function() {
@@ -39,4 +37,3 @@
 
     $scope.$on('$destroy', $scope.distory);
   }]);
-})()
