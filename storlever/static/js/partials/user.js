@@ -30,10 +30,10 @@
     $scope.user = (function(){
       return {
         init: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.data.get();
         },
-        distory: function(){
+        destroy: function(){
         }
       };
     })();
@@ -41,7 +41,7 @@
     $scope.group = (function() {
       return {
         init: function() {
-          $scope.distory();          
+          $scope.destroy();          
           $scope.data.get();
         },
         showDetail: function(g){
@@ -57,17 +57,17 @@
           //   });
           // }
         },
-        distory: function(){}
+        destroy: function(){}
       };
     })();
     
 
-    $scope.distory = function(){
+    $scope.destroy = function(){
       if (undefined !== $scope.aborter){
           $scope.aborter.resolve();
           delete $scope.aborter;
       }
     };
 
-    $scope.$on('$destroy', $scope.distory);
+    $scope.$on('$destroy', $scope.destroy);
   }]);

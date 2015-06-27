@@ -21,7 +21,7 @@
           }
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.aborter = $q.defer(),
           $http.get("/storlever/api/v1/system/localhost", {
             timeout: $scope.aborter.promise
@@ -137,7 +137,7 @@
             $scope.overview.getMemory();
           });
         },
-        distory: function(){
+        destroy: function(){
           if (undefined !== $scope.overview.timer){
             window.clearInterval($scope.overview.timer);
             delete $scope.overview.timer;
@@ -170,7 +170,7 @@
           opened: true
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
 
           
           $scope.aborter = $q.defer(),
@@ -200,7 +200,7 @@
           opened: false
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/system/datetime", {
               timeout: $scope.aborter.promise
@@ -219,13 +219,13 @@
       };
     })();
 
-    $scope.distory = function(){
-      $scope.overview.distory();
+    $scope.destroy = function(){
+      $scope.overview.destroy();
       if (undefined !== $scope.aborter){
           $scope.aborter.resolve();
           delete $scope.aborter;
       }
     };
 
-    $scope.$on('$destroy', $scope.distory);
+    $scope.$on('$destroy', $scope.destroy);
   }]);

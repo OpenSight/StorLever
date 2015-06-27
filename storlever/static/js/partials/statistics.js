@@ -2,7 +2,7 @@
     $scope.cpu = (function(){
       return {
         init: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.cpu.get();
         },
         get: function(){
@@ -23,7 +23,7 @@
             $scope.cpu[key] = response;
           });
         },
-        distory: function(){
+        destroy: function(){
         }
       };
     })();
@@ -31,7 +31,7 @@
     $scope.io = (function(){
       return {
         init: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.io.get();
         },
         get: function(){
@@ -50,17 +50,17 @@
             $scope.io[key] = response;
           });
         },
-        distory: function(){
+        destroy: function(){
         }
       };
     })();
 
-    $scope.distory = function(){
+    $scope.destroy = function(){
       if (undefined !== $scope.aborter){
           $scope.aborter.resolve();
           delete $scope.aborter;
       }
     };
 
-    $scope.$on('$destroy', $scope.distory);
+    $scope.$on('$destroy', $scope.destroy);
   }]);
