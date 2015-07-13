@@ -55,10 +55,10 @@ setup(name='storlever',
       install_requires=requires,
       tests_require=requires,
       test_suite="storlever.tests",
-      data_files=[
-          ('/etc/', ['storlever.ini']),
-          ('/etc/init.d', ['initscripts/storlever']),
-      ],	  
+#     data_files=[
+#         ('/etc/', ['storlever.ini']),
+#         ('/etc/init.d', ['initscripts/storlever']),
+#     ],
       entry_points="""\
       [paste.app_factory]
       main = storlever.app:main
