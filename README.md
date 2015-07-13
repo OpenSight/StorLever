@@ -305,11 +305,3 @@ Write an extension
 If you want to develop an extension(plug-in) for StorLever, you should follow some convention of StroLever. 
 And each extension has the same architecture with StorLever, also includes three layers. 
 We would provide a How-to document to detail this topic. 
-
-
- 
-
-
-
-
-

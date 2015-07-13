@@ -1,0 +1,257 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="User">
+  <tabset>
+    <tab heading="用户" select="user.init()">
+      <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+          <span class="input-group-addon"> 
+            <i class="glyphicon glyphicon-search"></i>
+          </span>
+          <input type="text" class="form-control" placeholder="Filter..." ng-model="user.seach.name" />            
+        </div>
+        <div class="col-sm-12 os-table-container">
+          <table class="table os-table">
+            <thead>
+              <tr>
+                <th class="col-sm-1">ID</th>
+                <th class="col-sm-5">用户</th>
+                <th class="col-sm-2">支持登录</th>
+                <th class="col-sm-3">组</th>
+                <th class="col-sm-1">删除</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="u in data.users | filter: user.seach">
+              <tr>
+                <td ng-click="data.showDetail(u)">{{u.uid}}</td>
+                <td ng-click="data.showDetail(u)">
+                  <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;{{u.name}}
+                </td>
+                <td ng-click="data.showDetail(u)">
+                  <span ng-show="true === u.login">是</span>
+                  <span ng-show="true !== u.login">否</span>
+                </td>
+                <td ng-click="data.showDetail(u)">{{u.groups}}</td>
+                <td>
+                  <i class="glyphicon glyphicon-trash"></i>
+                </td>
+              </tr>
+              <tr class="ng-hide" ng-show="u.bDetailShown">
+                <td colspan="999">
+                  <div class="panel os-panel">
+                    <div class="panel-body">
+                      <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">用户名</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="u.name" />
+                          </div>
+                          <label class="col-sm-1 control-label">ID</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="u.uid" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">群组</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="u.groups" />
+                          </div>
+                          <label class="col-sm-1 control-label">初级群组</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="u.primary_group" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">目录</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="u.primary_group" />
+                          </div>
+                          <label class="col-sm-1 control-label">支持登录</label>
+                          <div class="col-sm-4">
+                            <p class="form-control-static">
+                              <span ng-show="true === u.login">是</span>
+                              <span ng-show="true !== u.login">否</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">新密码</label>
+                          <div class="col-sm-4">
+                            <input type="password" class="form-control" ng-model="u.new_password" />
+                          </div>
+                        </div>
+                        <div class="form-group os-submit-group">
+                          <label class="col-sm-1 control-label"></label>
+                          <div class="col-sm-4">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr ng-show="user.adding">
+                <td colspan="999">
+                  <div class="panel os-panel">
+                    <div class="panel-body">
+                      <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">用户名</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="user.new.name" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">密码</label>
+                          <div class="col-sm-4">
+                            <input type="password" class="form-control" ng-model="user.new.password" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">群组</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="user.groups" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">初级群组</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="user.primary_group" />
+                          </div>
+                        </div>
+                        <div class="form-group os-submit-group">
+                          <label class="col-sm-2 control-label"></label>
+                          <div class="col-sm-4">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>          
+        </div>
+        <div class="col-sm-12 os-table-toolbar">
+          <bttton class="btn btn-default" ng-click="data.showAddForm(user)"> <i class="glyphicon glyphicon-plus"></i>
+            &nbsp;添加
+          </bttton>
+        </div>
+      </div>
+    </tab>
+    <tab heading="组" select="group.init()">
+      <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+          <span class="input-group-addon"> 
+            <i class="glyphicon glyphicon-search"></i>
+          </span>
+          <input type="text" class="form-control" placeholder="Filter..." ng-model="group.seach.name" />            
+        </div>
+        <div class="col-sm-12 os-table-container">
+          <table class="table os-table">
+            <thead>
+              <tr>
+                <th class="col-sm-1">ID</th>
+                <th class="col-sm-10">名称</th>
+                <th class="col-sm-1">删除</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="g in data.groups | filter: group.search">
+              <tr> 
+                <td ng-click="group.showDetail(g)">{{g.gid}}</td>
+                <td ng-click="group.showDetail(g)">
+                  <i class="fa fa-users"></i>&nbsp;&nbsp;{{g.name}}
+                </td>
+                <td>
+                  <i class="glyphicon glyphicon-trash"></i>
+                </td>
+              </tr>
+              <tr class="ng-hide" ng-show="g.bDetailShown">
+                <td colspan="999">
+                  <div class="panel os-panel">
+                    <div class="panel-body">
+                      <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">名称</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="g.name" ng-readonly="true" />
+                          </div>
+                          <label class="col-sm-1 control-label">ID</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="g.gid" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-1 control-label">成员</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" ng-model="g.member" />
+                          </div>
+                          <!-- <div class="col-sm-9 os-multi-select-container">
+                            <div isteven-multi-select input-model="g.users" output-model="g.member" button-label="name" item-label="name" tick-property="selected"  orientation="horizontal" max-labels="10"></div>
+                          </div> -->
+                        </div>
+                        <div class="form-group os-submit-group">
+                          <label class="col-sm-1 control-label"></label>
+                          <div class="col-sm-4">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="999">
+                  <bttton class="btn btn-default" ng-click="data.showAddForm(group)">
+                    <i class="glyphicon glyphicon-plus"></i>&nbsp;添加
+                  </bttton>
+                </td>
+              </tr>
+              <tr ng-show="group.adding">
+                <td colspan="999">
+                  <div class="panel os-panel">
+                    <div class="panel-body">
+                      <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">名称</label>
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="group.name" />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">成员</label>
+                          <div class="col-sm-10">
+                            <label class="col-sm-2" ng-repeat="user in data.users">
+                              <input type="checkbox" ng-model="group.member" name="{{group.name}}" ng-change="group.changMember(user, group)" />
+                              {{user.name}}
+                            </label>
+                            <input type="ng" class="form-control" ng-model="user.member" />
+                          </div>
+                        </div>
+                        <div class="form-group os-submit-group">
+                          <label class="col-sm-2 control-label"></label>
+                          <div class="col-sm-4">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </tab>
+  </tabset>
+</div>

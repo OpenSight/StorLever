@@ -29,7 +29,7 @@ def get_menu_list(request):
 
 
 class MenuNode(object):
-    def __init__(self, node_id, parent_id, node_type, text, uri):
+    def __init__(self, node_id, parent_id, node_type, text, uri, require_js):
         if not isinstance(text, TranslationString):
             raise StorLeverError("text must be a instance of TranslationString", 400)
         self.node_id = str(node_id)
@@ -37,6 +37,7 @@ class MenuNode(object):
         self.node_type = str(node_type)
         self.text = text
         self.uri = str(uri)
+        self.require_js = require_js
         self._sub_nodes = []
         self._lock = lock()   # protect the _sub_nodes property update
 
@@ -59,6 +60,7 @@ class MenuNode(object):
             "node_type": self.node_type,
             "text": text,
             "uri": self.uri,
+            "require_js": self.require_js,
             "sub_nodes": sub_nodes_list
         }
 
@@ -88,8 +90,8 @@ class WebMenuManager(object):
         self.nodes = {}
         self.root_list = []
 
-    def add_root_node(self, node_id, text, uri):
-        root_node = MenuNode(node_id, "", "root", text, uri)
+    def add_root_node(self, node_id, text, uri, require_js):
+        root_node = MenuNode(node_id, "", "root", text, uri, require_js)
         with self.lock:
             #check id duplicate
             if node_id in self.nodes:
@@ -109,9 +111,9 @@ class WebMenuManager(object):
             self.nodes[root_node.node_id] = root_node
             self.root_list.append(root_node)
 
-    def add_intermediate_node(self, node_id, parent_id, text, uri):
+    def add_intermediate_node(self, node_id, parent_id, text, uri, require_js):
 
-        inter_node = MenuNode(node_id, parent_id, "intermediate", text, uri)
+        inter_node = MenuNode(node_id, parent_id, "intermediate", text, uri, require_js)
 
         with self.lock:
             #check id duplicate
@@ -140,9 +142,9 @@ class WebMenuManager(object):
 
             self.nodes[inter_node.node_id] = inter_node
 
-    def add_leaf_node(self, node_id, parent_id, text, uri):
+    def add_leaf_node(self, node_id, parent_id, text, uri, require_js):
 
-        leaf_node = MenuNode(node_id, parent_id, "leaf", text, uri)
+        leaf_node = MenuNode(node_id, parent_id, "leaf", text, uri, require_js)
 
         with self.lock:
             #check id duplicate

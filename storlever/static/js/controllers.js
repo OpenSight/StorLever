@@ -1,6 +1,7 @@
 var controllers = (function() {
     'use strict';
     /* Controllers */
+
     return angular.module('app.controllers', []).controller('MyCtrl', ['$scope',
         function($scope) {
 
@@ -18,6 +19,8 @@ var controllers = (function() {
             };
 
             $scope.activeNode($scope.roots[0].node_id);
+            $scope.inited = true;
         }
     ]);
 })();
+

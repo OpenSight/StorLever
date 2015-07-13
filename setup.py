@@ -8,12 +8,12 @@ README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.md')).read()
 
 requires = [
-    'pyramid',
-    'pyramid_debugtoolbar',
-    'waitress',
-    'pyyaml',
+    'pyramid>=1.5.2',
+    'pyramid_debugtoolbar>=2.2.2',
+    'waitress>=0.8.9',
+    'PyYaml>=3.11',
     'psutil>=1.1.3',
-    'pyramid_chameleon',
+    'pyramid_chameleon>=0.3',
 ]
 
 if sys.version_info < (2,7):
@@ -25,18 +25,29 @@ os.chmod("initscripts/storlever", 0755)
 
 setup(name='storlever',
       version='0.1.0',
+      license='AGPLv3',
+      url='https://github.com/OpenSight/StorLever',
       description='Management/Configure System for network and storage '
                   'resource in linux system, with RESTful API',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
-      "Programming Language :: Python",
-      "Framework :: Pyramid",
-      "Topic :: Internet :: WWW/HTTP",
-      "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+        "Development Status :: 4 - Beta",
+        "Framework :: Pyramid",
+        "Intended Audience :: System Administrators",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+        "Topic :: System :: Monitoring",
+        "Topic :: System :: Networking :: Monitoring",
+        "Topic :: System :: Systems Administration",
       ],
-      author='',
+      author='OpenSight',
       author_email='',
-      url='',
       keywords='storage restful web',
       packages=find_packages(),
       include_package_data=True,

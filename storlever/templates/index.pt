@@ -4,14 +4,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Storlevel</title>
+  <title>StorLever</title>
   <link rel="shortcut icon" href="${request.static_url('storlever:static/img/favicon.ico')}" />
   <link rel="stylesheet" href="${request.static_url('storlever:static/css/bootstrap.min.css')}" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('storlever:static/css/app.css')}">
+  <!-- <link rel="stylesheet" href="${request.static_url('storlever:static/css/isteven-multi-select.css')}"> -->
+  <link rel="stylesheet" href="${request.static_url('storlever:static/css/font-awesome.min.css')}">
 </head>
 <body ng-controller="MenuList" class="storlever">
   <!-- Fixed navbar -->
-  <header  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <header  class="navbar navbar-inverse navbar-fixed-top ng-hide" ng-show="inited" role="navigation">
     <div class="container first-container">
       <div class="navbar-header" >
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -35,7 +37,7 @@
       </div><!--/.nav-collapse -->
     </div>
   </header>
-  <div class="container container-compact">
+  <div class="container container-compact ng-hide" ng-show="inited">
     <div class="row">
       <div class="col-sm-2">
         <ul ng-repeat="root in roots" class="list-group menu-list-trunk" ng-class="{active: root.node_id===activeInfo[0]}">
@@ -80,15 +82,19 @@
   <script src="${request.static_url('storlever:static/js/ui-bootstrap-tpls-0.11.2.min.js')}"></script>
   <script src="${request.static_url('storlever:static/js/Chart.min.js')}"></script>
   <script src="${request.static_url('storlever:static/js/angular-chart.js')}"></script>
+  <!-- <script src="${request.static_url('storlever:static/js/isteven-multi-select.js')}"></script> -->
+  <script src="${request.static_url('storlever:static/js/script.js')}"></script>
   
   <script src="${request.static_url('storlever:static/js/app.js')}"></script>
   <script src="${request.static_url('storlever:static/js/services.js')}"></script>
   <script src="${request.static_url('storlever:static/js/controllers.js')}"></script>
   <script src="${request.static_url('storlever:static/js/filters.js')}"></script>
   <script src="${request.static_url('storlever:static/js/directives.js')}"></script>
+
   
-  <script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
+  <!--script src="${request.static_url('storlever:static/js/partials/system-info.js')}"></script>
   <script src="${request.static_url('storlever:static/js/partials/statistics.js')}"></script>
+  <script src="${request.static_url('storlever:static/js/partials/user.js')}"></script-->
   </body>
 </html>
 

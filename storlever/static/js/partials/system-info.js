@@ -1,5 +1,4 @@
-(function(){
-  controllers.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
+  app.register.controller('SystemInfo', ['$scope', '$http', '$q', function($scope, $http, $q){
     $scope.overview = (function(){
       return {
         cpu: {
@@ -12,16 +11,17 @@
           }
         },
         memory: {
-          labels: ['Usage', 'Free'],
-          data: [100, 0],
+          labels: ['已占用', '空闲', '缓存'],
+          data: [100, 0, 0],
           options:{
             pointDot: false,
             animation: false,
-            showTooltips: false
+            showTooltips: true,
+            tooltipTemplate: '<%if (label){%><%=label%>: <%}%><%= value %>%'
           }
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.aborter = $q.defer(),
           $http.get("/storlever/api/v1/system/localhost", {
             timeout: $scope.aborter.promise
@@ -44,8 +44,9 @@
           }).success(function(response) {
             $scope.cpulist = response;
           });
-          $scope.overview.startGetCPUTimes();
-          $scope.overview.getMemory();
+          // $scope.overview.startGetCPUTimes();
+          $scope.overview.startTimer();
+          // $scope.overview.getMemory();
         },
         saveHostname: function(){
           $http.put("/storlever/api/v1/system/localhost", {
@@ -56,6 +57,15 @@
           $http.put("/storlever/api/v1/system/selinux", {
             timeout: $scope.aborter.promise
           }, JSON.stringify({state: state}));
+        },
+        startTimer: function(){
+          if (undefined !== $scope.overview.timer){
+            return;
+          }
+          $scope.overview.timer = window.setInterval(function(){
+            $scope.overview.getCPUTimes();
+            $scope.overview.getMemory();
+          }, 1000);
         },
         startGetCPUTimes: function(){
           if (undefined !== $scope.overview.cpu.timer){
@@ -72,7 +82,7 @@
           if (undefined !== $scope.overview.cpu.aborter){
             return;
           }
-          $scope.overview.cpu.aborter = $q.defer(),
+          $scope.overview.cpu.aborter = $q.defer();
           $http.get("/storlever/api/v1/system/cpu_times", {
             timeout: $scope.overview.cpu.aborter.promise
           }).success(function(response) {
@@ -101,12 +111,23 @@
           return Math.round((totle - idle) * 10000/ totle) / 100;
         },
         getMemory: function(){
+          if (undefined !== $scope.overview.memory.aborter){
+            return;
+          }
+          $scope.overview.memory.aborter = $q.defer();
           $http.get("/storlever/api/v1/system/memory", {
-            timeout: $scope.aborter.promise
+            timeout: $scope.overview.memory.aborter.promise
           }).success(function(response) {
-            $scope.overview.memory.detail = response;
-            $scope.overview.memory.data[0] = Math.round(response.percent * 100) / 100;
-            $scope.overview.memory.data[1] = 100 - $scope.overview.memory.data[0];
+            delete $scope.overview.memory.aborter;
+            $scope.overview.memory.total = response.total;
+            $scope.overview.memory.free = response.free;
+            $scope.overview.memory.cached = response.cached + response.buffers;
+            $scope.overview.memory.used = response.used - response.cached - response.buffers;
+            $scope.overview.memory.data[0] = Math.round($scope.overview.memory.used * 10000 / response.total) / 100;
+            $scope.overview.memory.data[1] = Math.round($scope.overview.memory.free * 10000 / response.total) / 100;
+            $scope.overview.memory.data[2] = Math.round((100 - $scope.overview.memory.data[0] - $scope.overview.memory.data[1]) * 100) / 100;
+          }).error(function(){
+            delete $scope.overview.memory.aborter;
           });
         },
         releaseMemory: function(){
@@ -116,15 +137,20 @@
             $scope.overview.getMemory();
           });
         },
-        distory: function(){
-          if (undefined !== $scope.overview.cpu.timer){
-            window.clearInterval($scope.overview.cpu.timer);
-            delete $scope.overview.cpu.timer;
+        destroy: function(){
+          if (undefined !== $scope.overview.timer){
+            window.clearInterval($scope.overview.timer);
+            delete $scope.overview.timer;
           }
 
           if (undefined !== $scope.overview.cpu.aborter){
             $scope.overview.cpu.resolve();
             delete $scope.overview.cpu.aborter;
+          }
+
+          if (undefined !== $scope.overview.memory.aborter){
+            $scope.overview.memory.resolve();
+            delete $scope.overview.memory.aborter;
           }
 
           if (undefined !== $scope.aborter){
@@ -141,10 +167,12 @@
           date: '',
           time: '',
           zone: '',
-          opened: false
+          opened: true
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
+
+          
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/system/datetime", {
               timeout: $scope.aborter.promise
@@ -155,10 +183,10 @@
               $scope.config.datetime.zone = response.datetime.match(/[+-][\d]{4}/)[0];
             });
         },
-        openDatepicker: function($event) {
+        open: function($event) {
           $event.preventDefault();
           $event.stopPropagation();
-          $scope.datetime.opened = true;
+          $scope.config.datetime.opened = true;
         }
       };
     })();
@@ -172,7 +200,7 @@
           opened: false
         },
         show: function() {
-          $scope.distory();
+          $scope.destroy();
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/system/datetime", {
               timeout: $scope.aborter.promise
@@ -191,12 +219,13 @@
       };
     })();
 
-    $scope.distory = function(){
-      $scope.overview.distory();
+    $scope.destroy = function(){
+      $scope.overview.destroy();
       if (undefined !== $scope.aborter){
           $scope.aborter.resolve();
           delete $scope.aborter;
       }
     };
+
+    $scope.$on('$destroy', $scope.destroy);
   }]);
-})()

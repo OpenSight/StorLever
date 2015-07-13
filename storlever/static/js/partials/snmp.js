@@ -1,8 +1,5 @@
-(function() {
-    'use strict';
-    /* Controllers */
-    angular.module('app.controllers', []).controller('Snmp', ['$scope', 'SnmpFac', 
-        function($scope, MenuListFac) {
+app.register.controller('Snmp', ['$scope', 'SnmpFac',
+    function($scope, MenuListFac) {
             $scope.roots = MenuListFac.get();
 
             $scope.activeNode = function(id, $event){
@@ -16,7 +13,9 @@
             $scope.activeNode($scope.roots[0].node_id);
         }
     ]);
-})();
+
+
+
 
 (function() {
     'use strict';
