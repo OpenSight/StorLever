@@ -46,7 +46,7 @@ def regist_system(mgr):
     inter_text = _("Network")
     mgr.add_intermediate_node("INTER_NODE_Network", "ROOT_NODE_System", inter_text, "", [])
     leaf_text = _("Interface Management")
-    mgr.add_leaf_node("interface", "INTER_NODE_Network", leaf_text, "/partials/interface", [])
+    mgr.add_leaf_node("interface", "INTER_NODE_Network", leaf_text, "/partials/interface", ["/static/js/partials/interface.js"])
     leaf_text = _("Bond Management")
     mgr.add_leaf_node("bond", "INTER_NODE_Network", leaf_text, "/partials/bond", [])
     leaf_text = _("Network Settings")

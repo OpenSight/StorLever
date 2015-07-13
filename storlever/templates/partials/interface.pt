@@ -1,0 +1,140 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Interface">
+      <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+          <span class="input-group-addon"> 
+            <i class="glyphicon glyphicon-search"></i>
+          </span>
+          <input type="text" class="form-control" placeholder="Filter..." ng-model="interface.seach.name" />
+        </div>
+        <div class="col-sm-12 os-table-container">
+          <table class="table os-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="col-sm-1">接口名称</th>
+                <th class="col-sm-2">IP</th>
+                <th class="col-sm-2">MASK</th>
+                <th class="col-sm-1">网关</th>
+                <th class="col-sm-1">接口类型</th>
+                <th class="col-sm-2">MAC</th>
+                <th class="col-sm-1">速度</th>
+                <th>启用</th>
+                <th>删除</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="u in data.interfaces | filter: interface.seach">
+              <tr>
+                <td ng-click="data.showDetail(u)">
+                  <input type="checkbox" name="favoriteColors" ng-model="formData.favoriteColors.red">
+                </td>
+                <td ng-click="data.showDetail(u)">{{u.name}}</td>
+                <td ng-click="data.showDetail(u)">{{u.ip}}</td>
+                <td ng-click="data.showDetail(u)">{{u.netmask}}</td>
+                <td ng-click="data.showDetail(u)">{{u.gateway}}</td>
+                <td ng-click="data.showDetail(u)">
+                  <span ng-show="true === u.is_bond_slave">bond_slave</span>
+                  <span ng-show="true !== u.is_bond_master">bond_master</span>
+                </td>
+                <td ng-click="data.showDetail(u)">{{u.mac}}</td>
+                <td ng-click="data.showDetail(u)">{{u.speed}}</td>
+                <td ng-click="data.showDetail(u)">
+                  <span ng-show="true === u.enabled">是</span>
+                  <span ng-show="true !== u.enabled">否</span>
+                </td>
+                <td>
+                  <i class="glyphicon glyphicon-trash"></i>
+                </td>
+              </tr>
+              <tr class="ng-hide" ng-show="u.bDetailShown">
+              <td colspan="999">
+              <tabset>
+                  <tab heading="设置" select="config.init(u)">
+
+                                    <div class="panel os-panel">
+                                      <div class="panel-body">
+                                        <form class="form-horizontal os-form" role="form" ng-submit="config.submitForm()">
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">IP</label>
+                                            <div class="col-sm-4">
+                                              <input type="text" class="form-control" ng-model="config.data.ip" />
+                                            </div>
+                                            <label class="col-sm-1 control-label">MASK</label>
+                                            <div class="col-sm-4">
+                                              <input type="text" class="form-control" ng-model="config.data.netmask" />
+                                            </div>
+                                          </div>
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">网关</label>
+                                            <div class="col-sm-4">
+                                              <input type="text" class="form-control" ng-model="config.data.gateway" />
+                                            </div>
+                                            <label class="col-sm-1 control-label">是否启用</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">
+                                                <input type="checkbox" ng-model="config.data.enabled">
+                                                <span>启用</span>
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div class="form-group os-submit-group">
+                                            <label class="col-sm-1 control-label"></label>
+                                            <div class="col-sm-4">
+                                              <button class="btn btn-default" type="submit()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                              <button class="btn btn-default" ngclick="config.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                            </div>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+
+                  </tab>
+                  <tab heading="状态" select="state.init(u)">
+                  <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                  <div class="form-group">
+                                    <label class="col-sm-1 control-label">接收字节</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.rx_bytes}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">接收包数</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.rx_packets}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">接收错误</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.rx_errs}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">接收丢包</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.rx_drop}}</p>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="col-sm-1 control-label">发送字节</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.tx_bytes}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">发送包数</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.tx_packets}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">发送错误</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.tx_errs}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">发送丢包</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{state.data.tx_drop}}</p>
+                                    </div>
+                                  </div>
+                                </form>
+
+                  </tab>
+              </tabset>
+              </td>
+              </tr>
+            </tbody>
+          </table>          
+        </div>
+      </div>
+</div>
