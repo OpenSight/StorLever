@@ -162,24 +162,33 @@ After installing StorLever successfully, you can start up StorLever's service in
 
 ### Daemon mode:
 
-StorLever would install its init script into your system in the above installing process, 
-you can make use of these init script to start up the StorLever in daemon mode by the following command:
+If you want to start up Storlever's Web server at background, so that it can run alone from your console, 
+you can enter the following command: 
+    
+    $ pserve --daemon --log-file=[log file] --pid-file=[pid file] [paste config file]
 
-    $ service storlever startup
+In this situation, StorLever would read paste configurations from the given [paste config file] 
+(StorLever project root directory contains some sample ini file), store its process pid into the [pid file] for stop, 
+redirect its stderr/stdout to /dev/null, and output the log to [log file]
 
-In this situation, StorLever would read the paste configurations from /etc/storlever.ini. And its stderr/stdout would 
-redirect to /dev/null
+If you want to stop the StorLever's server in daemon mode, enter the following command: 
 
+    $ pserve --stop-daemon --pid-file=[pid file] 
+
+[pid file] is the file contains the pid of the daemon. 
+    
 
 ### Foreground mode:
 
 If you want to debug or test StorLever, you may want to start StorLever's server at foreground mode, 
-so you can read the stdout/stderr from StorLever's Server. Enter the following command would start up StorLever's 
+so that you can read the stdout/stderr from StorLever's Server. Enter the following command would start up StorLever's 
 Server in foreground mode
 
    $ pserve [StorLever paste config file]
 
 StorLever's paste config file can be chosen the ini file under StorLever project root directory. 
+
+If StorLever is running at foreground mode, just type Ctrl+C can terminate it. 
 
 After that, StorLever is running, enjoy!!!!  
 
@@ -187,11 +196,20 @@ After that, StorLever is running, enjoy!!!!
 Startup On Boot
 ------------------------------
 
-If you want to automatically start up StorLever on system boot, you can make use of chkconfig utility to add 
-StorLever's service into the system rc.d directory:
+If you want to automatically start up StorLever on system boot, you can make use of the init.d script of StorLever
+and chkconfig utility to add StorLever's service into the system rc.d directory.  Follow the guide below: 
+
+First, you should copy the init.d script and configure file from StorLever project into your system 
+/etc directory. At the StorLever's root directory, type the following commands: 
+
+    $ cp initscripts/storlever /etc/init.d/
+    $ cp storlever.ini /etc/
+    
+Then, Add StorLever into the system rc.d directory through "chkconfig" utility: 
 
     $ chkconfig --add storlever 
 
+Then, reboot the machine, and you can see StorLever would run in daemon mode.     
 	
 For Developer
 ------------------------
