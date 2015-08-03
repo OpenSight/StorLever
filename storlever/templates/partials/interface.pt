@@ -4,83 +4,119 @@
           <span class="input-group-addon"> 
             <i class="glyphicon glyphicon-search"></i>
           </span>
-          <input type="text" class="form-control" placeholder="Filter..." ng-model="interface.seach.name" />
+          <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="interface.seach.name" />
+          <span class="btn-small" style="float:right;padding-top:10px;" ng-click="data.refresh()">
+            <i  class="glyphicon glyphicon-refresh"></i>
+          </span>
         </div>
+
         <div class="col-sm-12 os-table-container">
           <table class="table os-table">
             <thead>
               <tr>
-                <th></th>
                 <th class="col-sm-1">接口名称</th>
                 <th class="col-sm-2">IP</th>
                 <th class="col-sm-2">MASK</th>
-                <th class="col-sm-1">网关</th>
+                <th class="col-sm-2">网关</th>
                 <th class="col-sm-1">接口类型</th>
                 <th class="col-sm-2">MAC</th>
                 <th class="col-sm-1">速度</th>
-                <th>启用</th>
-                <th>删除</th>
+                <th class="col-sm-1">启用</th>
               </tr>
             </thead>
             <tbody ng-repeat="u in data.interfaces | filter: interface.seach">
               <tr>
-                <td ng-click="data.showDetail(u)">
-                  <input type="checkbox" name="favoriteColors" ng-model="formData.favoriteColors.red">
-                </td>
                 <td ng-click="data.showDetail(u)">{{u.name}}</td>
                 <td ng-click="data.showDetail(u)">{{u.ip}}</td>
                 <td ng-click="data.showDetail(u)">{{u.netmask}}</td>
                 <td ng-click="data.showDetail(u)">{{u.gateway}}</td>
                 <td ng-click="data.showDetail(u)">
                   <span ng-show="true === u.is_bond_slave">bond_slave</span>
-                  <span ng-show="true !== u.is_bond_master">bond_master</span>
+                  <span ng-show="true === u.is_bond_master">bond_master</span>
+                  <span ng-show="true !== u.is_bond_master && true !== u.is_bond_slave">physical</span>
                 </td>
                 <td ng-click="data.showDetail(u)">{{u.mac}}</td>
                 <td ng-click="data.showDetail(u)">{{u.speed}}</td>
                 <td ng-click="data.showDetail(u)">
-                  <span ng-show="true === u.enabled">是</span>
-                  <span ng-show="true !== u.enabled">否</span>
-                </td>
-                <td>
-                  <i class="glyphicon glyphicon-trash"></i>
+                  <span ng-show="true === u.enabled">yes</span>
+                  <span ng-show="true !== u.enabled">no</span>
                 </td>
               </tr>
               <tr class="ng-hide" ng-show="u.bDetailShown">
               <td colspan="999">
               <tabset>
                   <tab heading="设置" select="config.init(u)">
-
                                     <div class="panel os-panel">
                                       <div class="panel-body">
-                                        <form class="form-horizontal os-form" role="form" ng-submit="config.submitForm()">
+                                        <form class="form-horizontal os-form" role="form">
                                           <div class="form-group">
                                             <label class="col-sm-1 control-label">IP</label>
                                             <div class="col-sm-4">
-                                              <input type="text" class="form-control" ng-model="config.data.ip" />
+                                              <input type="text" class="form-control" ng-model="config.data[u.name].ip" />
                                             </div>
                                             <label class="col-sm-1 control-label">MASK</label>
                                             <div class="col-sm-4">
-                                              <input type="text" class="form-control" ng-model="config.data.netmask" />
+                                              <input type="text" class="form-control" ng-model="config.data[u.name].netmask" />
                                             </div>
                                           </div>
                                           <div class="form-group">
                                             <label class="col-sm-1 control-label">网关</label>
                                             <div class="col-sm-4">
-                                              <input type="text" class="form-control" ng-model="config.data.gateway" />
+                                              <input type="text" class="form-control" ng-model="config.data[u.name].gateway" />
                                             </div>
                                             <label class="col-sm-1 control-label">是否启用</label>
                                             <div class="col-sm-4">
                                               <p class="form-control-static">
-                                                <input type="checkbox" ng-model="config.data.enabled">
+                                                <input type="checkbox" ng-model="config.data[u.name].enabled">
                                                 <span>启用</span>
                                               </p>
+                                            </div>
+                                          </div>
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">MAC</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{config.data[u.name].mac}}</p>
+                                            </div>
+                                            <label class="col-sm-1 control-label">网口速率</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{config.data[u.name].speed}}</p>
+                                            </div>
+                                          </div>
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">接口名称</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{config.data[u.name].name}}</p>
+                                            </div>
+                                            <label class="col-sm-1 control-label">双工状态</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{config.data[u.name].duplex}}</p>
+                                            </div>
+                                          </div>
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">接口类型</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{(config.data[u.name].is_bond_master === true)?"bond_master" : (config.data[u.name].is_bond_slave === true)?"bond_slave":"physical"}}</p>
+                                            </div>
+                                            <label class="col-sm-1 control-label">自动状态</label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static">{{config.data[u.name].auto}}</p>
+                                            </div>
+                                          </div>
+                                          <div class="form-group">
+                                            <label class="col-sm-1 control-label">连接状态</label>
+                                            <div class="col-sm-4">
+                                                <p class="form-control-static">{{(config.data[u.name].linkup === true)?"yes":"no"}}</p>
+                                            </div>
+                                            <label class="col-sm-1 control-label"></label>
+                                            <div class="col-sm-4">
+                                              <p class="form-control-static"></p>
                                             </div>
                                           </div>
                                           <div class="form-group os-submit-group">
                                             <label class="col-sm-1 control-label"></label>
                                             <div class="col-sm-4">
-                                              <button class="btn btn-default" type="submit()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
-                                              <button class="btn btn-default" ngclick="config.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                              <button class="btn btn-default" ng-click="config.submitForm(u)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                              <button class="btn btn-default" ng-click="config.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                                             </div>
                                           </div>
                                         </form>
@@ -88,48 +124,111 @@
                                     </div>
 
                   </tab>
-                  <tab heading="状态" select="state.init(u)">
+                  <!--tab heading="详细" select="config.init(u)">
+                        <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                  <div class="form-group">
+                                    <label class="col-sm-1 control-label">IP</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].ip}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">MAC</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].mac}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">网口速率</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].speed}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">子网掩码</label>
+                                    <div class="col-sm-2">
+                                         <p class="form-control-static">{{config.data[u.name].netmask}}</p>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="col-sm-1 control-label">接口名称</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].name}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">双工状态</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].duplex}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">是否启用</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].enabled === true?"yes":"no"}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">接口类型</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{(config.data[u.name].is_bond_master === true)?"bond_master" : (config.data[u.name].is_bond_slave === true)?"bond_slave":"物理"}}</p>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="col-sm-1 control-label">自动状态</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{config.data[u.name].auto}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">连接状态</label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static">{{(config.data[u.name].linkup === true)?"yes":"no"}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label"></label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static"></p>
+                                    </div>
+                                    <label class="col-sm-1 control-label"></label>
+                                    <div class="col-sm-2">
+                                      <p class="form-control-static"></p>
+                                    </div>
+                                  </div>
+                                </form>
+                        </div>
+                  </tab-->
+
+                  <tab heading="统计" select="state.init(u)">
                   <div class="panel-body">
                                 <form class="form-horizontal os-form" role="form">
                                   <div class="form-group">
                                     <label class="col-sm-1 control-label">接收字节</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.rx_bytes}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].rx_bytes}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收包数</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.rx_packets}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].rx_packets}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收错误</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.rx_errs}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].rx_errs}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收丢包</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.rx_drop}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].rx_drop}}</p>
                                     </div>
                                   </div>
                                   <div class="form-group">
                                     <label class="col-sm-1 control-label">发送字节</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.tx_bytes}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].tx_bytes}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送包数</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.tx_packets}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].tx_packets}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送错误</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.tx_errs}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].tx_errs}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送丢包</label>
                                     <div class="col-sm-2">
-                                      <p class="form-control-static">{{state.data.tx_drop}}</p>
+                                      <p class="form-control-static">{{state.data[u.name].tx_drop}}</p>
                                     </div>
                                   </div>
                                 </form>
-
+                  </div>
                   </tab>
+
+
               </tabset>
               </td>
               </tr>

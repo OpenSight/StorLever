@@ -18,7 +18,17 @@
           });
         },
         showDetail: function(item){
-          item.bDetailShown = !(true === item.bDetailShown);
+            if (item.bDetailShown === undefined) item.bDetailShown = false;
+            item.bDetailShown = !(true === item.bDetailShown);
+            if (item.bDetailShown === true){//开
+                $scope.config.init(item);
+            }
+        },
+        refresh: function(){
+            angular.forEach($scope.data.interfaces, function(item,index,array){
+                item.bDetailShown = false;
+            });
+            ethList.init();
         }
       };
     })();
@@ -26,29 +36,36 @@
     $scope.config = (function(){
       return {
         get: function(item){
+           if ( $scope.config.data == undefined){
+               $scope.config.data = {};
+           }
+
            $scope.aborter = $q.defer(),
            $http.get("/storlever/api/v1/network/eth_list/"+item.name, {
                timeout: $scope.aborter.promise
              }).success(function(response) {
-               $scope.config.data = response;
+               $scope.config.data[item.name] = response;
+               $scope.config.data[item.name].enabled_bf = $scope.config.data[item.name].enabled;
              });
         },
 
         init: function(item) {
-          $scope.destroy();
-            //初始化重新拿
-          $scope.config.get(item);
+            if (item.bDetailShown === true){
+              $scope.destroy();
+                //初始化重新拿
+              $scope.config.get(item);
+            }
         },
 
-        submitForm:function() {
+        submitForm:function(item) {
             var putData = {
-                ip: $scope.config.data.ip,
-                netmask: $scope.config.data.netmask,
-                gateway: $scope.config.data.gateway
+                ip: $scope.config.data[item.name].ip,
+                netmask: $scope.config.data[item.name].netmask,
+                gateway: $scope.config.data[item.name].gateway
             };
 
             $scope.aborter = $q.defer(),
-            $http.put("/storlever/api/v1/network/eth_list/"+$scope.config.data.name, putData, {
+            $http.put("/storlever/api/v1/network/eth_list/"+$scope.config.data[item.name].name, putData, {
                 timeout: $scope.aborter.promise
             }).success(function(response) {
 
@@ -56,19 +73,21 @@
                     alert("修改网络接口失败！");
             });
 //op
-            var postData = {
-                opcode: $scope.config.data.enabled?"enable":"disable"
-            };
-            $scope.aborter = $q.defer(),
-                $http.post("/storlever/api/v1/network/eth_list/"+$scope.config.data.name+"/op", postData, {
+            if ( $scope.config.data[item.name].enabled_bf !== $scope.config.data[item.name].enabled){
+                var postData = {
+                    opcode: ($scope.config.data[item.name].enabled === true)?"enable":"disable"
+                };
+                $scope.aborter = $q.defer(),
+                $http.post("/storlever/api/v1/network/eth_list/"+$scope.config.data[item.name].name+"/op", postData, {
                     timeout: $scope.aborter.promise
                 }).success(function(response) {
 
                     }).error(function(response) {
-                        if ($scope.config.data.enabled)
+                        if ($scope.config.data.enabled === true)
                             alert("启用网络接口失败！");
                         else alert("停用网络接口失败！");
                     });
+            }
 
         },
 
@@ -80,16 +99,21 @@
     $scope.state = (function() {
       return {
         get: function(item){
+            if ( $scope.state.data == undefined){
+                $scope.state.data = {};
+            }
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/network/eth_list/"+item.name+"/stat", {
               timeout: $scope.aborter.promise
             }).success(function(response) {
-              $scope.state.data = response;
+              $scope.state.data[item.name] = response;
             });
         },
         init: function(item) {
-          $scope.destroy();          
-          $scope.state.get(item);
+            if (item.bDetailShown === true){
+              $scope.destroy();
+              $scope.state.get(item);
+            }
         },
 
         destroy: function(){}
