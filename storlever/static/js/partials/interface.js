@@ -9,7 +9,10 @@
     $scope.data = (function(){
       return {
         get: function(){
-          $scope.data.interfaces = [];
+          $scope.data.interfaces = undefined;
+          $scope.state.data = undefined;
+          $scope.config.data = undefined;
+
           $scope.aborter = $q.defer(),
           $http.get("/storlever/api/v1/network/eth_list", {
             timeout: $scope.aborter.promise
@@ -21,7 +24,24 @@
             if (item.bDetailShown === undefined) item.bDetailShown = false;
             item.bDetailShown = !(true === item.bDetailShown);
             if (item.bDetailShown === true){//开
-                $scope.config.init(item);
+                if ($scope.state.freshState !== undefined && $scope.state.freshState[item.name] !== undefined && $scope.state.freshState[item.name].pause === true){
+                    $scope.state.init(item);
+                }else
+                    $scope.config.init(item);
+            }else{
+                //若状态在刷新就关闭
+                if ( $scope.state.fresh !== undefined)
+                {
+                    angular.forEach($scope.state.fresh, function(data,index,array){
+                        if (data.name === item.name){
+                            if (data.on === true){
+                                $scope.state.freshState[item.name].pause = true; //为了在行隐藏状态下点击直接展开状态栏继续刷
+                            }else $scope.state.freshState[item.name].pause = false;
+                            data.on = false;
+
+                        }
+                    });
+                }
             }
         },
         refresh: function(){
@@ -36,7 +56,7 @@
     $scope.config = (function(){
       return {
         get: function(item){
-           if ( $scope.config.data == undefined){
+           if ( $scope.config.data === undefined){
                $scope.config.data = {};
            }
 
@@ -51,9 +71,22 @@
 
         init: function(item) {
             if (item.bDetailShown === true){
-              $scope.destroy();
+
+               if (undefined !== $scope.aborter){
+                   $scope.aborter.resolve();
+                   delete $scope.aborter;
+               }
                 //初始化重新拿
               $scope.config.get(item);
+              //若状态在刷新就关闭
+              if ( $scope.state.fresh !== undefined)
+              {
+                  angular.forEach($scope.state.fresh, function(data,index,array){
+                      if (data.name === item.name){
+                         data.on = false;
+                      }
+                  });
+              }
             }
         },
 
@@ -99,10 +132,10 @@
     $scope.state = (function() {
       return {
         get: function(item){
-            if ( $scope.state.data == undefined){
+            if ( $scope.state.data === undefined){
                 $scope.state.data = {};
             }
-          $scope.aborter = $q.defer(),
+            $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/network/eth_list/"+item.name+"/stat", {
               timeout: $scope.aborter.promise
             }).success(function(response) {
@@ -113,9 +146,62 @@
             if (item.bDetailShown === true){
               $scope.destroy();
               $scope.state.get(item);
+              if ( $scope.state.fresh === undefined)
+              {
+                  $scope.state.fresh = [];
+              }
+              var found_fresh = false;
+              angular.forEach($scope.state.fresh, function(data,index,array){
+                 if (data.name === item.name){
+                     data.on = true;
+                     found_fresh = true;
+                 }
+              });
+              if (found_fresh === false)  {
+                  var  tmpItem = {
+                      name : item.name,
+                      on : true
+                  };
+                  $scope.state.fresh.push(tmpItem);
+              }
+
+              $scope.state.startTimer();
             }
         },
+        startTimer: function(){
+           if (undefined !== $scope.state.timer){
+                 return;
+           }
+           $scope.state.timer = window.setInterval(function(){
+               angular.forEach($scope.state.fresh, function(data,index,array){
+                   if (data.on === true){
+                       $scope.state.getFreshState(data);
+                   }
+               });
+              }, 1000);
+        },
+        getFreshState: function(item){
+           if ($scope.state.freshState === undefined){
+               $scope.state.freshState = [];
+           }
 
+           if ($scope.state.freshState[item.name] === undefined){
+               $scope.state.freshState[item.name] = {};
+           }
+
+           if (undefined !== $scope.state.freshState[item.name].aborter){
+                  return;
+           }
+           $scope.state.freshState[item.name].aborter = $q.defer();
+              $http.get("/storlever/api/v1/network/eth_list/"+item.name+"/stat", {
+                  timeout: $scope.state.freshState[item.name].aborter.promise
+              }).success(function(response) {
+                 $scope.state.data[item.name] = response;
+                 delete $scope.state.freshState[item.name].aborter;
+              }).error(function(){
+                 delete $scope.state.freshState[item.name].aborter;
+              });
+        },
         destroy: function(){}
       };
     })();
@@ -125,6 +211,11 @@
       if (undefined !== $scope.aborter){
           $scope.aborter.resolve();
           delete $scope.aborter;
+      }
+
+      if (undefined !== $scope.state.timer){
+          window.clearInterval($scope.state.timer);
+          delete $scope.state.timer;
       }
     };
 
