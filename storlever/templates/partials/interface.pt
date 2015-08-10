@@ -190,38 +190,46 @@
                                 <form class="form-horizontal os-form" role="form">
                                   <div class="form-group">
                                     <label class="col-sm-1 control-label">接收字节</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].rx_bytes}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收包数</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].rx_packets}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收错误</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].rx_errs}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">接收丢包</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].rx_drop}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">接收速度</label>
+                                    <div class="col-sm-1">
+                                      <p class="form-control-static">{{(state.data[u.name].rx_rate/1024).toFixed(2)}}kbps</p>
                                     </div>
                                   </div>
                                   <div class="form-group">
                                     <label class="col-sm-1 control-label">发送字节</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].tx_bytes}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送包数</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].tx_packets}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送错误</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].tx_errs}}</p>
                                     </div>
                                     <label class="col-sm-1 control-label">发送丢包</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                       <p class="form-control-static">{{state.data[u.name].tx_drop}}</p>
+                                    </div>
+                                    <label class="col-sm-1 control-label">发送速度</label>
+                                    <div class="col-sm-1">
+                                      <p class="form-control-static">{{(state.data[u.name].tx_rate/1024).toFixed(2)}}kbps</p>
                                     </div>
                                   </div>
                                 </form>
