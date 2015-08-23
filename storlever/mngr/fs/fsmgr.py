@@ -135,8 +135,11 @@ class FileSystemManager(object):
                 option_flag, boot_flag)
 
     def _sync_to_fstab(self, fs_dict):
-        with open(FSTAB_FILE_PATH, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(FSTAB_FILE_PATH):
+            with open(FSTAB_FILE_PATH, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]

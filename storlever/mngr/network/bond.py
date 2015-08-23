@@ -117,9 +117,11 @@ class BondManager(object):
         return max
 
     def _add_bond_to_conf(self, name):
-
-        with open(MODPROBE_CONF, 'r') as conf_file:
-            lines = conf_file.readlines()
+        if os.path.exists(MODPROBE_CONF):        
+            with open(MODPROBE_CONF, 'r') as conf_file:
+                lines = conf_file.readlines()
+        else:
+            lines = []
 
         for line in lines:
             if name in line:
@@ -132,6 +134,8 @@ class BondManager(object):
 
 
     def _del_bond_from_conf(self, name):
+        if not os.path.exists(MODPROBE_CONF):        
+            return
         with open(MODPROBE_CONF, 'r') as conf_file:
             lines = conf_file.readlines()
         lines = [line for line in lines if (name not in line)]

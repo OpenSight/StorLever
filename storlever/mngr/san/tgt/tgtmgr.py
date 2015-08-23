@@ -256,8 +256,11 @@ class TgtManager(object):
 
         # add storlever config to ntp.conf
         file_name = os.path.join(TGT_ETC_CONF_DIR, TGT_ETC_CONF_FILE)
-        with open(file_name, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         # filter some line
         lines = [line for line in lines

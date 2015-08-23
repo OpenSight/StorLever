@@ -38,8 +38,11 @@ class DnsManager(object):
         # read the file
         servers = []
         with self.lock:
-            with open(RESOLVE_FILE, "r") as config_file:
-                lines = config_file.readlines();
+            if os.path.exist(RESOLVE_FILE):
+                with open(RESOLVE_FILE, "r") as config_file:
+                    lines = config_file.readlines()
+            else:
+                lines = []
 
         for line in lines:
             line_part = line.split()
@@ -56,8 +59,11 @@ class DnsManager(object):
             raise StorLeverError("servers must be type of list", 400)
 
         with self.lock:
-            with open(RESOLVE_FILE, "r") as f:
-                lines = f.readlines()
+            if os.path.exist(RESOLVE_FILE):
+                with open(RESOLVE_FILE, "r") as f:
+                    lines = f.readlines()
+            else:
+                lines = []
 
         lines = [line for line in lines
                  if (not line.strip().startswith("nameserver"))]

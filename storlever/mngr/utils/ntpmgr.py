@@ -234,8 +234,11 @@ class NtpManager(object):
 
         # add storlever config to ntp.conf
         file_name = os.path.join(NTP_ETC_CONF_DIR, NTP_ETC_CONF_FILE)
-        with open(file_name, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]

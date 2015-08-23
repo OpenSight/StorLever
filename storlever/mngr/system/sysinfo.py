@@ -114,8 +114,11 @@ class SysManager(object):
 
     def get_host_list(self):
         # add ip for this hostname
-        with open("/etc/hosts", "r") as f:
-            lines = f.readlines()
+        if os.path.exists("/etc/hosts"):
+            with open("/etc/hosts", "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" not in lines:
             return []
@@ -144,8 +147,11 @@ class SysManager(object):
     def set_host_list(self, host_list, user="unknown"):
         host_list = HOST_LIST_SCHEMA.validate(host_list)
 
-        with open(ETC_HOSTS_FILE, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(ETC_HOSTS_FILE):
+            with open(ETC_HOSTS_FILE, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]

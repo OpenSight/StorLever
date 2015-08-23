@@ -92,8 +92,11 @@ class MailManager(object):
             os.makedirs(MAIL_ETC_CONF_DIR)
 
         file_name = os.path.join(MAIL_ETC_CONF_DIR, MAIL_ETC_CONF_FILE)
-        with open(file_name, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]

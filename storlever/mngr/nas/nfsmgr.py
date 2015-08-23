@@ -150,8 +150,11 @@ class NfsManager(object):
             os.makedirs(NFS_ETC_CONF_DIR)
 
         nfs_sys_file = os.path.join(NFS_ETC_CONF_DIR, NFS_ETC_CONF_FILE)
-        with open(os.path.join(nfs_sys_file, ), "r") as f:
-            lines = f.readlines()
+        if os.path.exists(nfs_sys_file):
+            with open(nfs_sys_file, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         if "# begin storlever\n" in lines:
             before_storlever = lines[0:lines.index("# begin storlever\n")]

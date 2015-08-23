@@ -273,8 +273,11 @@ class SnmpAgentManager(object):
 
         # add storlever config to ntp.conf
         file_name = os.path.join(SNMP_ETC_CONF_DIR, SNMP_ETC_CONF_FILE)
-        with open(file_name, "r") as f:
-            lines = f.readlines()
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         # filter the sensitive lines
         new_lines = []

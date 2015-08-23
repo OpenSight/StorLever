@@ -134,8 +134,11 @@ class SmartdManager(object):
             os.makedirs(SMARTD_ETC_CONF_DIR)
 
         smartd_etc_file = os.path.join(SMARTD_ETC_CONF_DIR, SMARTD_CONF_FILE)
-        with open(os.path.join(smartd_etc_file, ), "r") as f:
-            lines = f.readlines()
+        if os.path.exists(smartd_etc_file):
+            with open(os.path.join(smartd_etc_file, ), "r") as f:
+                lines = f.readlines()
+        else:
+            lines = []
 
         for i, line in enumerate(lines[:]):
             if line.strip().startswith("DEVICESCAN"):
