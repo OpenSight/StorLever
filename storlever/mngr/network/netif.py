@@ -33,7 +33,12 @@ class EthInterface(object):
         self.name = name
         ifcfg_file_name = "ifcfg-" + name
         self.conf_file_path = os.path.join(IF_CONF_PATH, ifcfg_file_name)
-        self.ifconfig_interface = ifconfig.Interface(name)
+        if isinstance(name, bytes):
+            name_bytes = name
+        else:
+            name_bytes = name.encode()
+
+        self.ifconfig_interface = ifconfig.Interface(name_bytes)
 
         # get the config file
         if os.path.exists(self.conf_file_path):
