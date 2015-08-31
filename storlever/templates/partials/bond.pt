@@ -73,7 +73,7 @@
           <table class="table os-table">
             <thead>
               <tr>
-                <th class="col-sm-1"><input type="checkbox" ng-click="bondlist_toggle_all()"> </th>
+                <th class="col-sm-1"><input type="checkbox" ng-model="bondlist.checkAllBox" ng-click="bondlist.toggle_all()"> </th>
                 <th class="col-sm-2">Bond名称</th>
                 <th class="col-sm-2">Bond类型</th>
                 <th class="col-sm-4">miimon</th>
@@ -114,7 +114,7 @@
                                             </div>
                                             <label class="col-sm-1 control-label">Bond类型</label>
                                             <div class="col-sm-4">
-                                                <select class="form-control" ng-model="config.data[u.name].mode" ng-options="o.value as o.key for o in staicData.bondModeOptionsData" ng-change="">
+                                                <select class="form-control" ng-model="config.data[u.name].mode" ng-options="o.value as o.key for o in staticData.bondModeOptionsData" >
                                                 </select>
                                             </div>
                                           </div>

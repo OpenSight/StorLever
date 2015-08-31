@@ -6,6 +6,8 @@ var app = angular.module('app', [
     'app.controllers',
     'ui.bootstrap',
     'chart.js',
+    'angular-loading-bar',
+    'ngAnimate'
  //   'isteven-multi-select'
 ]);
 

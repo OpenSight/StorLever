@@ -8,34 +8,53 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
     $scope.staticData = [];
     $scope.staticData.bondModeOptionsData = [
         {
-            key: "balance-rr",
+            key: "0(balance-rr)",
             value: 0
         },
         {
-            key: "active-backup",
+            key: "1(active-backup)",
             value: 1
         },
         {
-            key: "balance-xor",
+            key: "2(balance-xor)",
             value: 2
         },
         {
-            key: "broadcast",
+            key: "3(broadcast)",
             value: 3
         },
         {
-            key: "802.3ad",
+            key: "4(802.3ad)",
             value: 4
         },
         {
-            key: "balance-tlb",
+            key: "5(balance-tlb)",
             value: 5
         },
         {
-            key: "balance-alb",
+            key: "6(balance-alb)",
             value: 6
         }
     ];
+
+    $scope.staticData.deleteTask = [];
+
+    $scope.bondlist = (function () {
+        return {
+            toggle_all: function () {
+                if ($scope.bondlist.checkAllBox === undefined) $scope.bondlist.checkAllBox = false;
+                $scope.bondlist.checkAllBox = !$scope.bondlist.checkAllBox;
+                var nowCheckState = $scope.bondlist.checkAllBox;
+                if ($scope.bondlist.checkbox === undefined) $scope.bondlist.checkbox = [];
+
+                angular.forEach($scope.data.bondlist, function (item, index, array) {
+                    $scope.bondlist.checkbox[item.name] = nowCheckState;
+                });
+
+            }
+        };
+    })();
+
 
     $scope.data = (function () {
         return {
@@ -70,31 +89,41 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                 if ($scope.addShown === true)
                     $scope.bond.init();
             },
-            delete: function (item) {
-                $scope.data.delete_err_msg = " ";
+            delete: function (item, tag) {
+                $scope.staticData.deleteTask[tag]++;
                 $scope.aborter = $q.defer(),
                     $http.delete("/storlever/api/v1/network/bond/bond_list/"+item.name, {
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
-
+                            $scope.staticData.deleteTask[tag]--;
+                            if ($scope.staticData.deleteTask[tag] <= 0){
+                                if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
+                                $scope.data.refresh();
+                            }
                     }).error(function (response) {
+                            $scope.staticData.deleteTask[tag]--;
                             $scope.data.delete_err_msg += (item.name + " ");
+                            if ($scope.staticData.deleteTask[tag] <= 0){
+                                if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
+                                $scope.data.refresh();
+                            }
                     });
 
             },
             delete_one: function (item) {
-                $scope.data.delete(item);
-                if (delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
-                $scope.data.refresh();
+                $scope.data.delete_err_msg = " ";
+                $scope.staticData.deleteTask[item.name] = 0;
+                $scope.data.delete(item, item.name);
             },
             delete_all: function () {
+                $scope.data.delete_err_msg = " ";
+                $scope.staticData.deleteTask["all"] = 0;
                 angular.forEach($scope.data.bondlist, function (item, index, array) {
                     if ($scope.bondlist !== undefined && $scope.bondlist.checkbox !== undefined
                         && $scope.bondlist.checkbox[item.name] === true)
-                        $scope.data.delete(item);
+                        $scope.data.delete(item, "all");
                 });
-                if (delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
-               $scope.data.refresh();
+
             }
         };
     })();
@@ -111,7 +140,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
                             $scope.config.data[item.name] = response;
-                            $http.get("/storlever/api/v1/network//eth_list/" + item.name, {
+                            $http.get("/storlever/api/v1/network/eth_list/" + item.name, {
                                 timeout: $scope.aborter.promise
                             }).success(function (response) {
                                     $scope.config.data[item.name].ip = response.ip;
@@ -136,7 +165,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
             submitForm: function (item) {
                 var putData = {
                     miimon: $scope.config.data[item.name].miimon,
-                    mode: $scope.config.data[item.name].mode
+                    mode: $scope.config.data[item.name].mode+""
                 };
 
                 $scope.aborter = $q.defer(),
@@ -170,6 +199,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
             },
 
             submitForm: function (item) {//add one bond
+                $scope.bond.data.ifs = "";
                 angular.forEach($scope.bond.phylist, function (data, index, array) {//get choosen physical eth port
                     if ($scope.bond.tmpIfs[data] === true) {
                         if ($scope.bond.data.ifs.length > 0)
@@ -210,15 +240,13 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
                             $scope.bond.ethInterfaces = response;
+                            angular.forEach($scope.bond.ethInterfaces, function (data, index, array) {
+                                if (data.is_bond_slave === false && data.is_bond_master === false) {//physical
+                                    $scope.bond.phylist.push(data.name);
+
+                                }
+                            });
                 });
-
-                angular.forEach($scope.bond.ethInterfaces, function (data, index, array) {
-                    if (data.is_bond_slave === false && data.is_bond_master === false) {//physical
-                        $scope.bond.phylist.push(data.name);
-
-                    }
-                });
-
             }
         };
     })();
