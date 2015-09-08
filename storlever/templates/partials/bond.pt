@@ -88,7 +88,7 @@
                 <td ng-click="data.showDetail(u)">{{u.mode}}</td>
                 <td ng-click="data.showDetail(u)">{{u.miimon}}</td>
                 <td ng-click="data.showDetail(u)">{{u.slaves}}</td>
-                <td ng-click="data.delete_one(u)"><i class="glyphicon glyphicon-trash"></i></td>
+                <td ng-click="data.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
               </tr>
               <tr class="ng-hide" ng-show="u.bDetailShown">
               <td colspan="999">

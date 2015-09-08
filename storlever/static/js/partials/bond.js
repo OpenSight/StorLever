@@ -89,21 +89,32 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                 if ($scope.addShown === true)
                     $scope.bond.init();
             },
-            delete: function (item, tag) {
+            delete: function (name, tag) {
                 $scope.staticData.deleteTask[tag]++;
+
                 $scope.aborter = $q.defer(),
-                    $http.delete("/storlever/api/v1/network/bond/bond_list/"+item.name, {
+                    $http.delete("/storlever/api/v1/network/bond/bond_list/"+name, {
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
                             $scope.staticData.deleteTask[tag]--;
                             if ($scope.staticData.deleteTask[tag] <= 0){
+                                if ($scope.staticData.deleteBond0 === true) {
+                                    $scope.staticData.deleteBond0 = false;
+                                    $scope.data.delete("bond0", "all");
+                                    return;
+                                }
                                 if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
                                 $scope.data.refresh();
                             }
                     }).error(function (response) {
                             $scope.staticData.deleteTask[tag]--;
-                            $scope.data.delete_err_msg += (item.name + " ");
+                            $scope.data.delete_err_msg += (name + " ");
                             if ($scope.staticData.deleteTask[tag] <= 0){
+                                if ($scope.staticData.deleteBond0 === true) {
+                                    $scope.staticData.deleteBond0 = false;
+                                    $scope.data.delete("bond0", "all");
+                                    return;
+                                }
                                 if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
                                 $scope.data.refresh();
                             }
@@ -113,16 +124,22 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
             delete_one: function (item) {
                 $scope.data.delete_err_msg = " ";
                 $scope.staticData.deleteTask[item.name] = 0;
-                $scope.data.delete(item, item.name);
+                $scope.data.delete(item.name, item.name);
             },
             delete_all: function () {
                 $scope.data.delete_err_msg = " ";
                 $scope.staticData.deleteTask["all"] = 0;
+
                 angular.forEach($scope.data.bondlist, function (item, index, array) {
                     if ($scope.bondlist !== undefined && $scope.bondlist.checkbox !== undefined
                         && $scope.bondlist.checkbox[item.name] === true)
-                        $scope.data.delete(item, "all");
+                    {
+                       if (item.name === "bond0") $scope.staticData.deleteBond0 = true;
+                       else  $scope.data.delete(item.name, "all");
+                    }
+
                 });
+
 
             }
         };
@@ -172,7 +189,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     $http.put("/storlever/api/v1/network/bond/bond_list/" + $scope.config.data[item.name].name, putData, {
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
-
+                            $scope.data.refresh();
                     }).error(function (response) {
                             alert("修改bond接口失败！");
                     });
@@ -221,7 +238,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     $http.post("/storlever/api/v1/network/bond/bond_list", postData, {
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
-
+                            $scope.data.refresh();
                         }).error(function (response) {
                             alert("添加bond接口失败！");
                         });

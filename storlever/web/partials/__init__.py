@@ -5,3 +5,5 @@ def includeme(config):
     config.include(__name__ + '.system-info')
     config.include(__name__ + '.user')
     config.include(__name__ + '.interface')
+    config.include(__name__ + '.bond')
+    config.include(__name__ + '.net-settings')
