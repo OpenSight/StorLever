@@ -101,7 +101,15 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
                     }).success(function (response) {
 
                         }).error(function (response) {
-                            alert("修改网络接口失败！");
+                            $('#myModalLabel').text("");// 清空数据
+                            $('#myModalLabel').append("错误");
+                            $('#myErrorContent').text("");// 清空数据
+                            $('#myErrorContent').append("修改网络接口失败");
+                            $('#myErrorContentDetail').text("");// 清空数据
+                            $('#myErrorContentDetail').append(JSON.stringify(response));
+                            $('#myErrorContentDetail').hide();
+
+                            $('#myErrorModal').modal();
                         });
 //op
                 if ($scope.config.data[item.name].enabled_bf !== $scope.config.data[item.name].enabled) {
@@ -114,9 +122,28 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
                         }).success(function (response) {
 
                             }).error(function (response) {
-                                if ($scope.config.data.enabled === true)
-                                    alert("启用网络接口失败！");
-                                else alert("停用网络接口失败！");
+                                if ($scope.config.data.enabled === true){
+                                    $('#myModalLabel').text("");// 清空数据
+                                    $('#myModalLabel').append("错误");
+                                    $('#myErrorContent').text("");// 清空数据
+                                    $('#myErrorContent').append("启用网络接口失败");
+                                    $('#myErrorContentDetail').text("");// 清空数据
+                                    $('#myErrorContentDetail').append(JSON.stringify(response));
+                                    $('#myErrorContentDetail').hide();
+
+                                    $('#myErrorModal').modal();
+                                }
+                                else {
+                                    $('#myModalLabel').text("");// 清空数据
+                                    $('#myModalLabel').append("错误");
+                                    $('#myErrorContent').text("");// 清空数据
+                                    $('#myErrorContent').append("停用网络接口失败");
+                                    $('#myErrorContentDetail').text("");// 清空数据
+                                    $('#myErrorContentDetail').append(JSON.stringify(response));
+                                    $('#myErrorContentDetail').hide();
+
+                                    $('#myErrorModal').modal();
+                                }
                             });
                 }
 

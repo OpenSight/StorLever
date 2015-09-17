@@ -115,7 +115,17 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                                     $scope.data.delete("bond0", "all");
                                     return;
                                 }
-                                if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
+                                if ($scope.data.delete_err_msg.length > 1) {
+                                    $('#myModalLabel').text("");// 清空数据
+                                    $('#myModalLabel').append("错误");
+                                    $('#myErrorContent').text("");// 清空数据
+                                    $('#myErrorContent').append("删除Bond接口" + $scope.data.delete_err_msg + "失败");
+                                    $('#myErrorContentDetail').text("");// 清空数据
+                                    $('#myErrorContentDetail').append(JSON.stringify(response));
+                                    $('#myErrorContentDetail').hide();
+
+                                    $('#myErrorModal').modal();
+                                }
                                 $scope.data.refresh();
                             }
                     });
@@ -191,7 +201,15 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     }).success(function (response) {
                             $scope.data.refresh();
                     }).error(function (response) {
-                            alert("修改bond接口失败！");
+                            $('#myModalLabel').text("");// 清空数据
+                            $('#myModalLabel').append("错误");
+                            $('#myErrorContent').text("");// 清空数据
+                            $('#myErrorContent').append("修改bond接口失败");
+                            $('#myErrorContentDetail').text("");// 清空数据
+                            $('#myErrorContentDetail').append(JSON.stringify(response));
+                            $('#myErrorContentDetail').hide();
+
+                            $('#myErrorModal').modal();
                     });
             },
 
@@ -240,7 +258,15 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     }).success(function (response) {
                             $scope.data.refresh();
                         }).error(function (response) {
-                            alert("添加bond接口失败！");
+                            $('#myModalLabel').text("");// 清空数据
+                            $('#myModalLabel').append("错误");
+                            $('#myErrorContent').text("");// 清空数据
+                            $('#myErrorContent').append("添加bond接口失败");
+                            $('#myErrorContentDetail').text("");// 清空数据
+                            $('#myErrorContentDetail').append(JSON.stringify(response));
+                            $('#myErrorContentDetail').hide();
+
+                            $('#myErrorModal').modal();
                         });
             },
 
