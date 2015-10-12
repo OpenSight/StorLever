@@ -89,68 +89,99 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                 if ($scope.addShown === true)
                     $scope.bond.init();
             },
-            delete: function (name, tag) {
-                $scope.staticData.deleteTask[tag]++;
 
+            delete_one: function (item) {
+                $scope.data.delOneToken = Math.random();
                 $scope.aborter = $q.defer(),
-                    $http.delete("/storlever/api/v1/network/bond/bond_list/"+name, {
+                    $http.delete("/storlever/api/v1/network/bond/bond_list/"+item.name, {
                         timeout: $scope.aborter.promise
                     }).success(function (response) {
-                            $scope.staticData.deleteTask[tag]--;
-                            if ($scope.staticData.deleteTask[tag] <= 0){
-                                if ($scope.staticData.deleteBond0 === true) {
-                                    $scope.staticData.deleteBond0 = false;
-                                    $scope.data.delete("bond0", "all");
-                                    return;
-                                }
-                                if ($scope.data.delete_err_msg.length > 1) alert("删除Bond接口" + $scope.data.delete_err_msg + "失败");
-                                $scope.data.refresh();
-                            }
-                    }).error(function (response) {
-                            $scope.staticData.deleteTask[tag]--;
-                            $scope.data.delete_err_msg += (name + " ");
-                            if ($scope.staticData.deleteTask[tag] <= 0){
-                                if ($scope.staticData.deleteBond0 === true) {
-                                    $scope.staticData.deleteBond0 = false;
-                                    $scope.data.delete("bond0", "all");
-                                    return;
-                                }
-                                if ($scope.data.delete_err_msg.length > 1) {
-                                    $('#myModalLabel').text("");// 清空数据
-                                    $('#myModalLabel').append("错误");
-                                    $('#myErrorContent').text("");// 清空数据
-                                    $('#myErrorContent').append("删除Bond接口" + $scope.data.delete_err_msg + "失败");
-                                    $('#myErrorContentDetail').text("");// 清空数据
-                                    $('#myErrorContentDetail').append(JSON.stringify(response));
-                                    $('#myErrorContentDetail').hide();
+                            $scope.data.refresh();
+                        }).error(function (response) {
+                            var tmpMsg = {};
+                            tmpMsg.Label = "错误";
+                            tmpMsg.ErrorContent = "删除Bond "+item.name+" 失败";
+                            tmpMsg.ErrorContentDetail = response;
+                            tmpMsg.SingleButtonShown = true;
+                            tmpMsg.MutiButtonShown = false;
+                            tmpMsg.Token = $scope.data.delOneToken;
+                            tmpMsg.Callback = "delOneBondCallBack";
+                            $scope.$emit("Ctr1ModalShow", tmpMsg);
+                            $scope.data.refresh();
+                        });
+            },
 
-                                    $('#myErrorModal').modal();
-                                }
-                                $scope.data.refresh();
-                            }
-                    });
+            delOneBondCallBack:function (event, msg) {
 
             },
-            delete_one: function (item) {
-                $scope.data.delete_err_msg = " ";
-                $scope.staticData.deleteTask[item.name] = 0;
-                $scope.data.delete(item.name, item.name);
-            },
+
             delete_all: function () {
-                $scope.data.delete_err_msg = " ";
-                $scope.staticData.deleteTask["all"] = 0;
+                $scope.data.delMoreToken = Math.random();
+                $scope.data.delArr = [];
 
+//get select
                 angular.forEach($scope.data.bondlist, function (item, index, array) {
                     if ($scope.bondlist !== undefined && $scope.bondlist.checkbox !== undefined
                         && $scope.bondlist.checkbox[item.name] === true)
                     {
-                       if (item.name === "bond0") $scope.staticData.deleteBond0 = true;
-                       else  $scope.data.delete(item.name, "all");
+                        if (item.name === "bond0") $scope.staticData.deleteBond0 = true;
+                        else  $scope.data.delArr.push(item.name);
                     }
-
                 });
 
+                var tmpMsg = {};
+                tmpMsg.Token = $scope.data.delMoreToken;
+                tmpMsg.Stop = false;
+                $scope.data.delMoreBondCallBack(null, tmpMsg);
+            },
 
+            delMoreBondCallBack:function (event, msg) {
+                var tmpDel = null;
+
+                if (msg.Token != $scope.data.delMoreToken || msg.Stop === true) return;
+                if ($scope.data.delArr.length > 0){
+                    tmpDel = $scope.data.delArr[$scope.data.delArr.length-1];
+                    $scope.data.delArr.pop();
+                }else if ($scope.staticData.deleteBond0 === true){
+                    $scope.staticData.deleteBond0 = false;
+                    tmpDel = "bond0";
+                }else return;
+
+                $scope.aborter = $q.defer(),
+                    $http.delete("/storlever/api/v1/network/bond/bond_list/"+tmpDel, {
+                        timeout: $scope.aborter.promise
+                    }).success(function (response) {
+                            var tmpMsg = {};
+                            tmpMsg.Token = $scope.data.delMoreToken;
+                            tmpMsg.Stop = false;
+
+                            $scope.data.refresh();
+                            if ($scope.data.delArr.length > 0 || $scope.staticData.deleteBond0 === true)
+                                $scope.data.delMoreBondCallBack(null, tmpMsg);
+                            else return;
+                        }).error(function (response) {
+                            var tmpMsg = {};
+                            tmpMsg.Label = "错误";
+                            tmpMsg.ErrorContent = "删除Bond "+tmpDel+" 失败";
+                            tmpMsg.ErrorContentDetail = response;
+                            tmpMsg.SingleButtonShown = true;
+                            tmpMsg.MutiButtonShown = false;
+                            tmpMsg.Token = $scope.data.delMoreToken;
+                            tmpMsg.Callback = "delMoreBondCallBack";
+
+                            var tmpJobCount = 0;
+                            tmpJobCount += $scope.data.delArr.length;
+                            if ($scope.staticData.deleteBond0 === true)
+                                tmpJobCount++;
+                            if (tmpJobCount > 0){
+                                tmpMsg.ErrorContent = "删除Bond "+tmpDel+" 失败,仍有"+tmpJobCount+"个任务在队列中，是否继续";
+                                tmpMsg.SingleButtonShown = false;
+                                tmpMsg.MutiButtonShown = true;
+                            }
+
+                            $scope.$emit("Ctr1ModalShow", tmpMsg);
+                            $scope.data.refresh();
+                        });
             }
         };
     })();
@@ -178,6 +209,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
             },
 
             init: function (item) {
+                $scope.config.Token = Math.random();
                 if (item.bDetailShown === true) {
 
                     if (undefined !== $scope.aborter) {
@@ -201,16 +233,20 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     }).success(function (response) {
                             $scope.data.refresh();
                     }).error(function (response) {
-                            $('#myModalLabel').text("");// 清空数据
-                            $('#myModalLabel').append("错误");
-                            $('#myErrorContent').text("");// 清空数据
-                            $('#myErrorContent').append("修改bond接口失败");
-                            $('#myErrorContentDetail').text("");// 清空数据
-                            $('#myErrorContentDetail').append(JSON.stringify(response));
-                            $('#myErrorContentDetail').hide();
-
-                            $('#myErrorModal').modal();
+                            var tmpMsg = {};
+                            tmpMsg.Label = "错误";
+                            tmpMsg.ErrorContent = "修改bond接口失败";
+                            tmpMsg.ErrorContentDetail = response;
+                            tmpMsg.SingleButtonShown = true;
+                            tmpMsg.MutiButtonShown = false;
+                            tmpMsg.Token = $scope.config.Token;
+                            tmpMsg.Callback = "modBondCallBack";
+                            $scope.$emit("Ctr1ModalShow", tmpMsg);
                     });
+            },
+
+            modBondCallBack:function (event, msg) {
+
             },
 
             destroy: function () {
@@ -258,15 +294,15 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                     }).success(function (response) {
                             $scope.data.refresh();
                         }).error(function (response) {
-                            $('#myModalLabel').text("");// 清空数据
-                            $('#myModalLabel').append("错误");
-                            $('#myErrorContent').text("");// 清空数据
-                            $('#myErrorContent').append("添加bond接口失败");
-                            $('#myErrorContentDetail').text("");// 清空数据
-                            $('#myErrorContentDetail').append(JSON.stringify(response));
-                            $('#myErrorContentDetail').hide();
-
-                            $('#myErrorModal').modal();
+                            var tmpMsg = {};
+                            tmpMsg.Label = "错误";
+                            tmpMsg.ErrorContent = "添加bond接口失败";
+                            tmpMsg.ErrorContentDetail = response;
+                            tmpMsg.SingleButtonShown = true;
+                            tmpMsg.MutiButtonShown = false;
+                            tmpMsg.Token = $scope.bond.Token;
+                            tmpMsg.Callback = "addBondCallBack";
+                            $scope.$emit("Ctr1ModalShow", tmpMsg);
                         });
             },
 
@@ -277,6 +313,7 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
 
             init: function () {//get ethlist for choose
                 $scope.bond.clean_data();
+                $scope.bond.Token = Math.random();
 
                 $scope.aborter = $q.defer(),
                     $http.get("/storlever/api/v1/network/eth_list", {
@@ -290,6 +327,10 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
                                 }
                             });
                 });
+            },
+
+            addBondCallBack:function (event, msg) {
+
             }
         };
     })();
@@ -303,6 +344,11 @@ app.register.controller('Bond', ['$scope', '$http', '$q', function ($scope, $htt
     };
 
     $scope.$on('$destroy', $scope.destroy);
+
+    $scope.$on('modBondCallBack', $scope.config.modBondCallBack);
+    $scope.$on('addBondCallBack', $scope.bond.addBondCallBack);
+    $scope.$on('delOneBondCallBack', $scope.bond.delOneBondCallBack);
+    $scope.$on('delMoreBondCallBack', $scope.data.delMoreBondCallBack);
 
     var bondList = (function () {
         return {

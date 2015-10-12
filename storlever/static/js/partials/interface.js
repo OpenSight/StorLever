@@ -69,6 +69,9 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
             },
 
             init: function (item) {
+                $scope.config.modInterfaceToken = Math.random();
+                $scope.config.enableInterfaceToken = Math.random();
+
                 if (item.bDetailShown === true) {
 
                     if (undefined !== $scope.aborter) {
@@ -101,15 +104,15 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
                     }).success(function (response) {
 
                         }).error(function (response) {
-                            $('#myModalLabel').text("");// 清空数据
-                            $('#myModalLabel').append("错误");
-                            $('#myErrorContent').text("");// 清空数据
-                            $('#myErrorContent').append("修改网络接口失败");
-                            $('#myErrorContentDetail').text("");// 清空数据
-                            $('#myErrorContentDetail').append(JSON.stringify(response));
-                            $('#myErrorContentDetail').hide();
-
-                            $('#myErrorModal').modal();
+                            var tmpMsg = {};
+                            tmpMsg.Label = "错误";
+                            tmpMsg.ErrorContent = "修改网络接口失败";
+                            tmpMsg.ErrorContentDetail = response;
+                            tmpMsg.SingleButtonShown = true;
+                            tmpMsg.MutiButtonShown = false;
+                            tmpMsg.Token = $scope.config.modInterfaceToken;
+                            tmpMsg.Callback = "modInterFaceCallBack";
+                            $scope.$emit("Ctr1ModalShow", tmpMsg);
                         });
 //op
                 if ($scope.config.data[item.name].enabled_bf !== $scope.config.data[item.name].enabled) {
@@ -122,32 +125,31 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
                         }).success(function (response) {
 
                             }).error(function (response) {
+                                var tmpMsg = {};
+                                tmpMsg.Label = "错误";
                                 if ($scope.config.data.enabled === true){
-                                    $('#myModalLabel').text("");// 清空数据
-                                    $('#myModalLabel').append("错误");
-                                    $('#myErrorContent').text("");// 清空数据
-                                    $('#myErrorContent').append("启用网络接口失败");
-                                    $('#myErrorContentDetail').text("");// 清空数据
-                                    $('#myErrorContentDetail').append(JSON.stringify(response));
-                                    $('#myErrorContentDetail').hide();
-
-                                    $('#myErrorModal').modal();
-                                }
-                                else {
-                                    $('#myModalLabel').text("");// 清空数据
-                                    $('#myModalLabel').append("错误");
-                                    $('#myErrorContent').text("");// 清空数据
-                                    $('#myErrorContent').append("停用网络接口失败");
-                                    $('#myErrorContentDetail').text("");// 清空数据
-                                    $('#myErrorContentDetail').append(JSON.stringify(response));
-                                    $('#myErrorContentDetail').hide();
-
-                                    $('#myErrorModal').modal();
-                                }
+                                    tmpMsg.ErrorContent = "启用网络接口失败";
+                                }else
+                                    tmpMsg.ErrorContent = "停用网络接口失败";
+                                tmpMsg.ErrorContentDetail = response;
+                                tmpMsg.SingleButtonShown = true;
+                                tmpMsg.MutiButtonShown = false;
+                                tmpMsg.Token = $scope.config.enableInterfaceToken;
+                                tmpMsg.Callback = "enableInterFaceCallBack";
+                                $scope.$emit("Ctr1ModalShow", tmpMsg);
                             });
                 }
 
             },
+
+            modInterFaceCallBack:function (event, msg) {
+
+            },
+
+            enableInterFaceCallBack: function (event, msg) {
+            },
+
+
 
             destroy: function () {
             }
@@ -264,6 +266,8 @@ app.register.controller('Interface', ['$scope', '$http', '$q', function ($scope,
     };
 
     $scope.$on('$destroy', $scope.destroy);
+    $scope.$on('$modInterFaceCallBack', $scope.config.modInterFaceCallBack);
+    $scope.$on('$enableInterFaceCallBack', $scope.config.enableInterFaceCallBack);
 
     var ethList = (function () {
         return {
