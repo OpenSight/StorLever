@@ -169,9 +169,9 @@
           zone: '',
           opened: true
         },
+
         show: function() {
           $scope.destroy();
-
           
           $scope.aborter = $q.defer(),
             $http.get("/storlever/api/v1/system/datetime", {
@@ -190,8 +190,37 @@
         }
       };
     })();
-    
-    $scope.maintain = (function() {
+
+    $scope.config.passwd = (function() {
+      return {
+        submitForm: function() {
+            if ($scope.config.passwd.old === undefined || $scope.config.passwd.old === "" ||
+                $scope.config.passwd.new === undefined || $scope.config.passwd.new ==="" || $scope.config.passwd.new.length < 6) {
+                return;
+            }
+            var postData = {
+                login: "admin",
+                old_password: sjcl.codec.hex.fromBits(sjcl.misc.pbkdf2($scope.config.passwd.old, "OpenSight2013")),
+                new_password: sjcl.codec.hex.fromBits(sjcl.misc.pbkdf2($scope.config.passwd.new, "OpenSight2013"))
+            };
+            $scope.destroy();
+            $scope.aborter = $q.defer(),
+                $http.post("/storlever/api/v1/system/web_password",  postData, {
+                    timeout: $scope.aborter.promise
+                    }).success(function(response) {
+                        $scope.config.passwd.submitFinished = true;
+                        $scope.config.passwd.submitSucceed = true;
+                    }).error(function (response) {
+                        $scope.config.passwd.submitFinished = true;
+                        $scope.config.passwd.submitSucceed = false;
+                    });
+        }
+      };
+    })();
+
+
+
+      $scope.maintain = (function() {
       return {
         datetime: {
           date: '',

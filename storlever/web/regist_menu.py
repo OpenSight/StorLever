@@ -33,7 +33,7 @@ def regist_system(mgr):
     inter_text = _("System")
     mgr.add_intermediate_node("INTER_NODE_System", "ROOT_NODE_System", inter_text, "", [])
     leaf_text = _("System Infomation")
-    mgr.add_leaf_node("system-info", "INTER_NODE_System", leaf_text, "/partials/system-info", ["/static/js/partials/system-info.js"])
+    mgr.add_leaf_node("system-info", "INTER_NODE_System", leaf_text, "/partials/system-info", ["/static/js/partials/system-info.js", "/static/js/sjcl.js"])
     leaf_text = _("System Statistics")
     mgr.add_leaf_node("statistics", "INTER_NODE_System", leaf_text, "/partials/statistics", ["/static/js/partials/statistics.js"])
     leaf_text = _("Service Information")
