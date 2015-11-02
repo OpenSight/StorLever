@@ -13,6 +13,7 @@ import datetime
 import time
 import tarfile
 import os
+import os.path
 from platform import linux_distribution
 import socket
 

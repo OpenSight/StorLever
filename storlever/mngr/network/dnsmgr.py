@@ -16,6 +16,8 @@ from storlever.lib import logger
 import logging
 from storlever.lib.exception import StorLeverError
 from storlever.mngr.system.modulemgr import ModuleManager
+import os
+import os.path
 
 MODULE_INFO = {
     "module_name": "DNS",

@@ -10,6 +10,7 @@ This module implements some functions of network interface bond management.
 """
 
 import os
+import os.path
 import re
 
 from storlever.lib.command import check_output, read_file_entry, \
