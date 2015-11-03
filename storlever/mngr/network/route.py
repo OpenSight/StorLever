@@ -62,7 +62,10 @@ class RouteManager(object):
 
     def get_ipv6_route_list(self):
         route_list = []
-        route_lines = check_output([ROUTE_CMD, "-n", "-A", "inet6"]).splitlines()
+        try:
+            route_lines = check_output([ROUTE_CMD, "-n", "-A", "inet6"]).splitlines()
+        except Exception:
+            return route_list
 
         for line in route_lines[2:]:
             words = line.split()
