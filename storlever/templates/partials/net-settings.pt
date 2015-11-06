@@ -1,0 +1,288 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="NetSettings">
+  <tabset>
+    <tab heading="DNS" select="dns.show()">
+        <div class="row row-in-tab os-row-no-padding">
+            <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="dnslist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="dns.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="dns.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="dns.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+            </div>
+
+            <div class="panel os-panel" ng-show="dns.addShown">
+                <div class="panel-body">
+                    <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">服务器地址</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="dns.data_add.server" required/>
+                            </div>
+                        </div>
+
+                        <div class="form-group os-submit-group">
+                            <label class="col-sm-1 control-label"></label>
+                            <div class="col-sm-4">
+                                <button class="btn btn-default" ng-click="dns.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                <button class="btn btn-default" ng-click="dns.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-sm-12 os-table-container">
+                <table class="table os-table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-2"><input type="checkbox" ng-model="dnslist.checkAllBox" ng-click="dnslist.toggle_all()"> </th>
+                        <th class="col-sm-2">序号</th>
+                        <th class="col-sm-6">服务器地址</th>
+                        <th class="col-sm-2">删除</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="u in dnslist.data.servers | filter: dnslist.seach">
+                    <tr>
+                        <td><input type="checkbox" ng-model="dnslist.checkbox[u]"> </td>
+                        <td ng-click="dns.data.showDetail(u)">{{$index}}</td>
+                        <td ng-click="dns.data.showDetail(u)">
+                            {{u}}
+                        </td>
+                        <td ng-click="dns.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                    </tr>
+                    <tr class="ng-hide" ng-show="dns.data_mod.bDetailShown[u]">
+                        <td colspan="999">
+                            <div class="panel os-panel">
+                                <div class="panel-body">
+                                    <form class="form-horizontal os-form" role="form">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">服务器地址</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" ng-model="dns.data_mod.server[u]" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group os-submit-group">
+                                            <label class="col-sm-1 control-label"></label>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-default" ng-click="dns.data_mod.submitForm(u)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                                <button class="btn btn-default" ng-click="dns.data_mod.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </tab>
+    <tab heading="hosts" select="host.show()">
+        <div class="row row-in-tab os-row-no-padding">
+            <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+                <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="hostlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="host.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="host.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="host.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+            </div>
+
+            <div class="panel os-panel" ng-show="host.addShown">
+                <div class="panel-body">
+                    <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">服务器地址</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="host.data_add.addr" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">主机名</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="host.data_add.hostname" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">别名</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="host.data_add.alias" />
+                            </div>
+                        </div>
+
+                        <div class="form-group os-submit-group">
+                            <label class="col-sm-1 control-label"></label>
+                            <div class="col-sm-4">
+                                <button class="btn btn-default" ng-click="host.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                <button class="btn btn-default" ng-click="host.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-sm-12 os-table-container">
+                <table class="table os-table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-3">服务器地址</th>
+                        <th class="col-sm-3">主机名</th>
+                        <th class="col-sm-4">别名</th>
+                        <th class="col-sm-2">删除</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="u in hostlist.data.servers | filter: hostlist.seach">
+                    <tr>
+                        <td ng-click="host.data.showDetail(u)">{{u.addr}}</td>
+                        <td ng-click="host.data.showDetail(u)">
+                            {{u.hostname}}
+                        </td>
+                        <td ng-click="host.data.showDetail(u)">
+                            {{u.alias}}
+                        </td>
+                        <td ng-click="host.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                    </tr>
+                    <tr class="ng-hide" ng-show="host.data_mod.bDetailShown[u]">
+                        <td colspan="999">
+                            <div class="panel os-panel">
+                                <div class="panel-body">
+                                    <form class="form-horizontal os-form" role="form">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">服务器地址</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" ng-model="host.data_mod.addr[u]" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">主机名</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" ng-model="host.data_mod.hostname[u]" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">别名</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" ng-model="host.data_mod.alias[u]" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group os-submit-group">
+                                            <label class="col-sm-1 control-label"></label>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-default" ng-click="host.data_mod.submitForm(u)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                                <button class="btn btn-default" ng-click="host.data_mod.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </tab>
+    <tab heading="router_v4" select="router4.show()">
+        <div class="row row-in-tab os-row-no-padding">
+            <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+                <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="router4list.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="router4.data.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+            </div>
+
+            <div class="col-sm-12 os-table-container">
+                <table class="table os-table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-2">目标</th>
+                        <th class="col-sm-2">掩码</th>
+                        <th class="col-sm-2">网关</th>
+                        <th class="col-sm-2">网口</th>
+                        <th class="col-sm-1">metric</th>
+                        <th class="col-sm-1">ref</th>
+                        <th class="col-sm-1">使用</th>
+                        <th class="col-sm-1">标志</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="u in router4list.data | filter: router4list.seach">
+                    <tr>
+                        <td>{{u.destination}}</td>
+                        <td>{{u.genmask}}</td>
+                        <td>{{u.gateway}}</td>
+                        <td>{{u.iface}}</td>
+                        <td>{{u.metric}}</td>
+                        <td>{{u.ref}}</td>
+                        <td>{{u.use}}</td>
+                        <td>{{u.flags}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </tab>
+    <tab heading="router_v6" select="router6.show()">
+        <div class="row row-in-tab os-row-no-padding">
+            <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+                <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="router6list.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="router6.data.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+            </div>
+
+            <div class="col-sm-12 os-table-container">
+                <table class="table os-table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-2">目标</th>
+                        <th class="col-sm-2">下一跳</th>
+                        <th class="col-sm-2">网口</th>
+                        <th class="col-sm-1">metric</th>
+                        <th class="col-sm-1">ref</th>
+                        <th class="col-sm-1">使用</th>
+                        <th class="col-sm-1">标志</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="u in router6list.data | filter: router6list.seach">
+                    <tr>
+                        <td>{{u.destination}}</td>
+                        <td>{{u.next_hop}}</td>
+                        <td>{{u.iface}}</td>
+                        <td>{{u.metric}}</td>
+                        <td>{{u.ref}}</td>
+                        <td>{{u.use}}</td>
+                        <td>{{u.flags}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </tab>
+  </tabset>
+</div>
