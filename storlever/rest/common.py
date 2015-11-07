@@ -10,6 +10,7 @@ This module implements some common API for REST.
 """
 import sys
 import traceback
+import copy
 
 import pyramid.exceptions
 from pyramid.view import view_config
@@ -109,7 +110,11 @@ def get_params_from_request(request, schema=None):
     """
     params = dict(request.params)
     if "json" in request.content_type:
-        params.update(request.json_body)
+        if isinstance(request.json_body, dict):
+            params.update(request.json_body)
+        else:
+            params = copy.copy(request.json_body)
+
     if schema is not None:
         params = schema.validate(params)
 
