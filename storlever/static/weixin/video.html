@@ -57,68 +57,57 @@
       </div><!--/.nav-collapse -->
     </div>
   </header>
-  <div id="main">
-    <nav></nav>
-    <article>
-      <div class="container-fluid">
-        <div class="row-fluid player-root">
-          <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="panel panel-default">
-              <div class="panel-heading">Panel heading without title</div>
-              <div class="panel-body">
-                <div class="preview">
-                  <div class="preview-img">
-                    <div><img src="img/demo.jpg" alt=""></div>
-                  </div>
-                  <div class="preview-play">
-                    <div>
-                      <img src="img/play.png" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
+  <div class="container-fluid">
+    <div class="row-fluid player-root">
+      <div class="col-sm-6 col-md-6 col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Panel heading without title</div>
+          <div class="panel-body">
+            <div class="live">
+              <img src="img/demo.jpg" alt="">  
+              <video id="player1" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="none" width="100%" height="100%" poster="img/demo.jpg" data-setup="{}">
+                <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />  
+                <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />  
+                <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />  
+                <track kind="captions" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <track kind="subtitles" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <p class="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a web browser that
+                  <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+              </video>
             </div>
-          </div>
-          <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="panel panel-default">
-              <div class="panel-heading">Panel heading without title</div>
-              <div class="panel-body">
-                Panel content
-                <div>
-                  <img src="img/demo.jpg" alt="" width="100%">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="panel panel-default">
-              <div class="panel-heading">Panel heading without title</div>
-              <div class="panel-body">
-                Panel content
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-4 col-lg-3"></div>
-          <div id="player-container" class="player-container">
-            <video id="player" class="video-js vjs-default-skin" controls preload="none" width="100%" height="100%" poster="http://video-js.zencoder.com/oceans-clip.png" data-setup="{}">
-              <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />            
-              <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />            
-              <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />            
-              <track kind="captions" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
-              <!-- Tracks need an ending tag thanks to IE9 -->            
-              <track kind="subtitles" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
-              <!-- Tracks need an ending tag thanks to IE9 -->            
-              <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-              </p>
-            </video>
           </div>
         </div>
       </div>
-    </article>
+      <div class="col-sm-6 col-md-6 col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Panel heading without title</div>
+          <div class="panel-body">
+            <div class="live">
+              <img src="img/demo.jpg" alt="">  
+              <video id="player1" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="none" width="100%" height="100%" poster="img/demo.jpg" data-setup="{}">
+                <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />  
+                <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />  
+                <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />  
+                <track kind="captions" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <track kind="subtitles" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <p class="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a web browser that
+                  <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4 col-lg-3"></div>
+    </div>
   </div>
-  <footer>footer</footer>
 </body>
 <script src="//cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
