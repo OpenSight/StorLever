@@ -105,6 +105,27 @@
           </div>
         </div>
       </div>
+      <div class="col-sm-6 col-md-6 col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Panel heading without title</div>
+          <div class="panel-body">
+            <div class="live">
+              <img src="img/demo.jpg" alt="">  
+              <video id="player1" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="none" width="100%" height="100%" poster="img/demo.jpg" data-setup="{}">
+                <source src="http://streambox.fr/playlists/test_001/stream.m3u8" type="application/x-mpegURL">
+                <track kind="captions" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <track kind="subtitles" src="../shared/example-captions.vtt" srclang="en" label="English"></track>
+                <!-- Tracks need an ending tag thanks to IE9 -->  
+                <p class="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a web browser that
+                  <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="col-sm-6 col-md-4 col-lg-3"></div>
     </div>
   </div>
@@ -112,6 +133,11 @@
 <script src="//cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="//cdn.bootcss.com/video.js/5.1.0/video.min.js"></script>
+<script src="js/videojs-media-sources.js"></script>
+<script src="js/videojs-hls.js"></script>
+<script>
+  videojs.options.flash.swf = 'video-js.swf';
+</script>
 <script src="js/index.js"></script>
 </html>
 

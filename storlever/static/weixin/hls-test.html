@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>video.js HLS demo</title>
+    <!--<link rel="stylesheet" href="videojs/video-js.min.css" type="text/css" />-->
+    <link href="//cdn.bootcss.com/video.js/5.1.0/video-js.min.css" rel="stylesheet">
+    <!--<script type="text/javascript" src="videojs/video.js"></script>
+    <script type="text/javascript" src="videojs-contrib/videojs.hls.min.js"></script>
+    <script type="text/javascript" src="videojs-contrib/videojs-media-sources.js"></script>-->
+    <script src="//cdn.bootcss.com/video.js/5.1.0/video.min.js"></script>
+    <script src="js/videojs-media-sources.js"></script>
+    <script src="js/videojs-hls.js"></script>    
+
+    <script type="text/javascript">
+      videojs.options.flash.swf = "//cdn.bootcss.com/video.js/5.1.0/video-js.swf";
+
+      function loadStream(url) {
+        var vid_obj = videojs("example_video_player");
+
+        vid_obj.src(url);
+        vid_obj.on('loadstart',function(){
+            vid_obj.play();
+        });
+      }
+    </script>
+  </head>
+  <body onload="loadStream('http://m4stv.inqb8r.tv/studentTV/studentTV.stream_360p/playlist.m3u8');">
+    <video  id="example_video_player"
+            width=640px
+            height=360px
+            autostart
+            class="video-js vjs-default-skin"
+            data-setup='{"techOrder": ["flash","html5"]}'>
+    </video>
+  </body>
+</html>
