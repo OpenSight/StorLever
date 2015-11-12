@@ -8,10 +8,18 @@
               },
               
               refresh: function () {
-                  if ($scope.dns.data_mod.bDetailShown !== undefined)
-                      angular.forEach($scope.dnslist.data.servers, function (item, index, array) {
-                          $scope.dns.data_mod.bDetailShown[item]  = false;
+                     angular.forEach($scope.dnslist.data.servers, function (item, index, array) {
+                         if ($scope.dns.data_mod.bDetailShown && $scope.dns.data_mod.bDetailShown[index] !== undefined)
+                          $scope.dns.data_mod.bDetailShown[index]  = false;
+                         if ($scope.dnslist.checkbox !== undefined
+                              && ($scope.dnslist.checkbox[index] !== undefined ))//push unchecked for submit
+                         {
+                             $scope.dnslist.checkbox[index] = false;
+                         }
                       });
+
+                  if ($scope.dnslist !==undefined && $scope.dnslist.checkAllBox!==undefined)
+                      $scope.dnslist.checkAllBox = false;
                   $scope.dns.show();
               },
               
@@ -28,7 +36,7 @@
 
                   angular.forEach($scope.dnslist.data.servers, function (item, index, array) {
                       if ($scope.dnslist !== undefined && $scope.dnslist.checkbox !== undefined
-                          && ($scope.dnslist.checkbox[item] === false || $scope.dnslist.checkbox[item] === undefined))//push unchecked for submit
+                          && ($scope.dnslist.checkbox[index] === false || $scope.dnslist.checkbox[index] === undefined))//push unchecked for submit
                       {
                         $scope.dns.data.delArr.push(item);
                       }
@@ -76,11 +84,17 @@
                       },
 
                       submitForm: function () {//add one dns
+                          var isDuplicate = false;
                           if ($scope.dns.data_add.server === "")
                           {
                              // return;
                           }else{
-                              $scope.dnslist.data.servers.push($scope.dns.data_add.server);
+                              angular.forEach($scope.dnslist.data.servers, function (item, index, array) {
+                                  if (item.toString() === $scope.dns.data_add.server.toString())
+                                      isDuplicate = true;
+                              });
+                              if (isDuplicate === false)
+                                $scope.dnslist.data.servers.push($scope.dns.data_add.server);
                           }
 
                           var postData = {
@@ -160,12 +174,12 @@
 
               data: (function () {
                   return {
-                      showDetail: function (item) {
+                      showDetail: function (item, index) {
                           if ($scope.dns.data_mod.bDetailShown === undefined) $scope.dns.data_mod.bDetailShown = [];
-                          if ($scope.dns.data_mod.bDetailShown[item] === undefined) $scope.dns.data_mod.bDetailShown[item] = false;
-                          $scope.dns.data_mod.bDetailShown[item] = !(true === $scope.dns.data_mod.bDetailShown[item]);
-                          if ($scope.dns.data_mod.bDetailShown[item] === true) {//开
-                              $scope.dns.data_mod.init(item);
+                          if ($scope.dns.data_mod.bDetailShown[index] === undefined) $scope.dns.data_mod.bDetailShown[index] = false;
+                          $scope.dns.data_mod.bDetailShown[index] = !(true === $scope.dns.data_mod.bDetailShown[index]);
+                          if ($scope.dns.data_mod.bDetailShown[index] === true) {//开
+                              $scope.dns.data_mod.init(item,index);
                           } else {
                               
                           }
@@ -175,21 +189,21 @@
 
               data_mod: (function () {
                   return {
-                      init: function (item) {
-                          if ($scope.dns.data_mod.bDetailShown[item] === true) {
+                      init: function (item, index) {
+                          if ($scope.dns.data_mod.bDetailShown[index] === true) {
                               if ($scope.dns.data_mod.server === undefined) $scope.dns.data_mod.server = [];
-                              $scope.dns.data_mod.server[item] = item;
+                              $scope.dns.data_mod.server[index] = item;
                           }
                       },
 
-                      submitForm: function (item) {
+                      submitForm: function (item, index) {
                           var tmpServerArr = [];
 
                           for(var i=0; i< $scope.dnslist.data.servers.length;i++){
-                              if ($scope.dnslist.data.servers[i] !== item)
+                              if (index !== i)
                                  tmpServerArr.push($scope.dnslist.data.servers[i]);
                               else
-                                 tmpServerArr.push($scope.dns.data_mod.server[item]);
+                                 tmpServerArr.push($scope.dns.data_mod.server[index]);
                           }
 
                           var postData = {
@@ -237,7 +251,7 @@
                   if ($scope.dnslist.checkbox === undefined) $scope.dnslist.checkbox = [];
 
                   angular.forEach($scope.dnslist.data.servers, function (item, index, array) {
-                      $scope.dnslist.checkbox[item] = nowCheckState;
+                      $scope.dnslist.checkbox[index] = nowCheckState;
                   });
 
               },
@@ -266,10 +280,18 @@
               },
 
               refresh: function () {
-                  if ($scope.host.data_mod.bDetailShown !== undefined)
-                      angular.forEach($scope.hostlist.data.servers, function (item, index, array) {
-                          $scope.host.data_mod.bDetailShown[item]  = false;
-                      });
+                  angular.forEach($scope.hostlist.data.servers, function (item, index, array) {
+                      if ($scope.host.data_mod.bDetailShown !== undefined && $scope.host.data_mod.bDetailShown[index] !== undefined)
+                          $scope.host.data_mod.bDetailShown[index]  = false;
+                      if ($scope.hostlist.checkbox !== undefined
+                          && ($scope.hostlist.checkbox[index] !== undefined ))//push unchecked for submit
+                      {
+                          $scope.hostlist.checkbox[index] = false;
+                      }
+                  });
+                  if ($scope.hostlist !== undefined && $scope.hostlist.checkAllBox!==undefined)
+                      $scope.hostlist.checkAllBox = false;
+
                   $scope.host.show();
               },
 
@@ -286,7 +308,7 @@
 
                   angular.forEach($scope.hostlist.data.servers, function (item, index, array) {
                       if ($scope.hostlist !== undefined && $scope.hostlist.checkbox !== undefined
-                          && ($scope.hostlist.checkbox[item] === false || $scope.hostlist.checkbox[item] === undefined))//push unchecked for submit
+                          && ($scope.hostlist.checkbox[index] === false || $scope.hostlist.checkbox[index] === undefined))//push unchecked for submit
                       {
                           $scope.host.data.delArr.push(item);
                       }
@@ -297,9 +319,7 @@
 
               data_del: function (submitArr) {
                   // $scope.host.data.delToken = Math.random();
-                  var postData = {
-                      servers: submitArr
-                  };
+                  var postData = submitArr;
 
                   $scope.host.data_del.token = Math.random();
                   $scope.aborter = $q.defer(),
@@ -393,9 +413,7 @@
                           tmpServerArr.push($scope.hostlist.data.servers[i]);
                   }
 
-                  var postData = {
-                      servers: tmpServerArr
-                  };
+                  var postData = tmpServerArr;
 
                   $scope.host.data.delOneToken = Math.random();
                   $scope.aborter = $q.defer(),
@@ -423,41 +441,50 @@
 
               data: (function () {
                   return {
-                      showDetail: function (item) {
+                      showDetail: function (item, index) {
                           if ($scope.host.data_mod.bDetailShown === undefined) $scope.host.data_mod.bDetailShown = [];
-                          if ($scope.host.data_mod.bDetailShown[item] === undefined) $scope.host.data_mod.bDetailShown[item] = false;
-                          $scope.host.data_mod.bDetailShown[item] = !(true === $scope.host.data_mod.bDetailShown[item]);
-                          if ($scope.host.data_mod.bDetailShown[item] === true) {//开
-                              $scope.host.data_mod.init(item);
+                          if ($scope.host.data_mod.bDetailShown[index] === undefined) $scope.host.data_mod.bDetailShown[index] = false;
+                          $scope.host.data_mod.bDetailShown[index] = !(true === $scope.host.data_mod.bDetailShown[index]);
+                          if ($scope.host.data_mod.bDetailShown[index] === true) {//开
+                              $scope.host.data_mod.init(item, index);
                           } else {
 
-                          }
-                      }
+                          }                      }
+
                   };
               })(),
 
               data_mod: (function () {
                   return {
-                      init: function (item) {
-                          if ($scope.host.data_mod.bDetailShown[item] === true) {
-                              if ($scope.host.data_mod.server === undefined) $scope.host.data_mod.server = [];
-                              $scope.host.data_mod.server[item] = item;
+                      init: function (item, index) {
+                          if ($scope.host.data_mod.bDetailShown[index] === true) {
+                              if ($scope.host.data_mod.addr === undefined) $scope.host.data_mod.addr = [];
+                              $scope.host.data_mod.addr[index] = item.addr;
+                              if ($scope.host.data_mod.hostname === undefined) $scope.host.data_mod.hostname = [];
+                              $scope.host.data_mod.hostname[index] = item.hostname;
+                              if ($scope.host.data_mod.alias === undefined) $scope.host.data_mod.alias = [];
+                              $scope.host.data_mod.alias[index] = item.alias;
                           }
                       },
 
-                      submitForm: function (item) {
+                      submitForm: function (item, index) {
                           var tmpServerArr = [];
 
                           for(var i=0; i< $scope.hostlist.data.servers.length;i++){
-                              if ($scope.hostlist.data.servers[i] !== item)
+                              if (i !== index)
                                   tmpServerArr.push($scope.hostlist.data.servers[i]);
-                              else
-                                  tmpServerArr.push($scope.host.data_mod.server[item]);
+                              else{
+                                  var tmpModData = {
+                                      addr: $scope.host.data_mod.addr[index],
+                                      hostname: $scope.host.data_mod.hostname[index],
+                                      alias: $scope.host.data_mod.alias[index]
+                                  };
+                                  tmpServerArr.push(tmpModData);
+
+                              }
                           }
 
-                          var postData = {
-                              servers: tmpServerArr
-                          };
+                          var postData = tmpServerArr;
 
                           $scope.host.data_mod.Token = Math.random();
                           $scope.aborter = $q.defer(),
@@ -468,7 +495,7 @@
                                   }).error(function (response) {
                                       var tmpMsg = {};
                                       tmpMsg.Label = "错误";
-                                      tmpMsg.ErrorContent = "修改host"+ item +"失败";
+                                      tmpMsg.ErrorContent = "修改host"+ item.hostname +"失败";
                                       tmpMsg.ErrorContentDetail = response;
                                       tmpMsg.SingleButtonShown = true;
                                       tmpMsg.MutiButtonShown = false;
@@ -500,7 +527,7 @@
                   if ($scope.hostlist.checkbox === undefined) $scope.hostlist.checkbox = [];
 
                   angular.forEach($scope.hostlist.data.servers, function (item, index, array) {
-                      $scope.hostlist.checkbox[item] = nowCheckState;
+                      $scope.hostlist.checkbox[index] = nowCheckState;
                   });
 
               },
@@ -512,7 +539,8 @@
                       $http.get("/storlever/api/v1/network/host_list", {
                           timeout: $scope.aborter.promise
                       }).success(function (response) {
-                              $scope.hostlist.data = response;
+                              $scope.hostlist.data = {};
+                              $scope.hostlist.data.servers = response;
                           });
               }
 

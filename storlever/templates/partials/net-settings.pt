@@ -51,14 +51,14 @@
                     </thead>
                     <tbody ng-repeat="u in dnslist.data.servers | filter: dnslist.seach">
                     <tr>
-                        <td><input type="checkbox" ng-model="dnslist.checkbox[u]"> </td>
-                        <td ng-click="dns.data.showDetail(u)">{{$index}}</td>
-                        <td ng-click="dns.data.showDetail(u)">
+                        <td><input type="checkbox" ng-model="dnslist.checkbox[$index]"> </td>
+                        <td ng-click="dns.data.showDetail(u, $index)">{{$index}}</td>
+                        <td ng-click="dns.data.showDetail(u, $index)">
                             {{u}}
                         </td>
                         <td ng-click="dns.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
                     </tr>
-                    <tr class="ng-hide" ng-show="dns.data_mod.bDetailShown[u]">
+                    <tr class="ng-hide" ng-show="dns.data_mod.bDetailShown[$index]">
                         <td colspan="999">
                             <div class="panel os-panel">
                                 <div class="panel-body">
@@ -66,14 +66,14 @@
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">服务器地址</label>
                                             <div class="col-sm-4">
-                                                <input type="text" class="form-control" ng-model="dns.data_mod.server[u]" />
+                                                <input type="text" class="form-control" ng-model="dns.data_mod.server[$index]" />
                                             </div>
                                         </div>
                                         <div class="form-group os-submit-group">
                                             <label class="col-sm-1 control-label"></label>
                                             <div class="col-sm-4">
-                                                <button class="btn btn-default" ng-click="dns.data_mod.submitForm(u)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
-                                                <button class="btn btn-default" ng-click="dns.data_mod.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                                <button class="btn btn-default" ng-click="dns.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                                <button class="btn btn-default" ng-click="dns.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                                             </div>
                                         </div>
                                     </form>
@@ -142,24 +142,26 @@
                 <table class="table os-table">
                     <thead>
                     <tr>
+                        <th class="col-sm-1"><input type="checkbox" ng-model="hostlist.checkAllBox" ng-click="hostlist.toggle_all()"> </th>
                         <th class="col-sm-3">服务器地址</th>
                         <th class="col-sm-3">主机名</th>
-                        <th class="col-sm-4">别名</th>
+                        <th class="col-sm-3">别名</th>
                         <th class="col-sm-2">删除</th>
                     </tr>
                     </thead>
                     <tbody ng-repeat="u in hostlist.data.servers | filter: hostlist.seach">
                     <tr>
-                        <td ng-click="host.data.showDetail(u)">{{u.addr}}</td>
-                        <td ng-click="host.data.showDetail(u)">
+                        <td><input type="checkbox" ng-model="hostlist.checkbox[$index]"> </td>
+                        <td ng-click="host.data.showDetail(u, $index)">{{u.addr}}</td>
+                        <td ng-click="host.data.showDetail(u, $index)">
                             {{u.hostname}}
                         </td>
-                        <td ng-click="host.data.showDetail(u)">
+                        <td ng-click="host.data.showDetail(u, $index)">
                             {{u.alias}}
                         </td>
                         <td ng-click="host.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
                     </tr>
-                    <tr class="ng-hide" ng-show="host.data_mod.bDetailShown[u]">
+                    <tr class="ng-hide" ng-show="host.data_mod.bDetailShown[$index]">
                         <td colspan="999">
                             <div class="panel os-panel">
                                 <div class="panel-body">
@@ -167,26 +169,26 @@
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">服务器地址</label>
                                             <div class="col-sm-4">
-                                                <input type="text" class="form-control" ng-model="host.data_mod.addr[u]" />
+                                                <input type="text" class="form-control" ng-model="host.data_mod.addr[$index]" />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">主机名</label>
                                             <div class="col-sm-4">
-                                                <input type="text" class="form-control" ng-model="host.data_mod.hostname[u]" />
+                                                <input type="text" class="form-control" ng-model="host.data_mod.hostname[$index]" />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">别名</label>
                                             <div class="col-sm-4">
-                                                <input type="text" class="form-control" ng-model="host.data_mod.alias[u]" />
+                                                <input type="text" class="form-control" ng-model="host.data_mod.alias[$index]" />
                                             </div>
                                         </div>
                                         <div class="form-group os-submit-group">
                                             <label class="col-sm-1 control-label"></label>
                                             <div class="col-sm-4">
-                                                <button class="btn btn-default" ng-click="host.data_mod.submitForm(u)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
-                                                <button class="btn btn-default" ng-click="host.data_mod.init(u)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                                <button class="btn btn-default" ng-click="host.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                                <button class="btn btn-default" ng-click="host.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
                                             </div>
                                         </div>
                                     </form>
