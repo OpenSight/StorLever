@@ -200,7 +200,6 @@ send_mail_schema=Schema({
     # subject
     Optional("subject"):  StrRe(r"^\S+$"),
 
-    # password for the account
     Optional("content"):  Default(Use(str), default=""),
 
     Optional("debug"): Default(BoolVal(), default=False),

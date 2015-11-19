@@ -7,3 +7,8 @@ def includeme(config):
     config.include(__name__ + '.interface')
     config.include(__name__ + '.bond')
     config.include(__name__ + '.net-settings')
+    config.include(__name__ + '.ntp')
+    config.include(__name__ + '.snmp')
+    config.include(__name__ + '.mail')
+    config.include(__name__ + '.smart')
+    config.include(__name__ + '.zabbix')

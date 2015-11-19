@@ -55,20 +55,51 @@ def regist_system(mgr):
     inter_text = _("Tools")
     mgr.add_intermediate_node("INTER_NODE_Tools", "ROOT_NODE_System", inter_text, "", [])
     leaf_text = _("NTP")
-    mgr.add_leaf_node("NTP", "INTER_NODE_Tools", leaf_text, "/partials/ntp", [])
+    mgr.add_leaf_node("NTP", "INTER_NODE_Tools", leaf_text, "/partials/ntp", ["/static/js/partials/ntp.js"])
     leaf_text = _("SNMP")
     mgr.add_leaf_node("SNMP", "INTER_NODE_Tools", leaf_text, "/partials/snmp", ["/static/js/partials/snmp.js"])
+    leaf_text = _("Mail")
+    mgr.add_leaf_node("Mail", "INTER_NODE_Tools", leaf_text, "/partials/mail", ["/static/js/partials/mail.js"])
+    leaf_text = _("SMART")
+    mgr.add_leaf_node("SMART", "INTER_NODE_Tools", leaf_text, "/partials/smart", ["/static/js/partials/smart.js"])
     leaf_text = _("Zabbix")
-    mgr.add_leaf_node("Zabbix", "INTER_NODE_Tools", leaf_text, "/partials/zabbix", [])
+    mgr.add_leaf_node("Zabbix", "INTER_NODE_Tools", leaf_text, "/partials/zabbix", ["/static/js/partials/zabbix.js"])
     
 
 def regist_storage(mgr):
     root_text = _("Storage")
     mgr.add_root_node("ROOT_NODE_Storage", root_text, "", [])
-    inter_text = _("Storage")
-    mgr.add_intermediate_node("INTER_NODE_Storage", "ROOT_NODE_Storage", inter_text, "", [])
-    leaf_text = _("Storage")
-    mgr.add_leaf_node("storage", "INTER_NODE_Storage", leaf_text, "/partials/store", [])
+    inter_text = _("Block")
+    mgr.add_intermediate_node("INTER_NODE_Block", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("block_list")
+    mgr.add_leaf_node("block_list", "INTER_NODE_Block", leaf_text, "/partials/block_list", [])
+
+    inter_text = _("MD")
+    mgr.add_intermediate_node("INTER_NODE_MD", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("md_list")
+    mgr.add_leaf_node("md_list", "INTER_NODE_MD", leaf_text, "/partials/md_list", [])
+
+    inter_text = _("LVM")
+    mgr.add_intermediate_node("INTER_NODE_LVM", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("lvm_list")
+    mgr.add_leaf_node("lvm_list", "INTER_NODE_LVM", leaf_text, "/partials/lvm_list", [])
+
+    inter_text = _("FS")
+    mgr.add_intermediate_node("INTER_NODE_FS", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("fs_list")
+    mgr.add_leaf_node("fs_list", "INTER_NODE_FS", leaf_text, "/partials/fs_list", [])
+
+    inter_text = _("LUN")
+    mgr.add_intermediate_node("INTER_NODE_LUN", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("lun_list")
+    mgr.add_leaf_node("lun_list", "INTER_NODE_LUN", leaf_text, "/partials/lun_list", [])
+
+    inter_text = _("NAS")
+    mgr.add_intermediate_node("INTER_NODE_NAS", "ROOT_NODE_Storage", inter_text, "", [])
+    leaf_text = _("nas_list")
+    mgr.add_leaf_node("nas_list", "INTER_NODE_NAS", leaf_text, "/partials/nas_list", [])
+
+
     
 def regist_server(mgr):
     root_text = _("Server")
