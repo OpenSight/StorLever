@@ -1,0 +1,204 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Zabbix">
+<tabset>
+<tab heading="设置" select="zabbixConf.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="panel os-panel">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">hostname</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="zabbixConf.data_add.hostname" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">refresh_active_check</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="zabbixConf.data_add.refresh_active_check" />
+                        </div>
+                    </div>
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <button class="btn btn-default os-submit-btn" ng-click="zabbixConf.data_add.submitForm()">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</tab>
+<tab heading="active_server" select="active_server.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="active_serverlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="active_server.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="active_server.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="active_server.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="active_server.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">服务器地址</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="active_server.data_add.active_server_addr" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="active_server.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="active_server.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="active_serverlist.checkAllBox" ng-click="active_serverlist.toggle_all()"> </th>
+                    <th class="col-sm-2">序号</th>
+                    <th class="col-sm-7">active_server地址</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in active_serverlist.data.servers | filter: active_serverlist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="active_serverlist.checkbox[$index]"> </td>
+                    <td ng-click="active_server.data.showDetail(u, $index)">{{$index}}</td>
+                    <td ng-click="active_server.data.showDetail(u, $index)">{{u}}</td>
+                    <td ng-click="active_server.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="active_server.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">服务器地址</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="active_server.data_mod.active_server_addr[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="active_server.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="active_server.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+<tab heading="passive_server" select="passive_server.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="passive_serverlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="passive_server.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="passive_server.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="passive_server.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="passive_server.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">服务器地址</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="passive_server.data_add.passive_server_addr" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="passive_server.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="passive_server.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="passive_serverlist.checkAllBox" ng-click="passive_serverlist.toggle_all()"> </th>
+                    <th class="col-sm-2">序号</th>
+                    <th class="col-sm-7">passive_server地址</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in passive_serverlist.data.servers | filter: passive_serverlist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="passive_serverlist.checkbox[$index]"> </td>
+                    <td ng-click="passive_server.data.showDetail(u, $index)">{{$index}}</td>
+                    <td ng-click="passive_server.data.showDetail(u, $index)">{{u}}</td>
+                    <td ng-click="passive_server.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="passive_server.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">服务器地址</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="passive_server.data_mod.passive_server_addr[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="passive_server.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="passive_server.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+</tabset>
+</div>

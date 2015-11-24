@@ -1,0 +1,139 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Smart">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="smartlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="smart.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="smart.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="smart.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="smart.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">dev</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="smart.data_add.dev" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">mail_to</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="smart.data_add.mail_to" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">mail_test</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" style="margin-top: 8px;" ng-model="smart.data_add.mail_test" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">mail_exec</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="smart.data_add.mail_exec" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">schedule_regexp</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="smart.data_add.schedule_regexp" />
+                        </div>
+                    </div>
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="smart.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="smart.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="smartlist.checkAllBox" ng-click="smartlist.toggle_all()"> </th>
+                    <th class="col-sm-2">dev</th>
+                    <th class="col-sm-2">mail_to</th>
+                    <th class="col-sm-1">mail_test</th>
+                    <th class="col-sm-2">mail_exec</th>
+                    <th class="col-sm-3">schedule_regexp</th>
+                    <th class="col-sm-1">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in smartlist.data.smarts | filter: smartlist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="smartlist.checkbox[$index]"> </td>
+                    <td ng-click="smart.data.showDetail(u, $index)">{{u.dev}}</td>
+                    <td ng-click="smart.data.showDetail(u, $index)">{{u.mail_to}}</td>
+                    <td ng-click="smart.data.showDetail(u, $index)">{{u.mail_test?"是":"否"}}</td>
+                    <td ng-click="smart.data.showDetail(u, $index)">{{u.mail_exec}}</td>
+                    <td ng-click="smart.data.showDetail(u, $index)">{{u.schedule_regexp}}</td>
+                    <td ng-click="smart.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="smart.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">dev</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="smart.data_mod.dev[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">mail_to</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="smart.data_mod.mail_to[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">mail_test</label>
+                                          <div class="col-sm-4">
+                                              <input type="checkbox" style="margin-top: 8px;" ng-model="smart.data_mod.mail_test[$index]" />
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">mail_exec</label>
+                                          <div class="col-sm-4">
+                                              <input type="text" class="form-control" ng-model="smart.data_mod.mail_exec[$index]" />
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                          <label class="col-sm-2 control-label">schedule_regexp</label>
+                                          <div class="col-sm-4">
+                                              <input type="text" class="form-control" ng-model="smart.data_mod.schedule_regexp[$index]" />
+                                          </div>
+                                    </div>
+
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="smart.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="smart.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
