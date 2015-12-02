@@ -1,0 +1,445 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Snmp">
+<tabset>
+<tab heading="设置" select="snmpConf.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="panel os-panel">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">sys_location</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.sys_location" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">sys_contact</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.sys_contact" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">sys_name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.sys_name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">agent_address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.agent_address" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">iquery_sec_name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.iquery_sec_name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">load_max</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.load_max" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">swap_min</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.swap_min" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">disk_min_percent</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="snmpConf.data_add.disk_min_percent" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">link_up_down_notifications</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" style="margin-top: 8px;" ng-model="snmpConf.data_add.link_up_down_notifications" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">default_monitors</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" style="margin-top: 8px;" ng-model="snmpConf.data_add.default_monitors" />
+                        </div>
+                    </div>
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <button class="btn btn-default os-submit-btn" ng-click="snmpConf.data_add.submitForm()">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</tab>
+<tab heading="community" select="community.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="communitylist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="community.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="community.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="community.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="community.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="community.data_add.community_name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">ipv6</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" style="margin-top: 8px;" ng-model="community.data_add.ipv6" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">源</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="community.data_add.source" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">oid</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="community.data_add.oid" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">只读</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" style="margin-top: 8px;" ng-model="community.data_add.read_only" />
+                        </div>
+                    </div>
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="community.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="community.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="communitylist.checkAllBox" ng-click="communitylist.toggle_all()"> </th>
+                    <th class="col-sm-2">名称</th>
+                    <th class="col-sm-1">ipv6</th>
+                    <th class="col-sm-2">源</th>
+                    <th class="col-sm-2">oid</th>
+                    <th class="col-sm-2">只读</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in communitylist.data.servers | filter: communitylist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="communitylist.checkbox[$index]"> </td>
+                    <td ng-click="community.data.showDetail(u, $index)">{{u.community_name}}</td>
+                    <td ng-click="community.data.showDetail(u, $index)">{{u.ipv6?"是":"否"}}</td>
+                    <td ng-click="community.data.showDetail(u, $index)">{{u.source}}</td>
+                    <td ng-click="community.data.showDetail(u, $index)">{{u.oid}}</td>
+                    <td ng-click="community.data.showDetail(u, $index)">{{u.read_only?"是":"否"}}</td>
+                    <td ng-click="community.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="community.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">名称</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="community.data_mod.community_name[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">ipv6</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" style="margin-top: 8px;" ng-model="community.data_mod.ipv6[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">源</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="community.data_mod.source[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">oid</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="community.data_mod.oid[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">只读</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" style="margin-top: 8px;" ng-model="community.data_mod.read_only[$index]" />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="community.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="community.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+<tab heading="monitor" select="monitor.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="monitorlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="monitor.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="monitor.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="monitor.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="monitor.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="monitor.data_add.monitor_name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">option</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="monitor.data_add.option" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">expression</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="monitor.data_add.expression" />
+                        </div>
+                    </div>
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="monitor.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="monitor.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="monitorlist.checkAllBox" ng-click="monitorlist.toggle_all()"> </th>
+                    <th class="col-sm-3">名称</th>
+                    <th class="col-sm-3">option</th>
+                    <th class="col-sm-3">expression</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in monitorlist.data.servers | filter: monitorlist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="monitorlist.checkbox[$index]"> </td>
+                    <td ng-click="monitor.data.showDetail(u, $index)">{{u.monitor_name}}</td>
+                    <td ng-click="monitor.data.showDetail(u, $index)">{{u.option}}</td>
+                    <td ng-click="monitor.data.showDetail(u, $index)">{{u.expression}}</td>
+                    <td ng-click="monitor.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="monitor.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">名称</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="monitor.data_mod.monitor_name[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">option</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="monitor.data_mod.option[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">expression</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="monitor.data_mod.expression[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="monitor.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="monitor.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+<tab heading="trap_sink" select="trap_sink.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="trap_sinklist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="trap_sink.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="删除" ng-click="trap_sink.delete_all()">
+                <i  class="glyphicon glyphicon-trash"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="trap_sink.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="trap_sink.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">主机地址</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="trap_sink.data_add.host" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">type</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="trap_sink.data_add.type" ng-options="o.value as o.key for o in staticData.trap_sinkModeOptionsData" ng-change="">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">community</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="trap_sink.data_add.community" />
+                        </div>
+                    </div>
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="trap_sink.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="trap_sink.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-1"><input type="checkbox" ng-model="trap_sinklist.checkAllBox" ng-click="trap_sinklist.toggle_all()"> </th>
+                    <th class="col-sm-3">主机地址</th>
+                    <th class="col-sm-3">type</th>
+                    <th class="col-sm-3">community</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in trap_sinklist.data.servers | filter: trap_sinklist.seach">
+                <tr>
+                    <td><input type="checkbox" ng-model="trap_sinklist.checkbox[$index]"> </td>
+                    <td ng-click="trap_sink.data.showDetail(u, $index)">{{u.host}}</td>
+                    <td ng-click="trap_sink.data.showDetail(u, $index)">{{u.type}}</td>
+                    <td ng-click="trap_sink.data.showDetail(u, $index)">{{u.community}}</td>
+                    <td ng-click="trap_sink.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="trap_sink.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">主机地址</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="trap_sink.data_mod.host[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">type</label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" ng-model="trap_sink.data_mod.type[$index]" ng-options="o.value as o.key for o in staticData.trap_sinkModeOptionsData" ng-change="">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">community</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" ng-model="trap_sink.data_mod.community[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="trap_sink.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="trap_sink.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+</tabset>
+</div>
