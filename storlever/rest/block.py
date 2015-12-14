@@ -148,9 +148,9 @@ scan_bus_schema = Schema({
 def scan_bus(request):
     scsi_mgr =  scsimgr.scsi_mgr()
     params = get_params_from_request(request, scan_bus_schema)
-    remove = params.get("remove", None),
-    force_rescan = params.get("force_rescan", None),
-    force_remove = params.get("force_remove", None),
+    remove = params.get("remove", False),
+    force_rescan = params.get("force_rescan", False),
+    force_remove = params.get("force_remove", False),
     if params['opt'] == "re_scan":  
         scsi_mgr.rescan_bus(params['host'], params['channels'], params['targets'],\
                              params['luns'],remove,force_rescan, force_remove)
