@@ -212,13 +212,13 @@ class ScsiManager(object):
             cmd_list.append("--forcerescan")
 
         if len(host) != 0:
-            cmd_list.append("--hosts=" + (",".join(host)))
+            cmd_list.append("--hosts=" + (",".join(map(str, host))))
         if len(channels) != 0:
-            cmd_list.append("--channels=" + (",".join(channels)))
+            cmd_list.append("--channels=" + (",".join(map(str, channels))))
         if len(targets) != 0:
-            cmd_list.append("--ids=" + (",".join(targets)))
+            cmd_list.append("--ids=" + (",".join(map(str, targets))))
         if len(luns) != 0:
-            cmd_list.append("--luns=" + (",".join(luns)))
+            cmd_list.append("--luns=" + (",".join(map(str, luns))))
 
         out = check_output(cmd_list)
 
