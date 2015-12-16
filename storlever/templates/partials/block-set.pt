@@ -1,0 +1,110 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Block">
+
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="blocklist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="block.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-2">名称</th>
+                    <th class="col-sm-2">size</th>
+                    <th class="col-sm-2">type</th>
+                    <th class="col-sm-2">fs_type</th>
+                    <th class="col-sm-1">只读</th>
+                    <th class="col-sm-3">挂载点</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in blocklist.data.servers | filter: blocklist.seach">
+                <tr>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.name}}</td>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.size}}</td>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.type}}</td>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.fs_type}}</td>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.read_only?"是":"否"}}</td>
+                    <td ng-click="block.data.showDetail(u, $index)">{{u.mount_point}}</td>
+                </tr>
+                <tr class="ng-hide" ng-show="block.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">名称</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.name[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">major</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.major[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">minor</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.minor[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">size</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.size[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">type</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.type[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">fs_type</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.fs_type[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">mount_point</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{block.data_mod.mount_point[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">只读</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" style="margin-top: 8px;" ng-model="block.data_mod.read_only[$index]" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="block.data_mod.clean_meta(u, $index)"><i class="glyphicon glyphicon-trash"></i>&nbsp;清除meta</button>
+                                            <button class="btn btn-default" ng-click="block.data_mod.flush_buf(u, $index)"><i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新缓存</button>
+                                            <button class="btn btn-default" ng-click="block.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+
+</div>

@@ -1,0 +1,219 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Scsi">
+<tabset>
+<tab heading="scan bus" select="scan.show()">
+        <div class="row row-in-tab os-row-no-padding">
+            <div class="panel os-panel">
+                <div class="panel-body">
+                    <form class="form-horizontal os-form" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">host</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="scan.data_add.host" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">channels</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="scan.data_add.channels" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">targets</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="scan.data_add.targets" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">luns</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" ng-model="scan.data_add.luns" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">remove</label>
+                            <div class="col-sm-4">
+                                <input type="checkbox" style="margin-top: 8px;" ng-model="scan.data_add.remove" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">force_rescan</label>
+                            <div class="col-sm-4">
+                                <input type="checkbox" style="margin-top: 8px;" ng-model="scan.data_add.force_rescan" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">force_remove</label>
+                            <div class="col-sm-4">
+                                <input type="checkbox" style="margin-top: 8px;" ng-model="scan.data_add.force_remove" />
+                            </div>
+                        </div>
+                        <div class="form-group os-submit-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-6">
+                                <button class="btn btn-default os-submit-btn" ng-click="scan.data_add.submitForm()">rescan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</tab>
+<tab heading="device" select="dev.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="devlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="dev.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-2">scsi_id</th>
+                    <th class="col-sm-2">scsi_type</th>
+                    <th class="col-sm-2">rev</th>
+                    <th class="col-sm-2">state</th>
+                    <th class="col-sm-2">vendor</th>
+                    <th class="col-sm-2">model</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in devlist.data.servers | filter: devlist.seach">
+                <tr>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.scsi_id}}</td>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.scsi_type}}</td>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.rev}}</td>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.state}}</td>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.vendor}}</td>
+                    <td ng-click="dev.data.showDetail(u, $index)">{{u.model}}</td>
+                </tr>
+                <tr class="ng-hide" ng-show="dev.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">scsi_id</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.scsi_id[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">scsi_type</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.scsi_type[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">dev_file</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.dev_file[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">sg_file</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.sg_file[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">vendor</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.vendor[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">model</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.model[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">rev</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.rev[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">state</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{dev.data_mod.state[$index]}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">smart</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" style="margin-top: 8px;" ng-model="dev.data_mod.smart[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">offline_auto</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" style="margin-top: 8px;" ng-model="dev.data_mod.offline_auto[$index]" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">详细信息</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">{{dev.data_mod.detail[$index]}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group os-submit-group">
+                                        <label class="col-sm-1 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-default" ng-click="dev.data_mod.submitForm(u, $index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                            <button class="btn btn-default" ng-click="scsi.data_mod.init(u, $index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</tab>
+<tab heading="host" select="host.show()">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="hostlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="host.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-2">host_number</th>
+                    <th class="col-sm-8">type</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in hostlist.data.servers | filter: hostlist.seach">
+                <tr>
+                    <td ng-click="scsi.data.showDetail(u, $index)">{{u.host_number}}</td>
+                    <td ng-click="scsi.data.showDetail(u, $index)">{{u.type}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</tab>
+</tabset>
+
+
+
+</div>
