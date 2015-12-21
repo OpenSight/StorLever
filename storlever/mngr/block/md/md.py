@@ -328,7 +328,7 @@ class MD(object):
             check_output(grow_cmd.split())
         self.refresh()
         logger.log(logging.INFO, logger.LOG_TYPE_CONFIG,
-                   "MD {0} grows successfully with block device {}".format(self.dev_file, device))
+                   "MD {0} grows successfully with block device {1}".format(self.dev_file, device))
 
 
 MDManager = MDManager()
