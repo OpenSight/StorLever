@@ -115,7 +115,8 @@ def post_vg_op(request):
 def delete_vg_rest(request):
     vg_name = request.matchdict['vg']
     lvm_mng = lvm.lvm_mgr()
-    lvm_mng.delete_vg(vg_name)
+    vg = lvm_mng.get_vg(vg_name)
+    vg.delete()
     return Response(status=200)
 
 
