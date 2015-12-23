@@ -1,0 +1,257 @@
+<div class="container-fluid container-compact os-tab-container" ng-controller="Md">
+    <div class="row row-in-tab os-row-no-padding">
+        <div class="col-sm-12 input-group os-table-toolbar">
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+              </span>
+            <input type="text" class="form-control" placeholder="Filter..." style="width:20%" ng-model="mdlist.seach" />
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加" ng-click="md.add()">
+                  <i  class="glyphicon glyphicon-plus"></i>
+              </span>
+              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="md.refresh()">
+                <i  class="glyphicon glyphicon-refresh"></i>
+              </span>
+        </div>
+
+        <div class="panel os-panel" ng-show="md.addShown">
+            <div class="panel-body">
+                <form class="form-horizontal os-form" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">md名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" ng-model="md.data_add.name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">level</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="md.data_add.level" ng-options="o.value as o.key for o in staticData.levelOptionsData" ng-change="">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">dev</label>
+                        <div class="col-sm-8">
+                            <!--div style="float: left; margin-right: 20px; margin-top: 5px;" ng-repeat="p in md.devlist">
+                                <input type="checkbox" ng-model="md.dev[p]" /> {{p}}
+                            </div-->
+                            <input type="text" class="form-control" ng-model="md.data_add.dev" />
+                        </div>
+                    </div>
+
+                    <div class="form-group os-submit-group">
+                        <label class="col-sm-1 control-label"></label>
+                        <div class="col-sm-4">
+                            <button class="btn btn-default" ng-click="md.data_add.submitForm()"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                            <button class="btn btn-default" ng-click="md.data_add.close()"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 os-table-container">
+            <table class="table os-table">
+                <thead>
+                <tr>
+                    <th class="col-sm-2">md名称</th>
+                    <th class="col-sm-4">uuid</th>
+                    <th class="col-sm-2">dev</th>
+                    <th class="col-sm-2">metadata</th>
+                    <th class="col-sm-2">删除</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="u in mdlist.data.servers | filter: mdlist.seach">
+                <tr>
+                    <td ng-click="md.data.showDetail(u, $index)">{{u.name}}</td>
+                    <td ng-click="md.data.showDetail(u, $index)">{{u.uuid}}</td>
+                    <td ng-click="md.data.showDetail(u, $index)">{{u.dev_file}}</td>
+                    <td ng-click="md.data.showDetail(u, $index)">{{u.metadata}}</td>
+                    <td ng-click="md.delete_one(u)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                </tr>
+                <tr class="ng-hide" ng-show="md.data_mod.bDetailShown[$index]">
+                    <td colspan="999">
+                      <tabset>
+                      <tab heading="详细信息" select="md.data_mod.showDetail(u, $index)">
+                        <div class="panel os-panel">
+                            <div class="panel-body">
+                                <form class="form-horizontal os-form" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">md名称</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.name[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">dev_file</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.dev_file[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">spare_devices</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.spare_devices[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">array_size</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.array_size[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">used_dev_size</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.used_dev_size[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">active_device</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.active_device[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">total_devices</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.total_devices[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">creation_time</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.creation_time[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">raid_level</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.raid_level[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">update_time</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.update_time[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">state</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.state[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">raid_devices</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.raid_devices[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">full_name</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.full_name[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">working_device</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.working_device[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">resync_status</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.resync_status[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">failed_devices</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.failed_devices[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">persistence</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.persistence[$index]}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">uuid</label>
+                                        <div class="col-sm-4">
+                                            <p class="form-control-static">{{md.data_mod.uuid[$index]}}</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                      </tab>
+                      <tab heading="成员列表" select="md.data_mod.initMembers(u, $index)">
+                          <div class="col-sm-12 input-group os-table-toolbar">
+                              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="添加热备" ng-click="md.data_mod.hotAdd(u, $index)">
+                                  <i  class="glyphicon glyphicon-plus"></i>
+                              </span>
+                              <span class="btn-small" style="cursor:pointer;float:right;padding-top:10px;padding-left:10px;" title="刷新" ng-click="md.data_mod.hotRefresh(u, $index)">
+                                <i  class="glyphicon glyphicon-refresh"></i>
+                              </span>
+                          </div>
+                          <div class="panel os-panel" ng-show="md.data_mod.hotAddShown[$index]">
+                              <div class="panel-body">
+                                  <form class="form-horizontal os-form" role="form">
+                                      <div class="form-group">
+                                          <label class="col-sm-2 control-label">devices</label>
+                                          <div class="col-sm-8">
+                                              <!--div style="float: left; margin-right: 20px; margin-top: 5px;" ng-repeat="p in md.devlist">
+                                                  <input type="checkbox" ng-model="md.dev[u.uuid][p]" /> {{p}}
+                                              </div-->
+                                              <input type="text" class="form-control" ng-model="md.data_mod.devs[$index]" />
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group os-submit-group">
+                                          <label class="col-sm-1 control-label"></label>
+                                          <div class="col-sm-4">
+                                              <button class="btn btn-default" ng-click="md.data_mod.addHotSp(u,$index)"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+                                              <button class="btn btn-default" ng-click="md.data_mod.close(u,$index)"><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</button>
+                                          </div>
+                                      </div>
+                                  </form>
+                              </div>
+                          </div>
+                          <div class="col-sm-12 os-table-container">
+                              <table class="table os-table">
+                                  <thead>
+                                  <tr>
+                                      <th class="col-sm-1">raid</th>
+                                      <th class="col-sm-1">NO.</th>
+                                      <th class="col-sm-1">major</th>
+                                      <th class="col-sm-1">minor</th>
+                                      <th class="col-sm-3">device</th>
+                                      <th class="col-sm-3">state</th>
+                                      <th class="col-sm-2">删除</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody ng-repeat="(md_member_key, md_member_value) in md.data_mod.members[$index]">
+                                  <tr>
+                                      <td>{{md_member_value.raiddevice}}</td>
+                                      <td>{{md_member_value.number}}</td>
+                                      <td>{{md_member_value.major}}</td>
+                                      <td>{{md_member_value.minor}}</td>
+                                      <td>{{md_member_value.device}}</td>
+                                      <td>{{md_member_value.state}}</td>
+                                      <td ng-click="md.data_mod.delete_one(u, md_member_value.device, $index)" style="cursor:pointer;"><i class="glyphicon glyphicon-trash"></i></td>
+                                  </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </tab>
+                      </tabset>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

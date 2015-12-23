@@ -12,3 +12,6 @@ def includeme(config):
     config.include(__name__ + '.mail')
     config.include(__name__ + '.smart')
     config.include(__name__ + '.zabbix')
+    config.include(__name__ + '.block-set')
+    config.include(__name__ + '.scsi-set')
+    config.include(__name__ + '.md-set')
