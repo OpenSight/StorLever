@@ -32,7 +32,7 @@ def includeme(config):
     config.add_route('lv', '/block/lvm/vg_list/{vg}/lv_list/{lv}')
     config.add_route('lv_op', '/block/lvm/vg_list/{vg}/lv_list/{lv}/op')
     config.add_route('lv_snapshot', '/block/lvm/vg_list/{vg}/lv_list/{lv}/snapshot')
-    config.add_route('pvmove', '/block/lvm/pv_move')
+    config.add_route('pvmove', '/block/lvm/pvmove')
 
 #curl -v -X GET http://192.168.1.123:6543/storlever/api/v1/block/lvm/vg_list
 @get_view(route_name='vg_list')
@@ -189,6 +189,18 @@ def get_lv(request):
            }
     return lv_info
 
+
+@delete_view(route_name='lv')
+def get_lv(request):
+    vg_name = request.matchdict['vg']
+    lv_name = request.matchdict['lv']
+    lvm_mng = lvm.lvm_mgr()
+    vg = lvm_mng.get_vg(vg_name)
+    lv = vg.get_lv(lv_name)
+    lv.delete()
+    return Response(status=200)
+
+
 lv_op_schema = Schema({
     "opt": StrRe(r"^(activate|disable)$"),
     DoNotCare(Use(str)): object  # for all those key we don't care
@@ -226,7 +238,7 @@ def post_lv_snapshot(request):
     lvm_mng = lvm.lvm_mgr()
     vg = lvm_mng.get_vg(vg_name)
     lv = vg.get_lv(lv_name)
-    lv.snapshot(params['lvname'], params['size'])
+    lv.snapshot(params['name'], params['size'])
     return Response(status=200)
 
 pv_move_schema = Schema({
