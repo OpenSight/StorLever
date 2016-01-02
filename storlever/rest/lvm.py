@@ -191,7 +191,7 @@ def get_lv(request):
 
 
 @delete_view(route_name='lv')
-def get_lv(request):
+def delete_lv(request):
     vg_name = request.matchdict['vg']
     lv_name = request.matchdict['lv']
     lvm_mng = lvm.lvm_mgr()
