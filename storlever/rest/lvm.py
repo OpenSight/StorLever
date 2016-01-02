@@ -62,7 +62,7 @@ new_vg_schema = Schema({
 def create_vg(request):
     lvm_mng = lvm.lvm_mgr()
     params = get_params_from_request(request, new_vg_schema)
-    vg = lvm_mng.new_vg(params['vgname'],params['dev'])
+    vg = lvm_mng.new_vg(params['vgname'], params['dev'])
     
     if vg is None:
         return Response(status=500)
@@ -102,11 +102,12 @@ def post_vg_op(request):
     vg_name = request.matchdict['vg']
     lvm_mng = lvm.lvm_mgr()
     vg = lvm_mng.get_vg(vg_name)
-    if(params['opt']) == 'grow' :
-        vg.grow(params['dev'])
-    elif(params['opt']) == 'shrink' :
-        vg.shrink(params['dev'])
-               
+    if(params['opt']) == 'grow':
+        for dev in params['dev']:
+            vg.grow(dev)
+    elif(params['opt']) == 'shrink':
+        for dev in params['dev']:
+            vg.shrink(dev)
     return Response(status=200)
 
 
@@ -166,7 +167,7 @@ def get_lv_list(request):
                'attr':lvs[lv].attr,
                'snap_percent':lvs[lv].snap_percent
                }
-    lv_dict.append(lv_info)
+        lv_dict.append(lv_info)
     return lv_dict
 
 #curl -v -X GET http://192.168.1.123:6543/storlever/api/v1/block/lvm/lv_list/lvname
@@ -225,7 +226,7 @@ def post_lv_snapshot(request):
     lvm_mng = lvm.lvm_mgr()
     vg = lvm_mng.get_vg(vg_name)
     lv = vg.get_lv(lv_name)
-    lv.snapshot(params['lvname'],params['size'])
+    lv.snapshot(params['lvname'], params['size'])
     return Response(status=200)
 
 pv_move_schema = Schema({
@@ -241,5 +242,5 @@ def post_pv_move(request):
     params = get_params_from_request(request, pv_move_schema)
     pv_name = params["src"]
     pv_mgr = lvm.PV(name=pv_name)
-    pv_mgr.move(params["dst"],params["lvname"])
+    pv_mgr.move(params["dst"], params["lvname"])
     return Response(status=200)
